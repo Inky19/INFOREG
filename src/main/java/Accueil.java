@@ -11,6 +11,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import javax.swing.ImageIcon;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -30,7 +31,11 @@ public class Accueil {
         J.setLocationRelativeTo(null);
         JPanel contentPane = (JPanel) J.getContentPane();
         contentPane.setLayout(new FlowLayout(FlowLayout.CENTER,5,5));
-
+        
+        // Icone de l'application
+        ImageIcon icon = new ImageIcon("asset/icon.png");
+        J.setIconImage(icon.getImage());
+        
         // Bouton permettant d'ouvrir un nouveau graphe orienté pondéré
         JButton orientepond = new JButton("Graphe Orienté Pondéré");
         orientepond.addActionListener(new ActionListener() {

@@ -7,12 +7,13 @@ Date de dernière modification : 08/03/2022
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -26,11 +27,8 @@ import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,13 +39,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public abstract class Interface{
 
@@ -191,7 +185,14 @@ public abstract class Interface{
         frame = new JFrame("INFOREG "+d.getPathSauvegarde());
         //fermer la fenêtre quand on quitte
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        // Position de la fenètre
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setSize(screenSize.width, screenSize.height);
         frame.setLocationRelativeTo(null);
+        // Icone de l'application
+        ImageIcon icon = new ImageIcon("asset/icon.png");
+        frame.setIconImage(icon.getImage());
+
         
         initToolBar();  
         addToolBar();      
@@ -207,9 +208,11 @@ public abstract class Interface{
         frame.getContentPane().add(this.d);
         this.d.repaint();
         
-        frame.pack();
+        //frame.pack(); remi : Je pense pas que c'est utile ici
         
         frame.setVisible(true);
+        
+
             
     }
     
