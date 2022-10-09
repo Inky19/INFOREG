@@ -38,6 +38,7 @@ public class ChargeDraw {
 
     /**
      * Méthode renvoyant un Draw correspondant à la charge
+     * @param inter
      * @return un Draw à afficher dans notre interface
      * @throws FileNotFoundException
      * @throws IOException
