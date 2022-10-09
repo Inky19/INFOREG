@@ -186,8 +186,7 @@ public abstract class Interface{
         this.tabs = new LinkedList<Draw>();
         tabs.add(d);
         d.setInterface(this);
-        tabs.add(new Draw());
-        
+      
     }
 
     /**
@@ -263,6 +262,7 @@ public abstract class Interface{
                 Draw newD = new Draw();
                 newD.setPondere(d.getPondere());
                 newD.setOriente(d.getOriente());
+                newD.setInterface(Interface.this);
                 tabsPanel.addTab (title, tabIco, newD);
                 tabsPanel.setSelectedIndex(tabsPanel.getTabCount()-1); // Positionne automatiquement la vue sur le nouvel onglet
                 
