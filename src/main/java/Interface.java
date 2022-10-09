@@ -8,29 +8,31 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.List;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,22 +43,22 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public abstract class Interface{
 
     protected JFrame frame;
     
     /** Les JPanel. */
+    protected JTabbedPane tabsPanel;
     protected JToolBar toolBarButtons;
     protected JPanel paneImage;
     protected Draw d;
+
+    protected LinkedList<Draw> tabs;
     
     
     /** Le Menu. */ 
@@ -181,6 +183,10 @@ public abstract class Interface{
      */
     public Interface(Draw d){
         this.d = d;
+        this.tabs = new LinkedList<Draw>();
+        tabs.add(d);
+        d.setInterface(this);
+      
     }
 
     /**
@@ -191,25 +197,38 @@ public abstract class Interface{
         frame = new JFrame("INFOREG "+d.getPathSauvegarde());
         //fermer la fenêtre quand on quitte
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        // Position de la fenètre
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setSize(screenSize.width, screenSize.height);
         frame.setLocationRelativeTo(null);
-        
+        // Icone de l'application
+        ImageIcon icon = new ImageIcon("asset/icon.png");
+        frame.setIconImage(icon.getImage());
+
+        initTabs();
         initToolBar();  
         addToolBar();      
         initPaneImage();
         initLeftMenuBar();
         addMenuBar();
         initRightMenuBar();
+        
         frame.add(toolBarButtons, BorderLayout.LINE_START);
         frame.add(paneImage,BorderLayout.CENTER);
         Interface.colorBg = paneImage.getBackground();
         frame.setJMenuBar(menuBar);
         
-        frame.getContentPane().add(this.d);
+        //frame.getContentPane().add(this.d);
+        frame.add(tabsPanel);
         this.d.repaint();
         
-        frame.pack();
+        System.out.println("AA");
+        
+        //frame.pack(); remi : Je pense pas que c'est utile ici
         
         frame.setVisible(true);
+        
+
             
     }
     
@@ -219,6 +238,45 @@ public abstract class Interface{
     public abstract void initToolBar() ;
 
     public abstract void addToolBar();
+    
+    public void initTabs(){
+        tabsPanel = new JTabbedPane();
+        ImageIcon tabIco = new ImageIcon("asset/icons/tab.png");
+        FlowLayout f = new FlowLayout (FlowLayout.CENTER, 5, 0);
+        JPanel pnlTab = new JPanel (f);
+        pnlTab.setOpaque (false);
+        JButton addTab = new JButton ("+");
+        addTab.setOpaque (false); //
+        addTab.setBorder (null);
+        addTab.setContentAreaFilled (false);
+        addTab.setFocusPainted (false);
+
+        tabsPanel.addTab("",null,new JScrollPane());
+        addTab.setFocusable (false);
+        pnlTab.add (addTab);
+        tabsPanel.setTabComponentAt (tabsPanel.getTabCount ()-1, pnlTab);
+        ActionListener listener = new ActionListener () {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                String title = "Tab " + String.valueOf (tabsPanel.getTabCount () - 1);
+                Draw newD = new Draw();
+                newD.setPondere(d.getPondere());
+                newD.setOriente(d.getOriente());
+                newD.setInterface(Interface.this);
+                tabsPanel.addTab (title, tabIco, newD);
+                tabsPanel.setSelectedIndex(tabsPanel.getTabCount()-1); // Positionne automatiquement la vue sur le nouvel onglet
+                
+            }
+        };
+        tabsPanel.addTab("Unammed graph", tabIco, d);
+        //tabsPanel.setMnemonicAt(0, KeyEvent.VK_1);
+        addTab.setFocusable (false);
+        addTab.addActionListener (listener);
+        tabsPanel.setVisible (true);
+
+
+        
+    }
 
     public void initLeftMenuBar(){
 

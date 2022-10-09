@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -65,7 +66,11 @@ public class ExportLatex {
         //fermer la fenêtre quand on quitte
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(null);
+        // Icone de l'application
+        ImageIcon icon = new ImageIcon("asset/icon.png");
+        frame.setIconImage(icon.getImage());
         
+                
         tabbedPane = new JTabbedPane();
         
         initPanelThicknessArc(d);
