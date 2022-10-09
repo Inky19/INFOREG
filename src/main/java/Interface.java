@@ -7,10 +7,12 @@ Date de dernière modification : 08/03/2022
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.List;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
@@ -20,8 +22,10 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import javax.swing.AbstractAction;
@@ -39,6 +43,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
@@ -48,9 +53,12 @@ public abstract class Interface{
     protected JFrame frame;
     
     /** Les JPanel. */
+    protected JTabbedPane tabsPanel;
     protected JToolBar toolBarButtons;
     protected JPanel paneImage;
     protected Draw d;
+
+    protected LinkedList<Draw> tabs;
     
     
     /** Le Menu. */ 
@@ -175,6 +183,9 @@ public abstract class Interface{
      */
     public Interface(Draw d){
         this.d = d;
+        this.tabs = new LinkedList<Draw>();
+        tabs.add(d);
+        tabs.add(new Draw());
     }
 
     /**
@@ -193,20 +204,24 @@ public abstract class Interface{
         ImageIcon icon = new ImageIcon("asset/icon.png");
         frame.setIconImage(icon.getImage());
 
-        
+        initTabs();
         initToolBar();  
         addToolBar();      
         initPaneImage();
         initLeftMenuBar();
         addMenuBar();
         initRightMenuBar();
+        
         frame.add(toolBarButtons, BorderLayout.LINE_START);
         frame.add(paneImage,BorderLayout.CENTER);
         Interface.colorBg = paneImage.getBackground();
         frame.setJMenuBar(menuBar);
         
-        frame.getContentPane().add(this.d);
+        //frame.getContentPane().add(this.d);
+        frame.add(tabsPanel);
         this.d.repaint();
+        
+        System.out.println("AA");
         
         //frame.pack(); remi : Je pense pas que c'est utile ici
         
@@ -222,6 +237,44 @@ public abstract class Interface{
     public abstract void initToolBar() ;
 
     public abstract void addToolBar();
+    
+    public void initTabs(){
+        tabsPanel = new JTabbedPane();
+        ImageIcon tabIco = new ImageIcon("asset/icons/tab.png");
+        FlowLayout f = new FlowLayout (FlowLayout.CENTER, 5, 0);
+        JPanel pnlTab = new JPanel (f);
+        pnlTab.setOpaque (false);
+        JButton addTab = new JButton ("+");
+        addTab.setOpaque (false); //
+        addTab.setBorder (null);
+        addTab.setContentAreaFilled (false);
+        addTab.setFocusPainted (false);
+
+        tabsPanel.addTab("",null,new JScrollPane());
+        addTab.setFocusable (false);
+        pnlTab.add (addTab);
+        tabsPanel.setTabComponentAt (tabsPanel.getTabCount ()-1, pnlTab);
+        ActionListener listener = new ActionListener () {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                String title = "Tab " + String.valueOf (tabsPanel.getTabCount () - 1);
+                Draw newD = new Draw();
+                newD.setPondere(d.getPondere());
+                newD.setOriente(d.getOriente());
+                tabsPanel.addTab (title, tabIco, newD);
+                tabsPanel.setSelectedIndex(tabsPanel.getTabCount()-1); // Positionne automatiquement la vue sur le nouvel onglet
+                
+            }
+        };
+        tabsPanel.addTab("Unammed graph", tabIco, d);
+        //tabsPanel.setMnemonicAt(0, KeyEvent.VK_1);
+        addTab.setFocusable (false);
+        addTab.addActionListener (listener);
+        tabsPanel.setVisible (true);
+
+
+        
+    }
 
     public void initLeftMenuBar(){
 
