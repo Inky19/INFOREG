@@ -93,12 +93,12 @@ public abstract class Interface{
     protected JLabel imageLabel;
     
     /** Tools pour savoir l'état/bouton selectionné. */
-    protected int activeTool;
+    protected static int activeTool;
     public static final int SELECT_TOOL = 10;
     public static final int NOEUD_TOOL = 11;
     public static final int ARC_TOOL = 12;
     public static final int LABEL_TOOL = 13;
-    protected int mode;
+    protected static int mode;
     public static final int EDITION_MODE = 1;
     public static final int TRAITEMENT_MODE = 2;
     protected static int activeTraitement;
@@ -185,7 +185,9 @@ public abstract class Interface{
         this.d = d;
         this.tabs = new LinkedList<Draw>();
         tabs.add(d);
+        d.setInterface(this);
         tabs.add(new Draw());
+        
     }
 
     /**
