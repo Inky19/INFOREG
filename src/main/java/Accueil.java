@@ -12,6 +12,7 @@ import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -75,6 +76,8 @@ public class Accueil {
                     d.setOriente(Draw.NONORIENTE);
                     SwingUtilities.invokeLater(new InterfaceNO(d)::createAndShowGui);
                 }
+                J.dispatchEvent(new WindowEvent(J, WindowEvent.WINDOW_CLOSING));
+
             }
         });
 
