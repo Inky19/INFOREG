@@ -19,6 +19,8 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import ObjetsGraph.*;
  
 public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin {
  
@@ -33,7 +35,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     /** Nombre maximum de nœuds d'un graphe, défini dans la classe Graphe */
     public static final int MAX = Graphe.nbmax;
     /** Liste des cerlces représentant les Nœuds*/
-    private Ellipse2D.Double[] circ = new Ellipse2D.Double[MAX];
+    private Noeud[] circ = new Noeud[MAX];
     /** Liste des labels */
     private String[] circLbl = new String[MAX];
     /** Nombre courant de cercle (i.e de Nœud du Graphe) */
@@ -483,7 +485,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     public void add(double x, double y) {
         if (numOfCircles < MAX) {
             //On ajoute un cercle à la liste circ et on actualise les attributs concernés
-            circ[numOfCircles] =  new Ellipse2D.Double(x, y, circleW, circleW);
+            circ[numOfCircles] =  new Noeud(x, y, circleW, circleW);
             circLbl[numOfCircles] = numOfCircles + "";
             currentCircleIndex = numOfCircles;
             numOfCircles++;
@@ -605,15 +607,12 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
             int y = event.getY();
             if (currentCircleIndex >= 0) {
                 if(multiSelecCirc[currentCircleIndex]){
-                    double transx;
-                    transx = x - circ[currentCircleIndex].x;
-                    double transy;
-                    transy = y - circ[currentCircleIndex].y;
+                    double transx = x - circ[currentCircleIndex].x;
+                    double transy = y - circ[currentCircleIndex].y;
                     
                     for(int i = 0; i< getNumOfCircles() ; i++){
                         if(multiSelecCirc[i]){
-                            circ[i].x = circ[i].x + transx;
-                            circ[i].y = circ[i].y + transy;
+                            circ[i].updatePos(circ[i].x + transx, circ[i].y + transy);
                         }
                     }
                     for(int i = 0; i<getNumOfLines() ; i++){
@@ -625,13 +624,8 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                     }
                     repaint();
                 }else{               
-                    //double oldX = circ[currentCircleIndex].x;
-                    //double oldY = circ[currentCircleIndex].y;
                     // On ajoute l'action à la pile
-                    //transitions.createLog("moveCircle", circ[currentCircleIndex],oldX,oldY, x, y);
-                    //
-                    circ[currentCircleIndex].x = x;
-                    circ[currentCircleIndex].y = y;
+                    circ[currentCircleIndex].updatePos(x, y);
                     zoneR = new Rectangle(Integer.MIN_VALUE,Integer.MIN_VALUE,0,0); //permet d'éviter qu'un ensemble de points soient toujours sélectionner
                                                                                     //après les avoir déselectionner en cliquant a cote
                     repaint();
@@ -715,17 +709,26 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         this.dest = -1;
     }
 
+    
+    /**
+     * 
+     * @return Taille des cercles
+     */
+    public double getTailleCirc(){
+        return (float) Interface.taille/20;
+    }
+    
+    
     /** 
      * Méthode permettant de modifier la taille des noeuds
      */
     public void tailleCirc(){
         if(numOfCircles>0){
-            double factor = (float) Interface.taille/20;
+            double factor = getTailleCirc();
             circleW = factor*Draw.RINIT ;
             //lineWidth = (float) factor*Draw.LINIT;
             for (int i = 0; i < numOfCircles; i++) {
-                circ[i].height = circleW ;
-                circ[i].width = circleW ;
+                circ[i].updateSize(circleW, circleW);
             }
             repaint();
         }
