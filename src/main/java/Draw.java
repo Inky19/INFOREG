@@ -21,6 +21,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import ObjetsGraph.*;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Stroke;
+import static java.awt.SystemColor.text;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
+import java.util.Random;
  
 public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin {
     
@@ -30,7 +38,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     
     //Pour les Nœuds :
     /** Rayon intial des cercles représentants les Nœuds */
-    private static final double RINIT = 15;
+    private static final double RINIT = 25;
     /** Rayon des cercles représentant les Nœuds, initialisé au rayon initial */
     private static double circleW = Draw.RINIT;
     /** Nombre maximum de nœuds d'un graphe, défini dans la classe Graphe */
@@ -438,23 +446,12 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                 }
             }   
         }
+        // Draw circles
         for (int i = 0; i < numOfCircles; i++) {
-            if(multiSelecCirc[i]){
-                ((Graphics2D) g).setPaint(Color.GREEN);
-                ((Graphics2D) g).draw(circ[i]); 
-            }else{
-                ((Graphics2D) g).setPaint(Color.BLACK);
-                ((Graphics2D) g).draw(circ[i]); 
-            }
-            ((Graphics2D) g).setPaint(Color.WHITE);
-            ((Graphics2D) g).fill(circ[i]);
-            ((Graphics2D) g).setPaint(Color.BLACK);
-            ((Graphics2D) g).drawString(circLbl[i],
-                    (int) circ[i].getCenterX(),
-                    (int) circ[i].getCenterY() + 20);
+            circ[i].paint((Graphics2D) g, multiSelecCirc[i],circLbl[i]);            
         }
         if(Draw.drawZone){
-            ((Graphics2D) g).draw(this.zoneR);
+           ((Graphics2D) g).draw(this.zoneR);
         }
     }    
  
