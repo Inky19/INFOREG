@@ -4,6 +4,7 @@ Auteur : Samy AMAL
 Date de création : 03/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
+import UI.ButtonTabComponent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -47,6 +48,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public abstract class Interface{
 
@@ -58,7 +61,9 @@ public abstract class Interface{
     protected JPanel paneImage;
     protected Draw d;
 
+    
     protected LinkedList<Draw> tabs;
+    private int currentTab;
     
     
     /** Le Menu. */ 
@@ -186,7 +191,7 @@ public abstract class Interface{
         this.tabs = new LinkedList<Draw>();
         tabs.add(d);
         d.setInterface(this);
-      
+        currentTab = 0;
     }
 
     /**
@@ -245,16 +250,17 @@ public abstract class Interface{
         FlowLayout f = new FlowLayout (FlowLayout.CENTER, 5, 0);
         JPanel pnlTab = new JPanel (f);
         pnlTab.setOpaque (false);
-        JButton addTab = new JButton ("+");
-        addTab.setOpaque (false); //
-        addTab.setBorder (null);
-        addTab.setContentAreaFilled (false);
-        addTab.setFocusPainted (false);
-
+        JButton addTabButton = new JButton ("+");
+        addTabButton.setOpaque (false); //
+        addTabButton.setBorder (null);
+        addTabButton.setContentAreaFilled (false);
+        addTabButton.setFocusPainted (false);
+        addTabButton.setFocusable (false);
+        
         tabsPanel.addTab("",null,new JScrollPane());
-        addTab.setFocusable (false);
-        pnlTab.add (addTab);
+        pnlTab.add (addTabButton);
         tabsPanel.setTabComponentAt (tabsPanel.getTabCount ()-1, pnlTab);
+        
         ActionListener listener = new ActionListener () {
             @Override
             public void actionPerformed (ActionEvent e) {
@@ -262,16 +268,35 @@ public abstract class Interface{
                 Draw newD = new Draw();
                 newD.setPondere(d.getPondere());
                 newD.setOriente(d.getOriente());
-                newD.setInterface(Interface.this);
-                tabsPanel.addTab (title, tabIco, newD);
-                tabsPanel.setSelectedIndex(tabsPanel.getTabCount()-1); // Positionne automatiquement la vue sur le nouvel onglet
+                newD.setInterface(Interface.this);                
+                tabsPanel.addTab(title, tabIco, newD);
+                tabsPanel.setTabComponentAt(tabsPanel.getTabCount ()-1,new ButtonTabComponent(tabsPanel, tabIco));
+            }
+        };
+        
+
+        ChangeListener changeListenenr = new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent ce) {
+                JTabbedPane sourceTabbedPane = (JTabbedPane) ce.getSource();
+                int index = sourceTabbedPane.getSelectedIndex();
+                if (index > 0){
+                    d = (Draw) tabsPanel.getSelectedComponent();
+                    currentTab = index;
+                } else {
+                    if (sourceTabbedPane.getTabCount()>1){
+                        tabsPanel.setSelectedIndex(currentTab);
+                    }
+                }
+                System.out.println("Tab changed to: " + sourceTabbedPane.getTitleAt(index));
                 
             }
         };
         tabsPanel.addTab("Unammed graph", tabIco, d);
         //tabsPanel.setMnemonicAt(0, KeyEvent.VK_1);
-        addTab.setFocusable (false);
-        addTab.addActionListener (listener);
+        addTabButton.setFocusable (false);
+        addTabButton.addActionListener (listener);
+        tabsPanel.addChangeListener(changeListenenr);
         tabsPanel.setVisible (true);
 
 
