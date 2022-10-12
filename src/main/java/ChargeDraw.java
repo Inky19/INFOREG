@@ -7,8 +7,9 @@ Date de dernière modification : 18/03/2022
 Commentaires ajoutés
 =============================================*/
 
+import ObjetsGraph.Clou;
+import ObjetsGraph.Noeud;
 import java.awt.Color;
-import java.awt.geom.Ellipse2D;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -106,15 +107,15 @@ public class ChargeDraw {
         int y1 = Integer.parseInt(tokenizer.nextToken());
         int x2 = Integer.parseInt(tokenizer.nextToken());
         int y2 = Integer.parseInt(tokenizer.nextToken());
-        Ellipse2D.Double from = d.getCirc()[d.findEllipse(x1,y1)];
-        Ellipse2D.Double to = d.getCirc()[d.findEllipse(x2,y2)];
+        Noeud from = d.getCirc()[d.findEllipse(x1,y1)];
+        Noeud to = d.getCirc()[d.findEllipse(x2,y2)];
         int p = Integer.parseInt(tokenizer.nextToken());
         int rgb = Integer.parseInt(tokenizer.nextToken());
         Color c = new Color(rgb);
         MyLine arc = new MyLine(from,to, p, c);
         int x3 = Integer.parseInt(tokenizer.nextToken());
         int y3 = Integer.parseInt(tokenizer.nextToken());
-        Ellipse2D.Double clou = new Ellipse2D.Double(x3,y3,MyLine.RCLOU,MyLine.RCLOU);
+        Clou clou = new Clou(x3,y3,MyLine.RCLOU);
         arc.setClou(clou);
         d.addLine(arc);
     }

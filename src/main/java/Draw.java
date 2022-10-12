@@ -21,14 +21,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import ObjetsGraph.*;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Stroke;
-import static java.awt.SystemColor.text;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
-import java.awt.geom.Rectangle2D;
-import java.util.Random;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import javax.swing.JLabel;
+import javax.swing.JSlider;
+import javax.swing.JToolBar;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import utilities.Vector2D;
  
 public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin {
     
@@ -38,7 +39,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     
     //Pour les Nœuds :
     /** Rayon intial des cercles représentants les Nœuds */
-    private static final double RINIT = 25;
+    private static final double RINIT = 17;
     /** Rayon des cercles représentant les Nœuds, initialisé au rayon initial */
     private static double circleW = Draw.RINIT;
     /** Nombre maximum de nœuds d'un graphe, défini dans la classe Graphe */
@@ -57,14 +58,14 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
 
     private int src = -1;
     private int dest = -1;
-    private int oriente = -1;
+    public int oriente = -1;
     public static final int ORIENTE = 0;
     public static final int NONORIENTE = 1;
     private String pathSauvegarde = " ";
     
     //Pour les Arcs :
     /** Dernier Nœud sur lequel on a passé la souris */
-    private Ellipse2D.Double fromPoint = null ;
+    private Noeud fromPoint = null ;
     /** Liste des Arcs */
     private ArrayList<MyLine> lines = new ArrayList<>();
     /** Nombre d'Arcs dessinés */
@@ -76,7 +77,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     /** Line width. */
     private float lineWidth = Draw.LINIT;
     /** Définit si le graphe est pondéré ou non */
-    private boolean pondere = true;
+    public boolean pondere = true;
     
     /** Graphe représenté par le Draw */
     private Graphe G = null;
@@ -94,6 +95,15 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     /** listes de booléens - éléments à déplacer en même temps */
     private boolean[] multiSelecCirc = new boolean[MAX];
     private boolean[] multiSelecArc = new boolean[MAX];
+    //Bouton
+    private final JSlider zoomSlider;
+    private final JLabel zoomLabel;
+    //Camera
+    private int cameraX = 0;
+    private int cameraY = 0;
+    private float zoom = 100f;
+    private static final int MAX_ZOOM = 500;
+    private static final int MIN_ZOOM = 50;
 
     public void setDest(int i) {
         this.dest = i;
@@ -167,7 +177,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         return circLbl;
     }
  
-    public Ellipse2D.Double[] getCirc(){
+    public Noeud[] getCirc(){
         return this.circ;
     }
     
@@ -180,6 +190,34 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     }
     
     public Draw() {
+        this.setLayout(new BorderLayout());
+        JToolBar tools = new JToolBar(null, JToolBar.HORIZONTAL);
+        tools.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        zoomLabel = new JLabel("100%"); 
+        zoomLabel.setPreferredSize(new Dimension(30,20));
+        zoomLabel.setAlignmentX(FlowLayout.RIGHT);
+        zoomSlider = new JSlider(MIN_ZOOM, MAX_ZOOM,100);
+        zoomSlider.setMajorTickSpacing(10);
+        zoomSlider.setSnapToTicks(true);
+        zoomSlider.setPreferredSize(new Dimension(150,20));
+        zoomSlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent event) {
+                int value = 10*(int) (zoomSlider.getValue()/10);
+                zoom = value;
+                zoomLabel.setText(value+"%");
+                repaint();
+            }
+        });
+        //zoomSlider.setAlignmentX(FlowLayout.RIGHT);
+        tools.add(zoomSlider);
+        tools.add(zoomLabel);
+        tools.setFloatable(false);
+        tools.setOpaque(false);
+        tools.setBorderPainted(true);
+        this.add(tools,BorderLayout.SOUTH);
+        
+        
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
@@ -264,12 +302,13 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                     if (Interface.activeTool==Interface.ARC_TOOL){
                         //ATTENTION : il faudra prendre le compte le cas où on pointe vers le meme cercle
                         if ((currentCircleIndex >= 0) && (fromPoint!=null) && (!fromPoint.equals(circ[currentCircleIndex]))) { // inside circle
-                            Ellipse2D.Double p = circ[currentCircleIndex];
+                            Noeud p = circ[currentCircleIndex];
                             if (pondere){
                                 String text = JOptionPane.showInputDialog("Entrer le poids de l'Arc (seuls les entiers seront acceptés):");
                                 try {
                                     int pds = Integer.parseInt(text);
-                                    MyLine newLine = new MyLine(fromPoint, p,pds,currentColor);
+                                    System.out.println(p==null);
+                                    MyLine newLine = new MyLine(fromPoint, p, pds, currentColor);
                                     addLine(newLine);
                                     repaint();
                                     //fromPoint = null;
@@ -351,7 +390,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                                 try {
                                     int pds = Integer.parseInt(text);
                                     MyLine arc = new MyLine(circ[currentCircleIndex], circ[currentCircleIndex],pds,currentColor);
-                                    Ellipse2D.Double clou = new Ellipse2D.Double(x-40,y,MyLine.RCLOU,MyLine.RCLOU);
+                                    Clou clou = new Clou(x-40,y,MyLine.RCLOU);
                                     arc.setClou(clou);
                                     addLine(arc);
                                     repaint();
@@ -365,7 +404,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                                 } 
                             } else {
                                 MyLine arc = new MyLine(circ[currentCircleIndex], circ[currentCircleIndex],1,currentColor);
-                                Ellipse2D.Double clou = new Ellipse2D.Double(x-40,y,MyLine.RCLOU,MyLine.RCLOU);
+                                Clou clou = new Clou(x-40,y,MyLine.RCLOU);
                                 arc.setClou(clou);
                                 addLine(arc);
                                 // On ajoute l'action à la pile
@@ -411,50 +450,49 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         super.paintComponent(g);
         //order : draw line puis draw circles
         for (int i = 0 ; i < numOfLines; i++){
-            ((Graphics2D) g).setPaint(lines.get(i).getC());
-            ((Graphics2D) g).setStroke(new BasicStroke(lineWidth));
-            int x1 = lines.get(i).getFromPoint().x;
-            int y1 = lines.get(i).getFromPoint().y;
-            int x3 = lines.get(i).getClouPoint().x;
-            int y3 = lines.get(i).getClouPoint().y;
-            if (pondere){
-                ((Graphics2D) g).drawString(""+lines.get(i).getPoids(),x3,y3-10);
-            }
-            if (lines.get(i).getFrom().equals(lines.get(i).getTo())) {
-                calcArc(x1,y1,x3,y3,g);
-            } else {
-                int x2 = lines.get(i).getToPoint().x;
-                int y2 = lines.get(i).getToPoint().y;
-                ((Graphics2D) g).drawLine(x1,y1,x3,y3);
-                ((Graphics2D) g).drawLine(x3,y3,x2,y2);
-                if(multiSelecArc[i]){
-                    ((Graphics2D) g).setPaint(Color.GREEN);
-                    ((Graphics2D) g).draw(lines.get(i).getClou());
-                }else{
-                    ((Graphics2D) g).setPaint(Interface.colorBg); //clous set color background
-                    ((Graphics2D) g).draw(lines.get(i).getClou());
-                }
-
-                ((Graphics2D) g).setPaint(lines.get(i).getC()); //reset color pour poids
-                if (oriente==Draw.ORIENTE){
-                    int[] t = new int[4];
-                    int x4 = (x3+x2)/2;
-                    int y4 = (y3+y2)/2;
-                    fleche(x3,y3,x4,y4,t);
-                    ((Graphics2D) g).drawLine(x4,y4,t[0],t[1]);
-                    ((Graphics2D) g).drawLine(x4,y4,t[2],t[3]);
-                }
-            }   
+            lines.get(i).paint(this, (Graphics2D) g, multiSelecArc[i],zoom,this.getBounds().getWidth()/2,this.getBounds().getHeight()/2,pondere);
         }
         // Draw circles
         for (int i = 0; i < numOfCircles; i++) {
-            circ[i].paint((Graphics2D) g, multiSelecCirc[i],circLbl[i]);            
+            //A CHANGER POUR INCLURE THIS
+            circ[i].paint((Graphics2D) g, multiSelecCirc[i],circLbl[i],zoom,this.getBounds().getWidth()/2,this.getBounds().getHeight()/2);            
         }
+        // Multiselect zone
         if(Draw.drawZone){
            ((Graphics2D) g).draw(this.zoneR);
         }
+        
     }    
- 
+    /**
+     * Permet de convertir des coordonnées globales en coordonnées de la zone de dessin
+     * @param x
+     * @param y
+    */
+    public Vector2D toDrawCoordinates(double x,double y) {
+        Rectangle r = this.getBounds();
+        float h = r.height;
+        float w = r.width;
+        return new Vector2D((x-w/2)*zoom/100+w/2,(y-h/2)*zoom/100+h/2);
+    }
+    /**
+     * Permet de convertir des coordonnées de la zone de dessin en coordonnées globales
+     * @param x
+     * @param y
+    */    
+    public Vector2D toGlobalCoordinates(double x,double y) {
+        Rectangle r = this.getBounds();
+        float h = r.height;
+        float w = r.width;
+        return new Vector2D((x-w/2)*100/zoom+w/2,(y-h/2)*100/zoom+h/2);
+    }
+    
+    public double toDrawScale(double h) {
+        return h*zoom/100;
+    }
+    
+    public double toGlobalScale(double h) {
+        return h*100/zoom;
+    }
     /**
      * Vérifie que l'on clique sur un cercle et donne son indice dans la liste circ
      * @param x = coordonnée x du pointeur de la souris
@@ -487,7 +525,8 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     public void add(double x, double y) {
         if (numOfCircles < MAX) {
             //On ajoute un cercle à la liste circ et on actualise les attributs concernés
-            circ[numOfCircles] =  new Noeud(x, y, circleW, circleW);
+            Vector2D v = toGlobalCoordinates(x, y);
+            circ[numOfCircles] =  new Noeud(v.x, v.y, circleW);
             circLbl[numOfCircles] = numOfCircles + "";
             currentCircleIndex = numOfCircles;
             numOfCircles++;
@@ -495,8 +534,8 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
             repaint();
         }
     }
-	
-	public int find(Ellipse2D.Double circ){
+    
+    public int find(Ellipse2D.Double circ){
         boolean trouve = false;
         int n = 0;
         Ellipse2D.Double comp;
@@ -604,24 +643,30 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     /** Déplace un cercle et les lignes qui lui sont rattachées */
     @Override
     public void mouseDragged(MouseEvent event) {
-        if ((Interface.activeTool==Interface.NOEUD_TOOL || Interface.activeTool==Interface.SELECT_TOOL)&& Interface.mode==Interface.EDITION_MODE)  {
-            int x = event.getX();
-            int y = event.getY();
+        int mouseX = event.getX();
+        int mouseY = event.getY();
+        Vector2D v = toGlobalCoordinates(mouseX, mouseY);
+        // Global coordinates of the mouse
+        int x = (int) v.x;
+        int y = (int) v.y;
+        if ((Interface.activeTool==Interface.NOEUD_TOOL || Interface.activeTool==Interface.SELECT_TOOL)&& Interface.mode==Interface.EDITION_MODE)  {          
             if (currentCircleIndex >= 0) {
                 if(multiSelecCirc[currentCircleIndex]){
-                    double transx = x - circ[currentCircleIndex].x;
-                    double transy = y - circ[currentCircleIndex].y;
+                    double transx = x - circ[currentCircleIndex].cx;
+                    double transy = y - circ[currentCircleIndex].cy;
                     
                     for(int i = 0; i< getNumOfCircles() ; i++){
                         if(multiSelecCirc[i]){
-                            circ[i].updatePos(circ[i].x + transx, circ[i].y + transy);
+                            Noeud n = circ[i];
+                            n.cx += transx;
+                            n.cy += transy;
                         }
                     }
                     for(int i = 0; i<getNumOfLines() ; i++){
                         if(multiSelecArc[i]){
-                            double cloux = lines.get(i).getClou().x + transx ;
-                            double clouy = lines.get(i).getClou().y + transy ;
-                            lines.get(i).setClou(new Ellipse2D.Double(cloux,clouy,MyLine.RCLOU,MyLine.RCLOU));
+                            Clou clou = lines.get(i).getClou();
+                            clou.cx += transx;
+                            clou.cy += transy ;
                         } 
                     }
                     repaint();
@@ -635,32 +680,32 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
             }
         } 
         if ((Interface.activeTool==Interface.ARC_TOOL || Interface.activeTool==Interface.SELECT_TOOL)&& Interface.mode==Interface.EDITION_MODE) {
-            int x = event.getX();
-            int y = event.getY();
+
             if (currentArcIndex >= 0) {
                 if(multiSelecArc[currentArcIndex]){
                     double transx;
-                    transx = x - lines.get(currentArcIndex).getClouPoint().x;
+                    Clou transClou = lines.get(currentArcIndex).getClou();
+                    transx = x - transClou.cx;
                     double transy;
-                    transy = y - lines.get(currentArcIndex).getClouPoint().y;
+                    transy = y - transClou.cy;
                     
                     for(int i = 0; i< getNumOfCircles() ; i++){
                         if(multiSelecCirc[i]){
-                            circ[i].x = circ[i].x + transx;
-                            circ[i].y = circ[i].y + transy;
+                            circ[i].cx += transx;
+                            circ[i].cy += transy;
                         }
                     }
                     for(int i = 0; i<getNumOfLines() ; i++){
                         if(multiSelecArc[i]){
-                            double cloux = lines.get(i).getClou().x + transx ;
-                            double clouy = lines.get(i).getClou().y + transy ;
-                            lines.get(i).setClou(new Ellipse2D.Double(cloux,clouy,MyLine.RCLOU,MyLine.RCLOU));
+                            Clou clou = lines.get(i).getClou();
+                            clou.cx += transx ;
+                            clou.cy += transy ;
                         } 
                     }
                     repaint();
                 }else{
                     MyLine line = lines.get(currentArcIndex);
-                    Ellipse2D.Double newClou = new Ellipse2D.Double(x,y,MyLine.RCLOU,MyLine.RCLOU);
+                    Clou newClou = new Clou(x,y,MyLine.RCLOU);
                     // On ajoute l'action à la pile
                     //Ellipse2D.Double prevClou = new Ellipse2D.Double(line.getClou().x,line.getClou().y,MyLine.RCLOU,MyLine.RCLOU);
                     //transitions.createLog("moveLine",line,prevClou,newClou);
@@ -730,7 +775,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
             circleW = factor*Draw.RINIT ;
             //lineWidth = (float) factor*Draw.LINIT;
             for (int i = 0; i < numOfCircles; i++) {
-                circ[i].updateSize(circleW, circleW);
+                circ[i].updateSize(circleW);
             }
             repaint();
         }
