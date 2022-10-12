@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe KruskalMST
 Auteur : Jorge QUISPE CCAMA

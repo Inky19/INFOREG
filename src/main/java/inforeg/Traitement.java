@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe Traitement
 Auteur : Samy AMAL

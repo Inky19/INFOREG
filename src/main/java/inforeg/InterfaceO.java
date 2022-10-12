@@ -1,8 +1,10 @@
+package inforeg;
+
 /*=============================================
-Classe InterfaceNO
+Classe InterfaceO
 Auteur : Béryl CASSEL
 Date de création : 08/03/2022
-Date de dernière modification : 24/03/2022
+Date de dernière modification : 08/03/2022
 =============================================*/
 
 import java.awt.Color;
@@ -30,64 +32,66 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+public class InterfaceO extends Interface implements Connexe {
 
-public class InterfaceNO extends Interface implements Connexe{
-
-    public InterfaceNO(Draw d){
+    public InterfaceO(Draw d){
         super(d);
     }
-    
+
     /** Actions */
 
-    public final AbstractAction Prim = new AbstractAction(){
+    public final AbstractAction Dijkstra = new AbstractAction(){
         {
-            putValue(Action.NAME,"Prim");
-            putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
-            putValue(Action.SHORT_DESCRIPTION,"Applique l'algorithme de Prim pour trouver \n"
-                                            + "l'arbre couvrant minimal du graphe (CTRL+P)");
+            putValue(Action.NAME,"Dijkstra");
+            putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
+            putValue(Action.SHORT_DESCRIPTION,"Applique l'algorithme de Dijkstra pour trouver \n"
+                                            + "le plus court chemin entre 2 sommets \n"
+                                            + "-Cliquez sur le nœud de départ \n"
+                                            + "-Cliquez sur le nœud d'arrivée \n"
+                                            + "(CTRL+D)");
             putValue(Action.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_P,KeyEvent.CTRL_DOWN_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_D,KeyEvent.CTRL_DOWN_MASK));
         }
 
         @Override
         public void actionPerformed(ActionEvent e){
             if (mode==Interface.TRAITEMENT_MODE){
-                activeTraitement = Interface.PRIM_TRAITEMENT;
+                activeTraitement = Interface.DIJKSTRA_TRAITEMENT;
                 d.reinit();
                 d.repaint();
-                (new PrimMST()).primMST(d);
+                JOptionPane.showMessageDialog(null, "Sélectionnez un sommet de départ et un sommet d'arrivée pour calculer le plus court chemin entre les deux s'il existe.", 
+                                            "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
             }
         }
     };
 
-    public final AbstractAction Kruskal = new AbstractAction(){
+    public final AbstractAction FordFulkerson = new AbstractAction() {
         {
-            putValue(Action.NAME,"Kruskal");
-            putValue(Action.MNEMONIC_KEY, KeyEvent.VK_K);
-            putValue(Action.SHORT_DESCRIPTION,"Applique l'algorithme de Kruskal pour trouver \n"
-                                            + "l'arbre couvrant minimal du graphe (CTRL+K)");
+            putValue(Action.NAME,"Ford Fulkerson");
+            putValue(Action.MNEMONIC_KEY, KeyEvent.VK_F);
+            putValue(Action.SHORT_DESCRIPTION,"Applique l'algorithme de Ford Fulkerson pour calculer \n"
+                                            + "le flot maximal entre 2 sommets \n"
+                                            + "-Cliquez sur le nœud source \n"
+                                            + "-Cliquez sur le nœud de sortie \n"
+                                            + "(CTRL+F)");
             putValue(Action.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_K,KeyEvent.CTRL_DOWN_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_F,KeyEvent.CTRL_DOWN_MASK));
         }
-
         @Override
-        public void actionPerformed(ActionEvent e){
-            if (mode==Interface.TRAITEMENT_MODE){
-                activeTraitement = Interface.KRUSKAL_TRAITEMENT;
+            public void actionPerformed(ActionEvent ea) {
+                activeTraitement = Interface.FORD_FULKERSON_TRAITEMENT;
                 d.reinit();
                 d.repaint();
-                (new KruskalMST()).kruskalMST(d);
+                JOptionPane.showMessageDialog(null, "Sélectionnez un sommet source et un sommet cible pour calculer le flot maximal entre les deux.", 
+                                        "Ford-Fulkerson - Flot maximal", JOptionPane.INFORMATION_MESSAGE);
             }
-        }
-        
-        
     };
 
-    public final AbstractAction ConnexiteNO = new AbstractAction() {
+    public final AbstractAction ConnexiteO = new AbstractAction() {
         {
             putValue(Action.NAME,"Connexité");
             putValue(Action.MNEMONIC_KEY, KeyEvent.VK_L);
-            putValue(Action.SHORT_DESCRIPTION,"Vérifie si le graphe est connexe \n"
+            putValue(Action.SHORT_DESCRIPTION,"Vérifie si le graphe est fortement connexe \n"
                                             + "(CTRL+L)");
             putValue(Action.ACCELERATOR_KEY,
                     KeyStroke.getKeyStroke(KeyEvent.VK_L,KeyEvent.CTRL_DOWN_MASK));
@@ -95,16 +99,16 @@ public class InterfaceNO extends Interface implements Connexe{
         @Override
             public void actionPerformed(ActionEvent ea) {
                 if (mode==Interface.TRAITEMENT_MODE){
-                    if (connexe((GNonOriente) d.getG())){
-                        JOptionPane.showMessageDialog(d, "Le graphe est connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
+                    if (connexe((GOriente) d.getG())){
+                        JOptionPane.showMessageDialog(d, "Le graphe est fortement connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(d, "Le graphe n'est pas connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(d, "Le graphe n'est pas fortement connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
             }
     };
 
-    public final AbstractAction ExportGraphNO = new AbstractAction() {
+    public final AbstractAction ExportGraphO = new AbstractAction() {
         {
             putValue(Action.NAME,"Export Matrice d'Adjacence");
             putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
@@ -115,14 +119,17 @@ public class InterfaceNO extends Interface implements Connexe{
         @Override
             public void actionPerformed(ActionEvent ea) {
                 d.exportGraphe();
-                JOptionPane.showMessageDialog(d, "La matrice d'adjacence du graphe non orienté est :\n\n" + d.getG().afficher(), "Matrice d'adjacence", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(d, "La matrice d'adjacence du graphe orienté est :\n\n" + d.getG().afficher(), "Matrice d'adjacence", JOptionPane.INFORMATION_MESSAGE);
             }
     };
-    
+
+    /**
+     * JPanel pour les boutons 
+     **/
     
     @Override
     public void initToolBar(){
-                //paneButtons = new JPanel();
+        //paneButtons = new JPanel();
         toolBarButtons = new JToolBar(null, JToolBar.VERTICAL);
         //Panel le long de l'axe Y
         toolBarButtons.setLayout(new BoxLayout(toolBarButtons, BoxLayout.Y_AXIS));
@@ -264,9 +271,9 @@ public class InterfaceNO extends Interface implements Connexe{
                     noeud.setEnabled(true);
                     arc.setEnabled(true);
                     label.setEnabled(true);
-                    Prim.setEnabled(false);
-                    Kruskal.setEnabled(false);
-                    ConnexiteNO.setEnabled(false);
+                    Dijkstra.setEnabled(false); 
+                    FordFulkerson.setEnabled(false);
+                    ConnexiteO.setEnabled(false);
                 } else if (ae.getSource()==traitement) {
                     d.reinit();
                     d.repaint();
@@ -275,9 +282,9 @@ public class InterfaceNO extends Interface implements Connexe{
                     noeud.setEnabled(false);
                     arc.setEnabled(false);
                     label.setEnabled(false);
-                    Prim.setEnabled(true);
-                    Kruskal.setEnabled(true);
-                    ConnexiteNO.setEnabled(true);
+                    Dijkstra.setEnabled(true); 
+                    FordFulkerson.setEnabled(true);
+                    ConnexiteO.setEnabled(true);
                     d.exportGraphe();
                 }
             }
@@ -288,39 +295,33 @@ public class InterfaceNO extends Interface implements Connexe{
         noeud.addActionListener(toolGroupListener);
         arc.addActionListener(toolGroupListener);
         label.addActionListener(toolGroupListener);
-        
         edition.addActionListener(modeGroupListener);
         //edition.setSelected(true);//edition activé au démarrage
         traitement.addActionListener(modeGroupListener);
-        
         //toolBarButtons.setLayout(new FlowLayout(FlowLayout.LEFT));
         toolBarButtons.setAlignmentX(FlowLayout.CENTER);
         toolBarButtons.setFloatable(false);
         toolBarButtons.setBorderPainted(true);
         
     }
-    
-    
+
     @Override
     public void addToolBar(){
-        toolBarButtons.add(Prim);
+        toolBarButtons.add(Dijkstra);
         toolBarButtons.addSeparator();
-        toolBarButtons.add(Kruskal);
+        toolBarButtons.add(FordFulkerson);
         toolBarButtons.addSeparator();
-        toolBarButtons.add(ConnexiteNO);
+        toolBarButtons.add(ConnexiteO);
     }
     
     @Override
     public void addMenuBar(){
         JMenu traitMenu = new JMenu("Traitement");
-        traitMenu.add(Prim);
-        traitMenu.add(Kruskal);
-        traitMenu.add(ConnexiteNO);
+        traitMenu.add(Dijkstra);
+        traitMenu.add(FordFulkerson);
+        traitMenu.add(ConnexiteO);
         menuBar.add(traitMenu);
-        exporter.add(new JMenuItem(ExportGraphNO));
+        exporter.add(new JMenuItem(ExportGraphO));
     }
     
-
 }
-    
- 

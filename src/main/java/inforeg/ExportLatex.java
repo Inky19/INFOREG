@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe Draw permettant d'exporter les graphes en source LaTeX
 Auteur : Samy AMAL

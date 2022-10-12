@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe Objet Arc définissant un Arc orienté
 Auteur : Béryl CASSEL

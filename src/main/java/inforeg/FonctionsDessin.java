@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Interface FonctionsDessin contenant les méthodes
 permettants d'afficher à l'écran certaines formes
