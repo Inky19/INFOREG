@@ -9,21 +9,17 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.List;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -203,8 +199,7 @@ public abstract class Interface{
         //fermer la fenêtre quand on quitte
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Position de la fenètre
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setSize(screenSize.width, screenSize.height);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setLocationRelativeTo(null);
         // Icone de l'application
         ImageIcon icon = new ImageIcon("asset/icon.png");
@@ -240,7 +235,7 @@ public abstract class Interface{
     /**
      * JPanel pour les boutons 
      **/
-    public abstract void initToolBar() ;
+    public abstract void initToolBar();
 
     public abstract void addToolBar();
     
@@ -378,8 +373,8 @@ public abstract class Interface{
         ImageIcon iconBack = new ImageIcon("back.png");
         ImageIcon iconForward = new ImageIcon("forward.png");
         //resize
-        Image imageBack = iconBack.getImage().getScaledInstance(15,15, java.awt.Image.SCALE_AREA_AVERAGING);
-        Image imageForward = iconForward.getImage().getScaledInstance(15,15, java.awt.Image.SCALE_AREA_AVERAGING);
+        Image imageBack = iconBack.getImage().getScaledInstance(20,20, java.awt.Image.SCALE_SMOOTH);
+        Image imageForward = iconForward.getImage().getScaledInstance(20,20, java.awt.Image.SCALE_AREA_AVERAGING);
         iconBack = new ImageIcon(imageBack); 
         iconForward = new ImageIcon(imageForward);
         Transitions piles = d.getTransitions();
@@ -390,7 +385,7 @@ public abstract class Interface{
                 if(pileZ.isEmpty()){
                     return;
                 }
-                Ellipse2D.Double[] circles = d.getCirc();
+                Noeud[] circles = d.getCirc();
                 Enregistrement lastReg = piles.getPreviousState();
                 // Pour chaque action, on effectue l'action inverse
                 // Ensuite, on déplace l'action sur l'autre pile
@@ -444,14 +439,14 @@ public abstract class Interface{
                         d.removeArc(d.findLine(fromIndex,toIndex));
                     case "moveLine":
                         MyLine line = lastReg.arc;
-                        line.setClou(lastReg.noeud);
+                        // -> line.setClou(lastReg.noeud);
                         d.repaint();
                         break;
                     case "deleteLine":
                         MyLine l = lastReg.arc;
                         // Mettre à jour les nœuds source et destination
-                        Ellipse2D.Double pFrom = circles[d.find(lastReg.noeud)];
-                        Ellipse2D.Double pTo = circles[d.find(lastReg.noeud2)];
+                        Noeud pFrom = circles[d.find(lastReg.noeud)];
+                        Noeud pTo = circles[d.find(lastReg.noeud2)];
                         MyLine updatedL = new MyLine(pFrom, pTo, l.getPoids(), l.getC());
                         d.addLine(updatedL);
                         break;
@@ -476,7 +471,7 @@ public abstract class Interface{
                 if(pileY.isEmpty()){
                     return;
                 }
-                Ellipse2D.Double[] circles = d.getCirc();
+                Noeud[] circles = d.getCirc();
                 Enregistrement nextReg = piles.getNextState();
                 // Pour chaque action, on l'exécute
                 // Ensuite, on déplace l'action sur l'autre pile
@@ -496,14 +491,14 @@ public abstract class Interface{
                     case "addLine":
                         MyLine l = nextReg.arc;
                         // Mettre à jour les nœuds source et destination
-                        Ellipse2D.Double pFrom = circles[d.find(nextReg.noeud)];
-                        Ellipse2D.Double pTo = circles[d.find(nextReg.noeud2)];
+                        Noeud pFrom = circles[d.find(nextReg.noeud)];
+                        Noeud pTo = circles[d.find(nextReg.noeud2)];
                         MyLine updatedL = new MyLine(pFrom, pTo, l.getPoids(), l.getC());
                         d.addLine(updatedL);
                         break;
                     case "moveLine":
                         MyLine line = nextReg.arc;
-                        line.setClou(nextReg.noeud2);
+                        //line.setClou(nextReg.noeud2);
                         d.repaint();
                         break;
                     case "deleteLine":
