@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe Transitions permettant de sauvegarder 
 les modifications et de les rétablir à l'aide 

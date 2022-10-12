@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe FordFurkenson
 Auteur : Jorge QUISPE CCAMA

@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Interface Connexe contenant les méthodes
 permettants de vérifier si un graphe est connexe

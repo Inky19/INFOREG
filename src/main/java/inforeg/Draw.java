@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe Draw permettant de dessiner les noeuds et arcs
 Auteur : Samy AMAL
@@ -5,6 +7,8 @@ Date de création : 03/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
 
+import inforeg.ObjetGraph.Noeud;
+import inforeg.ObjetGraph.Clou;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -20,7 +24,6 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import ObjetsGraph.*;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;

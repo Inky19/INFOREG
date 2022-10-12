@@ -1,10 +1,13 @@
+package inforeg;
+
 /*=============================================
 Classe Interface
 Auteur : Samy AMAL
 Date de création : 03/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
-import UI.ButtonTabComponent;
+import inforeg.ObjetGraph.Noeud;
+import inforeg.UI.ButtonTabComponent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;

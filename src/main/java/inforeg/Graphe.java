@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe abstraite Graphe définissant la structure 
 générale d'un graphe

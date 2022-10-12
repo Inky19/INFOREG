@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe Accueil qui défini le lancement de
 l'application

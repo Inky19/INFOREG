@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe PrimMST définissant l'algorithme de PrimMST
 Sous classe de la classe Traitement

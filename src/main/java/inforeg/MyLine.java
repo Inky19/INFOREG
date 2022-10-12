@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe MyLine permettant de stocker les informations
 d'une ligne à tracer
@@ -6,8 +8,8 @@ Date de création : 03/03/2022
 Date de dernière modification : 11/03/2022
 =============================================*/
 
-import ObjetsGraph.Clou;
-import ObjetsGraph.Noeud;
+import inforeg.ObjetGraph.Clou;
+import inforeg.ObjetGraph.Noeud;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;

@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe SauvDraw permettant de sauvegarder 
 le graphe dessiné

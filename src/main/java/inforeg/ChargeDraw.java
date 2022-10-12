@@ -1,3 +1,5 @@
+package inforeg;
+
 /*=============================================
 Classe ChargeDraw permettant de charger
 un graphe sauvegardé
@@ -7,8 +9,8 @@ Date de dernière modification : 18/03/2022
 Commentaires ajoutés
 =============================================*/
 
-import ObjetsGraph.Clou;
-import ObjetsGraph.Noeud;
+import inforeg.ObjetGraph.Clou;
+import inforeg.ObjetGraph.Noeud;
 import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
