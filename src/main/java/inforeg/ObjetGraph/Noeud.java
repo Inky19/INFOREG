@@ -17,18 +17,20 @@ import utilities.Vector2D;
  */
 public class Noeud extends Ellipse2D.Double {
     // Global coordinate of the node
-    public double cx;
-    public double cy;
+    private double cx;
+    private double cy;
     // Global radius
-    public double r;
+    private double r;
     // Color of the node
-    public Color color;
+    private Color color;
+    private String label;
     
     public Noeud(){
         super();
         this.
         cx = 0;
         cy = 0;
+        label = "";
     }
     
     public Noeud(double cx, double cy, double r){
@@ -36,6 +38,7 @@ public class Noeud extends Ellipse2D.Double {
         this.cy = cy;
         this.r  = r;
         this.color = Color.WHITE;
+        label = "";
     }
     
     public Noeud(double cx, double cy, double width, double height, Color color){
@@ -43,6 +46,7 @@ public class Noeud extends Ellipse2D.Double {
         this.cx = cx;
         this.cy = cy;
         this.color = color;
+        label = "";
     }
     
     public void updateSize(double r){
@@ -92,4 +96,62 @@ public class Noeud extends Ellipse2D.Double {
             g.drawString(label,font_x,font_y);
         }
     }
+
+    public double getCx() {
+        return cx;
+    }
+
+    public void setCx(double cx) {
+        this.cx = cx;
+    }
+    
+    public void addCx(double dx){
+        this.cx += dx;
+    }
+
+    public double getCy() {
+        return cy;
+    }
+
+    public void setCy(double cy) {
+        this.cy = cy;
+    }
+    
+    public void addCy(double dy){
+        this.cy += dy;
+    }
+
+    public double getR() {
+        return r;
+    }
+
+    public void setR(double r) {
+        this.r = r;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+    
+    public String getColorHex() {
+        String r = Integer.toHexString(color.getRed());
+        String g = Integer.toHexString(color.getGreen());
+        String b = Integer.toHexString(color.getBlue());
+        return (r+g+b);
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+    
+    
+    
 }

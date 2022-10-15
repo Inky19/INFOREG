@@ -6,7 +6,9 @@ Auteur : Samy AMAL
 Date de création : 03/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
+import inforeg.Save.ExportLatex;
 import inforeg.ObjetGraph.Noeud;
+import inforeg.Save.saveManager;
 import inforeg.UI.ButtonTabComponent;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -23,6 +25,7 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -51,7 +54,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public abstract class Interface{
-
+    
+    public static final String VERSION = "2.0";
     protected JFrame frame;
     
     /** Les JPanel. */
@@ -135,6 +139,9 @@ public abstract class Interface{
                 (new SauvDraw(f)).sauvegarderDraw(d);
             // Sinon, on créé un nouveau fichier de sauvegarde
             } else {
+                System.out.println("save");
+                saveManager.save(d);
+                /*
                 try {
                     JFileChooser dialogue = new JFileChooser(".");
                     if (dialogue.showOpenDialog(null)==JFileChooser.APPROVE_OPTION){
@@ -150,6 +157,7 @@ public abstract class Interface{
                 } catch (Exception NullPointerException){
                     System.out.println("Opération annulée");
                 }
+                */
             }
         };
     };
@@ -225,8 +233,6 @@ public abstract class Interface{
         frame.add(tabsPanel);
         this.d.repaint();
         
-        System.out.println("AA");
-        
         //frame.pack(); remi : Je pense pas que c'est utile ici
         
         frame.setVisible(true);
@@ -242,7 +248,8 @@ public abstract class Interface{
 
     public abstract void addToolBar();
     
-    public void initTabs(){
+    
+    private void initTabs(){
         tabsPanel = new JTabbedPane();
         ImageIcon tabIco = new ImageIcon("asset/icons/tab.png");
         FlowLayout f = new FlowLayout (FlowLayout.CENTER, 5, 0);
@@ -250,7 +257,7 @@ public abstract class Interface{
         pnlTab.setOpaque (false);
         JButton addTabButton = new JButton ("+");
         addTabButton.setOpaque (false); //
-        addTabButton.setBorder (null);
+        //addTabButton.setBorder (null);
         addTabButton.setContentAreaFilled (false);
         addTabButton.setFocusPainted (false);
         addTabButton.setFocusable (false);
@@ -262,13 +269,14 @@ public abstract class Interface{
         ActionListener listener = new ActionListener () {
             @Override
             public void actionPerformed (ActionEvent e) {
-                String title = "Tab " + String.valueOf (tabsPanel.getTabCount () - 1);
+                String title = "Graphe " + String.valueOf (tabsPanel.getTabCount ());
                 Draw newD = new Draw();
                 newD.setPondere(d.getPondere());
                 newD.setOriente(d.getOriente());
                 newD.setInterface(Interface.this);                
                 tabsPanel.addTab(title, tabIco, newD);
                 tabsPanel.setTabComponentAt(tabsPanel.getTabCount ()-1,new ButtonTabComponent(tabsPanel, tabIco));
+                tabsPanel.setSelectedIndex(tabsPanel.getTabCount()-1);
             }
         };
         
@@ -290,11 +298,16 @@ public abstract class Interface{
                 
             }
         };
-        tabsPanel.addTab("Unammed graph", tabIco, d);
+        
+        
+        tabsPanel.addTab("Graphe 1", tabIco, d);
+        tabsPanel.setTabComponentAt(1,new ButtonTabComponent(tabsPanel, tabIco));
         //tabsPanel.setMnemonicAt(0, KeyEvent.VK_1);
         addTabButton.setFocusable (false);
         addTabButton.addActionListener (listener);
         tabsPanel.addChangeListener(changeListenenr);
+        tabsPanel.setSelectedIndex(1);
+
         tabsPanel.setVisible (true);
 
 
@@ -388,7 +401,7 @@ public abstract class Interface{
                 if(pileZ.isEmpty()){
                     return;
                 }
-                Noeud[] circles = d.getCirc();
+                ArrayList<Noeud> circles = d.getNodes();
                 Enregistrement lastReg = piles.getPreviousState();
                 // Pour chaque action, on effectue l'action inverse
                 // Ensuite, on déplace l'action sur l'autre pile
@@ -423,7 +436,7 @@ public abstract class Interface{
                         {
                             piles.addPreviousState(temp);
                         }
-                        Ellipse2D.Double noeud = circles[d.find(lastReg.noeud)];
+                        Ellipse2D.Double noeud = circles.get(d.find(lastReg.noeud));
                         noeud.x = previousReg.x;
                         noeud.y = previousReg.y;
                         d.repaint();
@@ -448,8 +461,8 @@ public abstract class Interface{
                     case "deleteLine":
                         MyLine l = lastReg.arc;
                         // Mettre à jour les nœuds source et destination
-                        Noeud pFrom = circles[d.find(lastReg.noeud)];
-                        Noeud pTo = circles[d.find(lastReg.noeud2)];
+                        Noeud pFrom = circles.get(d.find(lastReg.noeud));
+                        Noeud pTo = circles.get(d.find(lastReg.noeud2));
                         MyLine updatedL = new MyLine(pFrom, pTo, l.getPoids(), l.getC());
                         d.addLine(updatedL);
                         break;
@@ -474,7 +487,7 @@ public abstract class Interface{
                 if(pileY.isEmpty()){
                     return;
                 }
-                Noeud[] circles = d.getCirc();
+                ArrayList<Noeud> circles = d.getNodes();
                 Enregistrement nextReg = piles.getNextState();
                 // Pour chaque action, on l'exécute
                 // Ensuite, on déplace l'action sur l'autre pile
@@ -483,7 +496,7 @@ public abstract class Interface{
                         d.add(nextReg.x, nextReg.y);
                         break;
                     case "moveCircle":
-                        Ellipse2D.Double noeud = circles[d.find(nextReg.noeud)];
+                        Ellipse2D.Double noeud = circles.get(d.find(nextReg.noeud));
                         noeud.x = nextReg.x2;
                         noeud.y = nextReg.y2;
                         d.repaint();
@@ -494,8 +507,8 @@ public abstract class Interface{
                     case "addLine":
                         MyLine l = nextReg.arc;
                         // Mettre à jour les nœuds source et destination
-                        Noeud pFrom = circles[d.find(nextReg.noeud)];
-                        Noeud pTo = circles[d.find(nextReg.noeud2)];
+                        Noeud pFrom = circles.get(d.find(nextReg.noeud));
+                        Noeud pTo = circles.get(d.find(nextReg.noeud2));
                         MyLine updatedL = new MyLine(pFrom, pTo, l.getPoids(), l.getC());
                         d.addLine(updatedL);
                         break;
