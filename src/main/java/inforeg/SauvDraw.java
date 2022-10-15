@@ -72,7 +72,7 @@ public class SauvDraw{
                 fichier.newLine();
                 fichier.write((int) d.getNodes().get(i).x 
                             + del + (int) d.getNodes().get(i).y
-                            + del + d.getCircLbl()[i]);
+                            + del + d.getNodes().get(i).getLabel());
             }
 
             //Sauvegarde des arcs du Draw

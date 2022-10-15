@@ -417,7 +417,6 @@ public class ExportLatex {
     public String writeCoordinates(Draw d){
         
         ArrayList<Noeud> circ = d.getNodes();
-        String[] lbl = d.getCircLbl() ;
         String coord = "";
         
         for (int i =0;i<d.getNumOfCircles();i++){
@@ -425,7 +424,7 @@ public class ExportLatex {
             int y = (int) circ.get(i).getCenterY() ;
             coord = coord + "\\node[draw,circle,fill="+noeudFill+"] ("+ String.valueOf(i)+") at ("
                     + String.valueOf(x)+",-"+ String.valueOf(y)+") {"
-                    + lbl[i] + "}; \n";
+                    + circ.get(i).getLabel() + "}; \n";
         }
         return coord;
     }

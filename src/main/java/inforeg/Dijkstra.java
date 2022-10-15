@@ -90,12 +90,12 @@ public class Dijkstra implements Traitement{
         if (s!=src){
             d.reinit();
             JOptionPane.showMessageDialog(null, "Il n'existe pas de chemin entre les sommets "
-                                            + d.getCircLbl()[src] + " et " + d.getCircLbl()[dest]+ ".", 
+                                            + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel()+ ".", 
                                             "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
         } else {
             d.repaint();
             JOptionPane.showMessageDialog(null, "Il existe un plus court chemin entre les sommets "
-                                                + d.getCircLbl()[src] + " et " + d.getCircLbl()[dest]
+                                                + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel()
                                                 + ", de distance " + dist[dest] + ".", 
                                                 "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
         }
