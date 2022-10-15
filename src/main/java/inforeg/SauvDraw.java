@@ -70,8 +70,8 @@ public class SauvDraw{
             //Sauvegarde des cercles du Draw et de leur label
             for (int i=0;i<d.getNumOfCircles();i++){
                 fichier.newLine();
-                fichier.write((int) d.getCirc()[i].x 
-                            + del + (int) d.getCirc()[i].y
+                fichier.write((int) d.getNodes().get(i).x 
+                            + del + (int) d.getNodes().get(i).y
                             + del + d.getCircLbl()[i]);
             }
 

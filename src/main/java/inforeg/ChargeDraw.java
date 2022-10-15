@@ -109,8 +109,8 @@ public class ChargeDraw {
         int y1 = Integer.parseInt(tokenizer.nextToken());
         int x2 = Integer.parseInt(tokenizer.nextToken());
         int y2 = Integer.parseInt(tokenizer.nextToken());
-        Noeud from = d.getCirc()[d.findEllipse(x1,y1)];
-        Noeud to = d.getCirc()[d.findEllipse(x2,y2)];
+        Noeud from = d.getNodes().get(d.findEllipse(x1,y1));
+        Noeud to = d.getNodes().get(d.findEllipse(x2,y2));
         int p = Integer.parseInt(tokenizer.nextToken());
         int rgb = Integer.parseInt(tokenizer.nextToken());
         Color c = new Color(rgb);
