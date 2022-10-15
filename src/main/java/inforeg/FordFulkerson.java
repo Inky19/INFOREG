@@ -118,7 +118,7 @@ public class FordFulkerson implements Traitement{
             // Add path flow to overall flow
             max_flow += path_flow;
         }
-        JOptionPane.showMessageDialog(null, "Le flot maximal du graphe entre les sommets " + d.getCircLbl()[src] +" et " + d.getCircLbl()[dest] + " est de " + max_flow +".", 
+        JOptionPane.showMessageDialog(null, "Le flot maximal du graphe entre les sommets " + d.getNodes().get(src).getLabel() +" et " + d.getNodes().get(dest).getLabel() + " est de " + max_flow +".", 
                                         "Ford-Fulkerson - Flot maximal", JOptionPane.INFORMATION_MESSAGE);
     }
 }

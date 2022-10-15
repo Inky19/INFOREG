@@ -24,6 +24,7 @@ public class Noeud extends Ellipse2D.Double {
     // Color of the node
     private Color color;
     private String label;
+    private int id;
     
     public Noeud(){
         super();
@@ -31,22 +32,25 @@ public class Noeud extends Ellipse2D.Double {
         cx = 0;
         cy = 0;
         label = "";
+        this.id = 0;
     }
     
-    public Noeud(double cx, double cy, double r){
+    public Noeud(double cx, double cy, double r, String label, int id){
         this.cx = cx;
         this.cy = cy;
         this.r  = r;
         this.color = Color.WHITE;
-        label = "";
+        this.id = id;
+        this.label = label;
     }
     
-    public Noeud(double cx, double cy, double width, double height, Color color){
+    public Noeud(double cx, double cy, double width, double height, Color color, String label, int id){
         super(cx-width/2,cy-height/2,width,height);
         this.cx = cx;
         this.cy = cy;
         this.color = color;
-        label = "";
+        this.label = label;
+        this.id = id;
     }
     
     public void updateSize(double r){
@@ -150,6 +154,10 @@ public class Noeud extends Ellipse2D.Double {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public int getId() {
+        return id;
     }
     
     

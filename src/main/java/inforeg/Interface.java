@@ -140,7 +140,11 @@ public abstract class Interface{
             // Sinon, on créé un nouveau fichier de sauvegarde
             } else {
                 System.out.println("save");
-                saveManager.save(d);
+                String name = saveManager.save(d);
+                System.out.println("Tab name :"+name);
+                if (name != null){
+                    tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), name);
+                }
                 /*
                 try {
                     JFileChooser dialogue = new JFileChooser(".");
@@ -467,7 +471,7 @@ public abstract class Interface{
                         d.addLine(updatedL);
                         break;
                     case "updateLbl":
-                        d.getCircLbl()[d.find(lastReg.noeud)] = lastReg.lastLbl;
+                        d.getNodes().get(d.find(lastReg.noeud)).setLabel(lastReg.lastLbl);
                         d.repaint();
                         break;
                     case "updatePds":
@@ -523,7 +527,7 @@ public abstract class Interface{
                         d.removeArc(d.findLine(fromIndex,toIndex));
                         break;
                     case "updateLbl":
-                        d.getCircLbl()[d.find(nextReg.noeud)] = nextReg.newLbl;
+                        d.getNodes().get(d.find(nextReg.noeud)).setLabel(nextReg.newLbl);
                         d.repaint();
                         break;
                     case "updatePds":

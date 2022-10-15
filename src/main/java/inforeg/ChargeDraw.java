@@ -95,7 +95,7 @@ public class ChargeDraw {
         d.add(x,y);
 
         //On ajoute le label du cercle à la liste d.circLbl
-        d.getCircLbl()[ind] = tokenizer.nextToken();
+        d.getNodes().get(ind).setLabel(tokenizer.nextToken());
     }
 
     /**
