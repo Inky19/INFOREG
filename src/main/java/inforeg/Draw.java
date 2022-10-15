@@ -50,9 +50,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     /** Nombre maximum de nœuds d'un graphe, défini dans la classe Graphe */
     public static final int MAX = Graphe.nbmax;
     /** Liste des cerlces représentant les Nœuds*/
-    private Noeud[] circ = new Noeud[MAX];
-    /** Liste des labels */
-    private String[] circLbl = new String[MAX];
+    private ArrayList<Noeud> nodes = new ArrayList<>();
     /** Nombre courant de cercle (i.e de Nœud du Graphe) */
     private int numOfCircles = 0;
     /** Indice du dernier cercle sélectionné, initialisé à -1 */
@@ -60,6 +58,9 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     //private static int countArcClicks = 0;
     /** Couleur courante de la classe, initilisée à bleue */
     private Color currentColor = Color.BLUE;
+    
+    /** Valeur du prochain id disponible pour créer un noeud */
+    private int nextNodeId;
 
     private int src = -1;
     private int dest = -1;
@@ -112,6 +113,14 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     private static final int MAX_ZOOM = 500;
     private static final int MIN_ZOOM = 50;
 
+    public int getNextNodeId() {
+        return nextNodeId;
+    }
+
+    public void setNextNodeId(int nextNodeId) {
+        this.nextNodeId = nextNodeId;
+    }
+    
     public void setDest(int i) {
         this.dest = i;
     }
@@ -179,13 +188,9 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     public ArrayList<MyLine> getLines(){
         return lines;
     }
-
-    public String[] getCircLbl(){
-        return circLbl;
-    }
  
-    public Noeud[] getCirc(){
-        return this.circ;
+    public ArrayList<Noeud> getNodes(){
+        return this.nodes;
     }
     
     public Transitions getTransitions(){
@@ -197,7 +202,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     }
     
     public Draw() {
-        
+        nextNodeId = 0;
         this.setLayout(new BorderLayout());
         JToolBar tools = new JToolBar(null, JToolBar.HORIZONTAL);
         tools.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -244,7 +249,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                         if (currentCircleIndex < 0 && currentArcIndex < 0){ // not inside a circle
                             add(x, y);
                             // On ajoute l'action à la pile
-                            transitions.createLog("addCircle", circ[numOfCircles-1]);
+                            transitions.createLog("addCircle", nodes.get(numOfCircles-1));
                         }
                     }
                     // Si on souhaite ajouter un label à un Nœud :
@@ -252,11 +257,11 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                         if (currentCircleIndex >= 0){ // inside a circle
                             try {
                                 String lbl = JOptionPane.showInputDialog("Entrer label :");
-                                String currentLbl =  circLbl[currentCircleIndex];
-                                circLbl[currentCircleIndex] = lbl;
+                                String currentLbl =  nodes.get(currentCircleIndex).getLabel();
+                                nodes.get(currentCircleIndex).setLabel(lbl);
                                 repaint();
                                 // On ajoute l'action à la pile
-                                transitions.createLog("updateLbl", getCirc()[currentCircleIndex],currentLbl,lbl);
+                                transitions.createLog("updateLbl", getNodes().get(currentCircleIndex),currentLbl,lbl);
                             } catch (Exception NullPointerException){
                                 System.out.println("Opération annulée");
                             }
@@ -279,7 +284,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                     }
                     if (Interface.activeTool==Interface.ARC_TOOL) {
                         if ((currentCircleIndex >= 0) && (fromPoint==null)){
-                            fromPoint = circ[currentCircleIndex];
+                            fromPoint = nodes.get(currentCircleIndex);
                         }
                     }
                     if (Interface.activeTool==Interface.SELECT_TOOL){
@@ -313,8 +318,8 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                     currentCircleIndex = findEllipse(x, y);
                     if (Interface.activeTool==Interface.ARC_TOOL){
                         //ATTENTION : il faudra prendre le compte le cas où on pointe vers le meme cercle
-                        if ((currentCircleIndex >= 0) && (fromPoint!=null) && (!fromPoint.equals(circ[currentCircleIndex]))) { // inside circle
-                            Noeud p = circ[currentCircleIndex];
+                        if ((currentCircleIndex >= 0) && (fromPoint!=null) && (!fromPoint.equals(nodes.get(currentCircleIndex)))) { // inside circle
+                            Noeud p = nodes.get(currentCircleIndex);
                             if (pondere){
                                 String text = JOptionPane.showInputDialog("Entrer le poids de l'Arc (seuls les entiers seront acceptés):");
                                 try {
@@ -345,8 +350,8 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                 }if (Interface.activeTool==Interface.SELECT_TOOL){
                     drawZone = false;
                     for(int i = 0; i< getNumOfCircles() ; i++ ){
-                        int x = (int) circ[i].getCenterX() ;
-                        int y = (int) circ[i].getCenterY() ;
+                        int x = (int) nodes.get(i).getCenterX() ;
+                        int y = (int) nodes.get(i).getCenterY() ;
                         if (zoneR.contains(x,y)){
                             multiSelecCirc[i]=true;
                         }
@@ -377,13 +382,13 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                             if(numOfLines > 0){
                                 for (int i=0;i<lines.size(); i++){
                                     MyLine l = lines.get(i);
-                                    if (l.getFrom().equals(circ[currentCircleIndex]) || l.getTo().equals(circ[currentCircleIndex])){
+                                    if (l.getFrom().equals(nodes.get(currentCircleIndex)) || l.getTo().equals(nodes.get(currentCircleIndex))){
                                         transitions.createLog("deleteLine",l);
                                     }
                                 }
                             }
                             // La reconstruction du noeud sera placée au haut de la pile
-                            transitions.createLog("deleteCircle",getCirc()[currentCircleIndex]);
+                            transitions.createLog("deleteCircle",getNodes().get(currentCircleIndex));
                             //
                             remove(currentCircleIndex);
                         }
@@ -401,7 +406,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                                 String text = JOptionPane.showInputDialog("Entrer le poids de l'Arc (seuls les entiers seront acceptés):");
                                 try {
                                     int pds = Integer.parseInt(text);
-                                    MyLine arc = new MyLine(circ[currentCircleIndex], circ[currentCircleIndex],pds,currentColor);
+                                    MyLine arc = new MyLine(nodes.get(currentCircleIndex), nodes.get(currentCircleIndex),pds,currentColor);
                                     Clou clou = new Clou(x-40,y,MyLine.RCLOU);
                                     arc.setClou(clou);
                                     addLine(arc);
@@ -415,7 +420,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                                     fromPoint = null;
                                 } 
                             } else {
-                                MyLine arc = new MyLine(circ[currentCircleIndex], circ[currentCircleIndex],1,currentColor);
+                                MyLine arc = new MyLine(nodes.get(currentCircleIndex), nodes.get(currentCircleIndex),1,currentColor);
                                 Clou clou = new Clou(x-40,y,MyLine.RCLOU);
                                 arc.setClou(clou);
                                 addLine(arc);
@@ -469,7 +474,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         }
         // Draw circles
         for (int i = 0; i < numOfCircles; i++) {
-            circ[i].paint(this, (Graphics2D) g, multiSelecCirc[i],circLbl[i]);            
+            nodes.get(i).paint(this, (Graphics2D) g, multiSelecCirc[i]);                    
         }
         // Multiselect zone
         if(Draw.drawZone){
@@ -508,14 +513,14 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         return h*100/zoom;
     }
     /**
-     * Vérifie que l'on clique sur un cercle et donne son indice dans la liste circ
+     * Vérifie que l'on clique sur un cercle et donne son indice dans la liste nodes
      * @param x = coordonnée x du pointeur de la souris
      * @param y = coordonnée y du pointeur de la souris
      * @return -1 si on ne clique pas sur un cercle, l'indice du cercle dans la liste sinon
      */
     public int findEllipse(int x, int y) {
         for (int i = 0; i < numOfCircles; i++) {
-            if (circ[i].contains(x, y)) { // inside a circle
+            if (nodes.get(i).contains(x, y)) { // inside a circle
                 return i;
             }
         }
@@ -532,16 +537,16 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     }
  
     /**
-     * Ajoute un cercle dans la liste circ et actualise l'affichage
+     * Ajoute un cercle dans la liste nodes et actualise l'affichage
      * @param x = abcsisse du cercle à dessiner
      * @param y = ordonnée du cercle à dessiner
      */
     public void add(double x, double y) {
         if (numOfCircles < MAX) {
-            //On ajoute un cercle à la liste circ et on actualise les attributs concernés
+            nextNodeId++;
+            //On ajoute un cercle à la liste nodes et on actualise les attributs concernés
             Vector2D v = toGlobalCoordinates(x, y);
-            circ[numOfCircles] =  new Noeud(v.x, v.y, circleW);
-            circLbl[numOfCircles] = numOfCircles + "";
+            nodes.add(new Noeud(v.x, v.y, circleW, String.valueOf(numOfCircles), nextNodeId));
             currentCircleIndex = numOfCircles;
             numOfCircles++;
             //On actualise l'affichage avec le nouveau cercle
@@ -554,7 +559,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         int n = 0;
         Ellipse2D.Double comp;
         while ((n<this.numOfCircles) && (!trouve)){
-            comp = this.circ[n];
+            comp = this.nodes.get(n);
             if (
                 Double.compare(comp.x, circ.x) == 0 && 
                 Double.compare(comp.y, circ.y) == 0
@@ -587,8 +592,8 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         boolean trouve = false;
         int n = 0;
         while ((n<this.numOfLines) && (!trouve)){
-            if ((this.lines.get(n).getFrom().equals(circ[src]))
-                && (this.lines.get(n).getTo().equals(circ[dest]))){
+            if ((this.lines.get(n).getFrom().equals(nodes.get(src)))
+                && (this.lines.get(n).getTo().equals(nodes.get(dest)))){
                     trouve = true;
                     return n;
                 }
@@ -612,7 +617,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         if(numOfLines > 0){
             ArrayList<MyLine> linesCopy = new ArrayList<>(lines);
             for (MyLine l : linesCopy){
-                if (l.getFrom().equals(circ[n]) || l.getTo().equals(circ[n])){
+                if (l.getFrom().equals(nodes.get(n)) || l.getTo().equals(nodes.get(n))){
                     lines.remove(l);
                     numOfLines--;
                 }
@@ -621,10 +626,8 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         //On remplace le cercle d'indic n par le dernier cercel ajouté
         //et on supprime le denrier cercle
         numOfCircles--;
-        circ[n] = circ[numOfCircles];
-        circLbl[n] = circLbl[numOfCircles];
-        circ[numOfCircles] = null;
-        circLbl[numOfCircles] = null; 
+        nodes.set(n, nodes.get(numOfCircles));
+        nodes.remove(numOfCircles);
         if (currentCircleIndex == n) {
             currentCircleIndex = -1;
         }
@@ -666,14 +669,14 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         if ((Interface.activeTool==Interface.NOEUD_TOOL || Interface.activeTool==Interface.SELECT_TOOL)&& Interface.mode==Interface.EDITION_MODE)  {          
             if (currentCircleIndex >= 0) {
                 if(multiSelecCirc[currentCircleIndex]){
-                    double transx = x - circ[currentCircleIndex].cx;
-                    double transy = y - circ[currentCircleIndex].cy;
+                    double transx = x - nodes.get(currentCircleIndex).getCx();
+                    double transy = y - nodes.get(currentCircleIndex).getCy();
                     
                     for(int i = 0; i< getNumOfCircles() ; i++){
                         if(multiSelecCirc[i]){
-                            Noeud n = circ[i];
-                            n.cx += transx;
-                            n.cy += transy;
+                            Noeud n = nodes.get(i);
+                            n.addCx(transx);
+                            n.addCy(transy);
                         }
                     }
                     for(int i = 0; i<getNumOfLines() ; i++){
@@ -686,7 +689,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                     repaint();
                 }else{               
                     // On ajoute l'action à la pile
-                    circ[currentCircleIndex].updatePos(x, y);
+                    nodes.get(currentCircleIndex).updatePos(x, y);
                     zoneR = new Rectangle(Integer.MIN_VALUE,Integer.MIN_VALUE,0,0); //permet d'éviter qu'un ensemble de points soient toujours sélectionner
                                                                                     //après les avoir déselectionner en cliquant a cote
                     repaint();
@@ -705,8 +708,8 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                     
                     for(int i = 0; i< getNumOfCircles() ; i++){
                         if(multiSelecCirc[i]){
-                            circ[i].cx += transx;
-                            circ[i].cy += transy;
+                            nodes.get(i).addCx(transx);
+                            nodes.get(i).addCy(transy);
                         }
                     }
                     for(int i = 0; i<getNumOfLines() ; i++){
@@ -793,7 +796,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
             circleW = factor*Draw.RINIT ;
             //lineWidth = (float) factor*Draw.LINIT;
             for (int i = 0; i < numOfCircles; i++) {
-                circ[i].updateSize(circleW);
+                nodes.get(i).updateSize(circleW);
             }
             repaint();
         }

@@ -55,4 +55,14 @@ public class Clou extends Ellipse2D.Double {
         g.setColor(color);
         g.fill(this);
     }
+
+    public double getCx() {
+        return cx;
+    }
+
+    public double getCy() {
+        return cy;
+    }
+    
+    
 }

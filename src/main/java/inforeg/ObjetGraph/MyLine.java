@@ -46,8 +46,8 @@ public class MyLine {
         this.to = toPoint;
         this.poids = pds;
         this.c = c;
-        int x = (int) (from.cx + to.cx)/2;
-        int y = (int) (from.cy + to.cy)/2;
+        int x = (int) (from.getCx() + to.getCx())/2;
+        int y = (int) (from.getCy() + to.getCy())/2;
         System.out.println(x + " " + y);
         this.clou = new Clou(x,y,RCLOU,c);
     }
@@ -59,7 +59,7 @@ public class MyLine {
     public void paint(Draw d, Graphics2D g, boolean selected) {
         g.setPaint(c);
         g.setStroke(new BasicStroke((float)d.toDrawScale(LINE_WIDTH)));
-        Vector2D v1 = d.toDrawCoordinates(from.cx,from.cy);
+        Vector2D v1 = d.toDrawCoordinates(from.getCx(),from.getCy());
         Vector2D v3 = d.toDrawCoordinates(clou.cx,clou.cy);
         int x1 = (int) v1.x;
         int y1 = (int) v1.y;
@@ -74,7 +74,7 @@ public class MyLine {
         if (from == to) {
             //calcArc(x1,y1,x3,y3,g);
         } else {
-            Vector2D v2 = d.toDrawCoordinates(to.cx,to.cy);
+            Vector2D v2 = d.toDrawCoordinates(to.getCx(),to.getCy());
             int x2 = (int) v2.x;
             int y2 = (int) v2.y;
             g.drawLine(x1,y1,x3,y3);
@@ -115,7 +115,7 @@ public class MyLine {
      * Getter du cercle de départ 
      * @return from (attribut)
      */
-    public Ellipse2D.Double getFrom() {
+    public Noeud getFrom() {
         return this.from;
     }
 
@@ -123,7 +123,7 @@ public class MyLine {
      * Getter du cercle d'arrivée 
      * @return to (attribut)
      */
-    public Ellipse2D.Double getTo() {
+    public Noeud getTo() {
         return this.to;
     }
 

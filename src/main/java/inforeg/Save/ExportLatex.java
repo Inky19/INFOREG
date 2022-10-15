@@ -1,4 +1,4 @@
-package inforeg;
+package inforeg.Save;
 
 /*=============================================
 Classe Draw permettant d'exporter les graphes en source LaTeX
@@ -7,7 +7,9 @@ Date de création : 18/2022
 Date de dernière modification : 30/03/2022
 =============================================*/
 
+import inforeg.Draw;
 import inforeg.ObjetGraph.MyLine;
+import inforeg.ObjetGraph.Noeud;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -414,16 +416,15 @@ public class ExportLatex {
      */
     public String writeCoordinates(Draw d){
         
-        Ellipse2D.Double[] circ = d.getCirc();
-        String[] lbl = d.getCircLbl() ;
+        ArrayList<Noeud> circ = d.getNodes();
         String coord = "";
         
         for (int i =0;i<d.getNumOfCircles();i++){
-            int x = (int) circ[i].getCenterX() ;
-            int y = (int) circ[i].getCenterY() ;
+            int x = (int) circ.get(i).getCenterX() ;
+            int y = (int) circ.get(i).getCenterY() ;
             coord = coord + "\\node[draw,circle,fill="+noeudFill+"] ("+ String.valueOf(i)+") at ("
                     + String.valueOf(x)+",-"+ String.valueOf(y)+") {"
-                    + lbl[i] + "}; \n";
+                    + circ.get(i).getLabel() + "}; \n";
         }
         return coord;
     }
