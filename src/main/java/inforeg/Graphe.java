@@ -8,6 +8,7 @@ Date de création : 27/01/2022
 Date de dernière modification : 29/03/2022
 =============================================*/
 
+import inforeg.ObjetGraph.MyLine;
 import java.util.ArrayList;
 
 public abstract class Graphe {
@@ -20,7 +21,7 @@ public abstract class Graphe {
     /**
      * Nombre maximal de sommets que peut contenir un graphe 
      */
-    protected final static int nbmax = 100;
+    protected final static int nbmax = 1000;
 
     /**
      * Matrice d'adjacence

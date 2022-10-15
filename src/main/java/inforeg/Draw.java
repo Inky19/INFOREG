@@ -7,9 +7,9 @@ Date de création : 03/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
 
+import inforeg.ObjetGraph.MyLine;
 import inforeg.ObjetGraph.Noeud;
 import inforeg.ObjetGraph.Clou;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -27,6 +27,8 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Point;
+import java.awt.RenderingHints;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JToolBar;
@@ -103,6 +105,8 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
     private final JSlider zoomSlider;
     private final JLabel zoomLabel;
     //Camera
+    private Point currentMousePosition;
+    private Point currentCameraPosition;
     private int cameraX = 0;
     private int cameraY = 0;
     private float zoom = 100f;
@@ -225,11 +229,15 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         tools.setOpaque(false);
         tools.setBorderPainted(true);
         this.add(tools,BorderLayout.SOUTH);
+        currentCameraPosition = new Point(cameraX,cameraY);
         
         
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
+                currentMousePosition = evt.getLocationOnScreen();
+                currentCameraPosition.x = cameraX;
+                currentCameraPosition.y = cameraY;
                 if (Interface.mode==Interface.EDITION_MODE){
                     int x = evt.getX();
                     int y = evt.getY();
@@ -450,21 +458,23 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
                 }
             }
         });
+
         addMouseMotionListener(this);
+        
     }
  
     //Méthode permettant de draw les éléments. */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         //order : draw line puis draw circles
         for (int i = 0 ; i < numOfLines; i++){
-            lines.get(i).paint(this, (Graphics2D) g, multiSelecArc[i],zoom,this.getBounds().getWidth()/2,this.getBounds().getHeight()/2,pondere);
+            lines.get(i).paint(this, (Graphics2D) g, multiSelecArc[i]);
         }
         // Draw circles
         for (int i = 0; i < numOfCircles; i++) {
-            //A CHANGER POUR INCLURE THIS
-            nodes.get(i).paint((Graphics2D) g, multiSelecCirc[i],nodes.get(i).getLabel(),zoom,this.getBounds().getWidth()/2,this.getBounds().getHeight()/2);            
+            nodes.get(i).paint(this, (Graphics2D) g, multiSelecCirc[i]);                    
         }
         // Multiselect zone
         if(Draw.drawZone){
@@ -481,7 +491,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         Rectangle r = this.getBounds();
         float h = r.height;
         float w = r.width;
-        return new Vector2D((x-w/2)*zoom/100+w/2,(y-h/2)*zoom/100+h/2);
+        return new Vector2D((x-w/2)*zoom/100+w/2+cameraX,(y-h/2)*zoom/100+h/2+cameraY);
     }
     /**
      * Permet de convertir des coordonnées de la zone de dessin en coordonnées globales
@@ -492,7 +502,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
         Rectangle r = this.getBounds();
         float h = r.height;
         float w = r.width;
-        return new Vector2D((x-w/2)*100/zoom+w/2,(y-h/2)*100/zoom+h/2);
+        return new Vector2D((x-w/2-cameraX)*100/zoom+w/2,(y-h/2-cameraY)*100/zoom+h/2);
     }
     
     public double toDrawScale(double h) {
@@ -646,7 +656,7 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
             setCursor(Cursor.getDefaultCursor());
         }  
     }
- 
+    
     /** Déplace un cercle et les lignes qui lui sont rattachées */
     @Override
     public void mouseDragged(MouseEvent event) {
@@ -740,7 +750,11 @@ public class Draw extends JPanel implements MouseMotionListener, FonctionsDessin
             }
         }
         if (Interface.mode==Interface.TRAITEMENT_MODE) {
+            Point currentScreenLocation  = event.getLocationOnScreen();
+            cameraX = currentScreenLocation.x - currentMousePosition.x + currentCameraPosition.x;
+            cameraY = currentScreenLocation.y - currentMousePosition.y + currentCameraPosition.y;
             Draw.drawZone = false;
+            cameraX += 1;
             repaint();
         }
     }  

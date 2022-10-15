@@ -9,6 +9,7 @@ Date de dernière modification : 18/03/2022
 Commentaires ajoutés
 =============================================*/
 
+import inforeg.ObjetGraph.MyLine;
 import inforeg.ObjetGraph.Clou;
 import inforeg.ObjetGraph.Noeud;
 import java.awt.Color;

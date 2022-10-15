@@ -7,7 +7,7 @@ package inforeg.Save;
 import inforeg.Arc;
 import inforeg.Draw;
 import inforeg.Interface;
-import inforeg.MyLine;
+import inforeg.ObjetGraph.MyLine;
 import inforeg.ObjetGraph.Noeud;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -92,6 +92,6 @@ public abstract class saveManager {
     public Draw load(){
         JFileChooser fileExplorer = new JFileChooser();
         int res = fileExplorer.showOpenDialog(null);
-        
+        return null;
     }
 }

@@ -8,7 +8,7 @@ Date de dernière modification : 30/03/2022
 =============================================*/
 
 import inforeg.Draw;
-import inforeg.MyLine;
+import inforeg.ObjetGraph.MyLine;
 import inforeg.ObjetGraph.Noeud;
 import java.awt.Color;
 import java.awt.Dimension;

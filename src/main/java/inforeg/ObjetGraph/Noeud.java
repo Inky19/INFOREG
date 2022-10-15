@@ -4,6 +4,7 @@
  */
 package inforeg.ObjetGraph;
 
+import inforeg.Draw;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -66,20 +67,22 @@ public class Noeud extends Ellipse2D.Double {
         cy = y;
     }
     
-    public void paint(Graphics2D g, boolean multiSelected, String label,float zoom,double cameraX, double cameraY) {
-        this.x = zoom/100*(cx-r-cameraX) + cameraX;
-        this.y = zoom/100*(cy-r-cameraY) + cameraY;
-        this.height = 2*r*zoom/100;
-        this.width = 2*r*zoom/100;
+    public void paint(Draw d, Graphics2D g, boolean selected) {
+        // Update position and scale
+        Vector2D v = d.toDrawCoordinates(cx-r, cy-r);
+        this.x = v.x;
+        this.y = v.y;
+        double h = d.toDrawScale(2*r);
+        this.height = h;
+        this.width = h;
         
-        g.setStroke(new BasicStroke(7*zoom/100));
+        g.setStroke(new BasicStroke((float)d.toDrawScale(7)));
         //Outline
-        if(multiSelected){
+        if(selected){
             g.setPaint(Color.GREEN); 
         }else{
             g.setPaint(Color.BLACK);
         }
-        
         g.draw(this);
         g.setStroke(new BasicStroke(1));
         //Inside
@@ -88,7 +91,7 @@ public class Noeud extends Ellipse2D.Double {
         g.fill(this);
         //Label
         if (label != null) {
-            Font font = new Font("Arial",Font.PLAIN,(int) (zoom/100*15));
+            Font font = new Font("Arial",Font.PLAIN,(int) d.toDrawScale(15));
             FontMetrics metrics = g.getFontMetrics(font);
             // Determine the X coordinate for the text
             int font_x = (int) (this.x + (this.width - metrics.stringWidth(label)) / 2);

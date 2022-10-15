@@ -8,6 +8,7 @@ Auteur : Isaias VENEGAS
 Date de création : 24/03/2022
 Date de dernière modification : 30/03/2022
 =============================================*/
+import inforeg.ObjetGraph.MyLine;
 import java.awt.geom.Ellipse2D;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
