@@ -4,10 +4,12 @@
  */
 package inforeg.ObjetGraph;
 
+import inforeg.Draw;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+import utilities.Vector2D;
 
 /**
  *
@@ -35,15 +37,17 @@ public class Clou extends Ellipse2D.Double {
         this.color = color;
     }
     
-    public void paint(Graphics2D g, boolean multiSelected, float zoom,double cameraX, double cameraY) {
-        this.x = zoom/100*(cx-r-cameraX) + cameraX;
-        this.y = zoom/100*(cy-r-cameraY) + cameraY;
-        this.height = 2*r*zoom/100;
-        this.width = 2*r*zoom/100;
+    public void paint(Draw d, Graphics2D g, boolean selected) {
+        Vector2D v = d.toDrawCoordinates(cx-r, cy-r);
+        this.x = v.x;
+        this.y = v.y;
+        double h = d.toDrawScale(2*r);
+        this.height = h;
+        this.width = h;
         
-        g.setStroke(new BasicStroke(7*zoom/100));
+        g.setStroke(new BasicStroke((float)d.toDrawScale(7)));
         //Outline
-        if(multiSelected){
+        if(selected){
             g.setPaint(Color.GREEN);
             g.draw(this);
         }

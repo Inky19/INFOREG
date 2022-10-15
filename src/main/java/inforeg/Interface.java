@@ -6,6 +6,7 @@ Auteur : Samy AMAL
 Date de création : 03/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
+import inforeg.ObjetGraph.MyLine;
 import inforeg.ObjetGraph.Noeud;
 import inforeg.UI.ButtonTabComponent;
 import java.awt.BorderLayout;
@@ -203,6 +204,7 @@ public abstract class Interface{
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Position de la fenètre
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setSize(1000, 600);
         frame.setLocationRelativeTo(null);
         // Icone de l'application
         ImageIcon icon = new ImageIcon("asset/icon.png");

@@ -1,4 +1,4 @@
-package inforeg;
+package inforeg.ObjetGraph;
 
 /*=============================================
 Classe MyLine permettant de stocker les informations
@@ -8,10 +8,12 @@ Date de création : 03/03/2022
 Date de dernière modification : 11/03/2022
 =============================================*/
 
+import inforeg.Draw;
 import inforeg.ObjetGraph.Clou;
 import inforeg.ObjetGraph.Noeud;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Ellipse2D;
@@ -54,9 +56,9 @@ public class MyLine {
         return this.clou;
     }
     
-    public void paint(Draw d, Graphics2D g, boolean multiSelected,float zoom,double cameraX, double cameraY, boolean pondere) {
+    public void paint(Draw d, Graphics2D g, boolean selected) {
         g.setPaint(c);
-        g.setStroke(new BasicStroke(LINE_WIDTH*zoom/100));
+        g.setStroke(new BasicStroke((float)d.toDrawScale(LINE_WIDTH)));
         Vector2D v1 = d.toDrawCoordinates(from.cx,from.cy);
         Vector2D v3 = d.toDrawCoordinates(clou.cx,clou.cy);
         int x1 = (int) v1.x;
@@ -65,7 +67,9 @@ public class MyLine {
         int y3 = (int) v3.y;
         
         if (d.pondere){
-            g.drawString(""+poids,x3,y3-10);
+            Font font = new Font("Arial",Font.PLAIN,(int) d.toDrawScale(15));
+            g.setFont(font);
+            g.drawString(""+poids,x3,y3-(int)d.toDrawScale(10));
         }
         if (from == to) {
             //calcArc(x1,y1,x3,y3,g);
@@ -76,7 +80,7 @@ public class MyLine {
             g.drawLine(x1,y1,x3,y3);
             g.drawLine(x3,y3,x2,y2);
             
-            clou.paint(g, multiSelected, zoom, cameraX, cameraY);
+            clou.paint(d, g, selected);
 
             g.setPaint(c); //reset color pour poids
             if (d.oriente==Draw.ORIENTE){
@@ -84,18 +88,13 @@ public class MyLine {
                 int x4 = (x3+x2)/2;
                 int y4 = (y3+y2)/2;
                 d.fleche(x3,y3,x4,y4,t);
-                g.setStroke(new BasicStroke(LINE_WIDTH*zoom/100));
+                g.setStroke(new BasicStroke((float)d.toDrawScale(LINE_WIDTH)));
                 g.drawLine(x4,y4,t[0],t[1]);
                 g.drawLine(x4,y4,t[2],t[3]);     
             }
         }
-    }
-
-    
-    
-    
-    
-    
+    }  
+        
     public int getPoids(){
         return poids;
     }

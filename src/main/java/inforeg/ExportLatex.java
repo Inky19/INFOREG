@@ -7,6 +7,7 @@ Date de création : 18/2022
 Date de dernière modification : 30/03/2022
 =============================================*/
 
+import inforeg.ObjetGraph.MyLine;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
