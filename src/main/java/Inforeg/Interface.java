@@ -161,9 +161,7 @@ public abstract class Interface {
                 saveManager.saveToFile(d, d.getPathSauvegarde());
                 // Sinon, on créé un nouveau fichier de sauvegarde
             } else {
-                System.out.println("save");
                 saveManager.save(d);
-                System.out.println("Tab name :" + d.getFileName());
                 if (d != null) {
                     tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
                 }
@@ -181,21 +179,10 @@ public abstract class Interface {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            try {
-                JFileChooser dialogue = new JFileChooser(".");
-                if (dialogue.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                    File fichier = dialogue.getSelectedFile();
-                    String source = fichier.getName();
-                    if (source.length() < 8 || !source.toLowerCase().substring(source.length() - 8).equals(".inforeg")) {
-                        d.setPathSauvegarde(fichier.getPath() + ".inforeg");
-                    } else {
-                        d.setPathSauvegarde(fichier.getPath());
-                    }
-                    (new SauvDraw(fichier)).sauvegarderDraw(d);
+                saveManager.save(d);
+                if (d != null) {
+                    tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
                 }
-            } catch (Exception NullPointerException) {
-                System.out.println("Opération annulée");
-            }
         }
     ;
 

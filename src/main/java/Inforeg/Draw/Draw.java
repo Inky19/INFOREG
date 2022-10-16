@@ -316,7 +316,6 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         if (currentCircleIndex < 0 && currentArcIndex < 0) { // not inside a circle
                             add(x, y);
                             // On ajoute l'action à la pile
-                            System.out.println("Added node");
                             transitions.createLog("addCircle", nodes.get(numOfCircles - 1));
                         }
                     }

@@ -136,6 +136,8 @@ public abstract class saveManager {
                             int pond = Integer.parseInt(data[6]);
                             colorHex = data[7];
                             
+                            // L'intégralité des nœuds doivent être chargés pour pouvoir trouver leur id.
+                            // Il est donc nécessaire que le fichier de sauvegarde ne comporte pas des lignes "Arc" avant des "Node" pour être sûr que cela marche.
                             Node n1 = d.getNodeFromId(id1);
                             Node n2 = d.getNodeFromId(id2);
                             Nail nail = new Nail(nailx, naily, radius);
