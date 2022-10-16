@@ -55,27 +55,31 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public abstract class Interface{
-    
+public abstract class Interface {
+
     public static final String VERSION = "2.0";
     protected JFrame frame;
-    
-    /** Les JPanel. */
+
+    /**
+     * Les JPanel.
+     */
     protected JTabbedPane tabsPanel;
     protected JToolBar toolBarButtons;
     protected JPanel paneImage;
     protected Draw d;
 
-    
     protected LinkedList<Draw> tabs;
     private int currentTab;
-    
-    
-    /** Le Menu. */ 
+
+    /**
+     * Le Menu.
+     */
     protected JMenuBar menuBar;
     protected JMenu exporter;
-    
-    /** Les boutons. */
+
+    /**
+     * Les boutons.
+     */
     protected JRadioButton select;
     protected JRadioButton noeud;
     protected JRadioButton arc;
@@ -85,24 +89,32 @@ public abstract class Interface{
     protected JButton save;
     protected JButton load;
     protected JButton clearSelection;
-    protected JButton back ;
+    protected JButton back;
     protected JButton forward;
-    
-    /** Reference to the original image. */
+
+    /**
+     * Reference to the original image.
+     */
     protected BufferedImage originalImage;
-    /** Image used to make changes. */
+    /**
+     * Image used to make changes.
+     */
     protected BufferedImage canvasImage;
-    
-    /** Couleur utilisée. */
+
+    /**
+     * Couleur utilisée.
+     */
     protected Color color = Color.WHITE;
-    protected BufferedImage colorSample = new BufferedImage(16,16,BufferedImage.TYPE_INT_RGB);
+    protected BufferedImage colorSample = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
     protected Rectangle selection;
-    protected static Color colorBg ;
-    
+    protected static Color colorBg;
+
     protected RenderingHints renderingHints;
     protected JLabel imageLabel;
-    
-    /** Tools pour savoir l'état/bouton selectionné. */
+
+    /**
+     * Tools pour savoir l'état/bouton selectionné.
+     */
     protected static int activeTool;
     public static final int SELECT_TOOL = 10;
     public static final int NOEUD_TOOL = 11;
@@ -116,35 +128,43 @@ public abstract class Interface{
     public static final int DIJKSTRA_TRAITEMENT = 22;
     public static final int KRUSKAL_TRAITEMENT = 23;
     public static final int FORD_FULKERSON_TRAITEMENT = 24;
-    
-    /** Attribut pour la taille des Noeuds. */
-    protected static int taille ;
-    /** Attribut pour l'épaisseur des Arcs. */
-    protected static int epaisseur ;
 
-        /** Actions */
-    /** Action de sauvegarde du graphe dans une sauvegarde existante */
-    public final AbstractAction Save = new AbstractAction(){
+    /**
+     * Attribut pour la taille des Noeuds.
+     */
+    protected static int taille;
+    /**
+     * Attribut pour l'épaisseur des Arcs.
+     */
+    protected static int epaisseur;
+
+    /**
+     * Actions
+     */
+    /**
+     * Action de sauvegarde du graphe dans une sauvegarde existante
+     */
+    public final AbstractAction Save = new AbstractAction() {
         {
-            putValue(Action.NAME,"Enregistrer");
+            putValue(Action.NAME, "Enregistrer");
             putValue(Action.MNEMONIC_KEY, KeyEvent.VK_S);
-            putValue(Action.SHORT_DESCRIPTION,"Sauvegarde le graphe actuel (CTRL+S)");
+            putValue(Action.SHORT_DESCRIPTION, "Sauvegarde le graphe actuel (CTRL+S)");
             putValue(Action.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_S,KeyEvent.CTRL_DOWN_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
         }
 
         @Override
-        public void actionPerformed(ActionEvent e){
+        public void actionPerformed(ActionEvent e) {
             // Si un fichier de sauvegarde existe déjà, on l'écrase et on effectue une nouvelle sauvegarde
-            if (d.getPathSauvegarde()!=" "){
+            if (d.getPathSauvegarde() != " ") {
                 File f = new File(d.getPathSauvegarde());
                 (new SauvDraw(f)).sauvegarderDraw(d);
-            // Sinon, on créé un nouveau fichier de sauvegarde
+                // Sinon, on créé un nouveau fichier de sauvegarde
             } else {
                 System.out.println("save");
                 String name = saveManager.save(d);
-                System.out.println("Tab name :"+name);
-                if (name != null){
+                System.out.println("Tab name :" + name);
+                if (name != null) {
                     tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), name);
                 }
                 /*
@@ -163,43 +183,46 @@ public abstract class Interface{
                 } catch (Exception NullPointerException){
                     System.out.println("Opération annulée");
                 }
-                */
+                 */
             }
-        };
+        }
+    ;
     };
 
     /** Création d'unnouveau fichier de sauvegarde */
-    public final AbstractAction SaveAs = new AbstractAction(){
+    public final AbstractAction SaveAs = new AbstractAction() {
         {
-            putValue(Action.NAME,"Enregistrer Sous");
-            putValue(Action.SHORT_DESCRIPTION,"Sauvegarde le graphe actuel");
+            putValue(Action.NAME, "Enregistrer Sous");
+            putValue(Action.SHORT_DESCRIPTION, "Sauvegarde le graphe actuel");
         }
 
         @Override
-        public void actionPerformed(ActionEvent e){
+        public void actionPerformed(ActionEvent e) {
             try {
                 JFileChooser dialogue = new JFileChooser(".");
-                if (dialogue.showOpenDialog(null)==JFileChooser.APPROVE_OPTION){
+                if (dialogue.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                     File fichier = dialogue.getSelectedFile();
                     String source = fichier.getName();
-                    if (source.length() < 8 || !source.toLowerCase().substring(source.length()-8).equals(".inforeg")) {
+                    if (source.length() < 8 || !source.toLowerCase().substring(source.length() - 8).equals(".inforeg")) {
                         d.setPathSauvegarde(fichier.getPath() + ".inforeg");
                     } else {
                         d.setPathSauvegarde(fichier.getPath());
                     }
                     (new SauvDraw(fichier)).sauvegarderDraw(d);
                 }
-            } catch (Exception NullPointerException){
+            } catch (Exception NullPointerException) {
                 System.out.println("Opération annulée");
             }
-        };
+        }
+    ;
+
     };
 
     /**
      * Constructeur d'une interface
      * @param d = instance de Draw permettant de dessiner le graphe
      */
-    public Interface(Draw d){
+    public Interface(Draw d) {
         this.d = d;
         this.tabs = new LinkedList<Draw>();
         tabs.add(d);
@@ -212,7 +235,7 @@ public abstract class Interface{
      */
     public void createAndShowGui() {
 
-        frame = new JFrame("INFOREG "+d.getPathSauvegarde());
+        frame = new JFrame("INFOREG " + d.getPathSauvegarde());
         //fermer la fenêtre quand on quitte
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Position de la fenètre
@@ -224,104 +247,97 @@ public abstract class Interface{
         frame.setIconImage(icon.getImage());
 
         initTabs();
-        initToolBar();  
-        addToolBar();      
+        initToolBar();
+        addToolBar();
         initPaneImage();
         initLeftMenuBar();
         addMenuBar();
         initRightMenuBar();
-        
+
         frame.add(toolBarButtons, BorderLayout.LINE_START);
-        frame.add(paneImage,BorderLayout.CENTER);
+        frame.add(paneImage, BorderLayout.CENTER);
         Interface.colorBg = paneImage.getBackground();
         frame.setJMenuBar(menuBar);
-        
+
         //frame.getContentPane().add(this.d);
         frame.add(tabsPanel);
         this.d.repaint();
-        
-        //frame.pack(); remi : Je pense pas que c'est utile ici
-        
-        frame.setVisible(true);
-        
 
-            
+        //frame.pack(); remi : Je pense pas que c'est utile ici
+        frame.setVisible(true);
+
     }
-    
+
     /**
-     * JPanel pour les boutons 
-     **/
+     * JPanel pour les boutons
+     *
+     */
     public abstract void initToolBar();
 
     public abstract void addToolBar();
-    
-    
-    private void initTabs(){
+
+    private void initTabs() {
         tabsPanel = new JTabbedPane();
         ImageIcon tabIco = new ImageIcon("asset/icons/tab.png");
-        FlowLayout f = new FlowLayout (FlowLayout.CENTER, 5, 0);
-        JPanel pnlTab = new JPanel (f);
-        pnlTab.setOpaque (false);
-        JButton addTabButton = new JButton ("+");
-        addTabButton.setOpaque (false); //
+        FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
+        JPanel pnlTab = new JPanel(f);
+        pnlTab.setOpaque(false);
+        JButton addTabButton = new JButton("+");
+        addTabButton.setOpaque(false); //
         //addTabButton.setBorder (null);
-        addTabButton.setContentAreaFilled (false);
-        addTabButton.setFocusPainted (false);
-        addTabButton.setFocusable (false);
-        
-        tabsPanel.addTab("",null,new JScrollPane());
-        pnlTab.add (addTabButton);
-        tabsPanel.setTabComponentAt (tabsPanel.getTabCount ()-1, pnlTab);
-        
-        ActionListener listener = new ActionListener () {
+        addTabButton.setContentAreaFilled(false);
+        addTabButton.setFocusPainted(false);
+        addTabButton.setFocusable(false);
+
+        tabsPanel.addTab("", null, new JScrollPane());
+        pnlTab.add(addTabButton);
+        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, pnlTab);
+
+        ActionListener listener = new ActionListener() {
             @Override
-            public void actionPerformed (ActionEvent e) {
-                String title = "Graphe " + String.valueOf (tabsPanel.getTabCount ());
+            public void actionPerformed(ActionEvent e) {
+                String title = "Graphe " + String.valueOf(tabsPanel.getTabCount());
                 Draw newD = new Draw();
                 newD.setPondere(d.getPondere());
                 newD.setOriente(d.getOriente());
-                newD.setInterface(Interface.this);                
+                newD.setInterface(Interface.this);
                 tabsPanel.addTab(title, tabIco, newD);
-                tabsPanel.setTabComponentAt(tabsPanel.getTabCount ()-1,new ButtonTabComponent(tabsPanel, tabIco));
-                tabsPanel.setSelectedIndex(tabsPanel.getTabCount()-1);
+                tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, tabIco));
+                tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
             }
         };
-        
 
         ChangeListener changeListenenr = new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent ce) {
                 JTabbedPane sourceTabbedPane = (JTabbedPane) ce.getSource();
                 int index = sourceTabbedPane.getSelectedIndex();
-                if (index > 0){
+                if (index > 0) {
                     d = (Draw) tabsPanel.getSelectedComponent();
                     currentTab = index;
                 } else {
-                    if (sourceTabbedPane.getTabCount()>1){
+                    if (sourceTabbedPane.getTabCount() > 1) {
                         tabsPanel.setSelectedIndex(currentTab);
                     }
                 }
                 System.out.println("Tab changed to: " + sourceTabbedPane.getTitleAt(index));
-                
+
             }
         };
-        
-        
+
         tabsPanel.addTab("Graphe 1", tabIco, d);
-        tabsPanel.setTabComponentAt(1,new ButtonTabComponent(tabsPanel, tabIco));
+        tabsPanel.setTabComponentAt(1, new ButtonTabComponent(tabsPanel, tabIco));
         //tabsPanel.setMnemonicAt(0, KeyEvent.VK_1);
-        addTabButton.setFocusable (false);
-        addTabButton.addActionListener (listener);
+        addTabButton.setFocusable(false);
+        addTabButton.addActionListener(listener);
         tabsPanel.addChangeListener(changeListenenr);
         tabsPanel.setSelectedIndex(1);
 
-        tabsPanel.setVisible (true);
+        tabsPanel.setVisible(true);
 
-
-        
     }
 
-    public void initLeftMenuBar(){
+    public void initLeftMenuBar() {
 
         menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("Fichier");
@@ -345,10 +361,10 @@ public abstract class Interface{
         fileMenu.add(exporter);
         menuBar.add(fileMenu);
     }
-    
+
     public abstract void addMenuBar();
 
-    public void initRightMenuBar(){
+    public void initRightMenuBar() {
         JMenu helpMenu = new JMenu("Aide");
         JMenu aboutMenu = new JMenu("A propos");
 
@@ -359,60 +375,60 @@ public abstract class Interface{
             @Override
             public void actionPerformed(ActionEvent ae) {
                 String str = "Pour créer des noeuds : \n"
-                                + "\n"
-                                + "    - veillez à ce que le bouton 'Noeud' soit activé \n"
-                                + "\n"
-                                + "    - puis, déplacer votre souris sur une zone et cliquer pour créer un noeud \n"
-                                + "\n"
-                                + "    - pour déplacer un noeud : maintenez le clique gauche sur un noeud, déplacez vers une zone de l'écran et relâchez\n"
-                                + "\n"
-                                + "    - pour supprimer un noeud : double-cliquez sur un noeud\n";
-                JOptionPane.showMessageDialog(frame ,str,"Bouton Noeud", JOptionPane.INFORMATION_MESSAGE);
+                        + "\n"
+                        + "    - veillez à ce que le bouton 'Noeud' soit activé \n"
+                        + "\n"
+                        + "    - puis, déplacer votre souris sur une zone et cliquer pour créer un noeud \n"
+                        + "\n"
+                        + "    - pour déplacer un noeud : maintenez le clique gauche sur un noeud, déplacez vers une zone de l'écran et relâchez\n"
+                        + "\n"
+                        + "    - pour supprimer un noeud : double-cliquez sur un noeud\n";
+                JOptionPane.showMessageDialog(frame, str, "Bouton Noeud", JOptionPane.INFORMATION_MESSAGE);
             }
         });
         JMenuItem helpSubMenuItem2 = new JMenuItem("Help Sub menu item 2");
         helpMenu.add(helpSubMenu);
         helpSubMenu.add(helpSubMenuItem1);
         helpSubMenu.add(helpSubMenuItem2);
-        
+
         JMenuItem credits = new JMenuItem("Crédits");
         aboutMenu.add(credits);
-        
+
         credits.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 String creditStr = "Application créée par Béryl CASSEL, Cristobal CARRASCO DE RODT, Jorge QUISPE , Isaías VENEGAS et Samy AMAL \n"
-                                    + "\n"
-                                    + "dans le cadre du projet de groupe INFOREG \n"
-                                    + "\n"
-                                    + "encadré par Olivier ROUX";
-                JOptionPane.showMessageDialog(frame ,creditStr,"Credits", JOptionPane.INFORMATION_MESSAGE);
+                        + "\n"
+                        + "dans le cadre du projet de groupe INFOREG \n"
+                        + "\n"
+                        + "encadré par Olivier ROUX";
+                JOptionPane.showMessageDialog(frame, creditStr, "Credits", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-                
-        menuBar.add(helpMenu); 
+
+        menuBar.add(helpMenu);
         menuBar.add(aboutMenu);
-        
+
         //CTRL Z / CTRL Y
         ImageIcon iconBack = new ImageIcon("back.png");
         ImageIcon iconForward = new ImageIcon("forward.png");
         //resize
-        Image imageBack = iconBack.getImage().getScaledInstance(20,20, java.awt.Image.SCALE_SMOOTH);
-        Image imageForward = iconForward.getImage().getScaledInstance(20,20, java.awt.Image.SCALE_AREA_AVERAGING);
-        iconBack = new ImageIcon(imageBack); 
+        Image imageBack = iconBack.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+        Image imageForward = iconForward.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_AREA_AVERAGING);
+        iconBack = new ImageIcon(imageBack);
         iconForward = new ImageIcon(imageForward);
         History piles = d.getTransitions();
         back = new JButton(iconBack);
         back.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 Collection<Enregistrement> pileZ = piles.getPreviousStates();
-                if(pileZ.isEmpty()){
+                if (pileZ.isEmpty()) {
                     return;
                 }
                 ArrayList<Node> circles = d.getNodes();
                 Enregistrement lastReg = piles.getPreviousState();
                 // Pour chaque action, on effectue l'action inverse
                 // Ensuite, on déplace l'action sur l'autre pile
-                switch(lastReg.action){
+                switch (lastReg.action) {
                     case "addCircle":
                         d.remove(d.find(lastReg.noeud));
                         break;
@@ -423,24 +439,23 @@ public abstract class Interface{
                         // Pour cela, comparons que l'enregistrement précédent 
                         // a comme position de fin la position de début de 
                         // l'enregistrement actuel.
-                        if(temp != null){
-                            while(
-                                    temp.action.equals("moveCircle") && 
-                                    Double.compare(temp.x2, previousReg.x) == 0 && 
-                                    Double.compare(temp.y2, previousReg.y) == 0)
-                            {
+                        if (temp != null) {
+                            while (temp.action.equals("moveCircle")
+                                    && Double.compare(temp.x2, previousReg.x) == 0
+                                    && Double.compare(temp.y2, previousReg.y) == 0) {
                                 // Si c'est le cas, nous stockons cet enregistrement intermédiaire 
                                 // jusqu'à ce que l'enregistrement précédent soit 
                                 // une action ou un élément différent.
                                 previousReg = temp;
                                 temp = piles.getPreviousState();
-                                if(temp==null){break;}
+                                if (temp == null) {
+                                    break;
+                                }
                             }
                         }
                         // On ajoute l'enregistrement à la liste 
                         // comme il a été retiré dans le cycle précédent.
-                        if(temp != null)
-                        {
+                        if (temp != null) {
                             piles.addPreviousState(temp);
                         }
                         Ellipse2D.Double noeud = circles.get(d.find(lastReg.noeud));
@@ -459,7 +474,7 @@ public abstract class Interface{
                     case "addLine":
                         int fromIndex = d.find(lastReg.noeud);
                         int toIndex = d.find(lastReg.noeud2);
-                        d.removeArc(d.findLine(fromIndex,toIndex));
+                        d.removeArc(d.findLine(fromIndex, toIndex));
                     case "moveLine":
                         MyLine line = lastReg.arc;
                         // -> line.setClou(lastReg.noeud);
@@ -491,14 +506,14 @@ public abstract class Interface{
         forward.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 Collection<Enregistrement> pileY = piles.getNextStates();
-                if(pileY.isEmpty()){
+                if (pileY.isEmpty()) {
                     return;
                 }
                 ArrayList<Node> circles = d.getNodes();
                 Enregistrement nextReg = piles.getNextState();
                 // Pour chaque action, on l'exécute
                 // Ensuite, on déplace l'action sur l'autre pile
-                switch(nextReg.action){
+                switch (nextReg.action) {
                     case "addCircle":
                         d.add(nextReg.x, nextReg.y);
                         break;
@@ -527,7 +542,7 @@ public abstract class Interface{
                     case "deleteLine":
                         int fromIndex = d.find(nextReg.noeud);
                         int toIndex = d.find(nextReg.noeud2);
-                        d.removeArc(d.findLine(fromIndex,toIndex));
+                        d.removeArc(d.findLine(fromIndex, toIndex));
                         break;
                     case "updateLbl":
                         d.getNodes().get(d.find(nextReg.noeud)).setLabel(nextReg.newLbl);
@@ -549,10 +564,11 @@ public abstract class Interface{
         menuBar.add(forward);
 
     }
-    
-    /** 
+
+    /**
      * Méthode permettant de modifier la couleur
-     * @param color 
+     *
+     * @param color
      */
     public void setColor(Color color) {
         this.color = color;
@@ -562,45 +578,45 @@ public abstract class Interface{
     /*
      *   Méthodes suivantes incertaines/inutiles pour l'instant
      */
-    
-    /*
+ /*
      * JPanel pour le BufferedImage (méthode getgui de BasicPaint)
      */
-    public void initPaneImage(){
+    public void initPaneImage() {
 
         Map<RenderingHints.Key, Object> hintsMap = new HashMap<>();
         hintsMap.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         hintsMap.put(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
         hintsMap.put(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        renderingHints = new RenderingHints(hintsMap); 
+        renderingHints = new RenderingHints(hintsMap);
 
-        setImage(new BufferedImage(320,240,BufferedImage.TYPE_INT_RGB));
-        paneImage = new JPanel(new BorderLayout(4,4));
-        paneImage.setBorder(new EmptyBorder(5,3,5,3));
-        
+        setImage(new BufferedImage(320, 240, BufferedImage.TYPE_INT_RGB));
+        paneImage = new JPanel(new BorderLayout(4, 4));
+        paneImage.setBorder(new EmptyBorder(5, 3, 5, 3));
+
         JPanel imageView = new JPanel(new GridBagLayout());
-        imageView.setPreferredSize(new Dimension(480,320));
+        imageView.setPreferredSize(new Dimension(480, 320));
         imageLabel = new JLabel(new ImageIcon(canvasImage));
         JScrollPane imageScroll = new JScrollPane(imageView);
         imageView.add(imageLabel);
         //imageLabel.addMouseMotionListener(new ImageMouseMotionListener());
         //imageLabel.addMouseListener(new ImageMouseListener());
-        paneImage.add(imageScroll,BorderLayout.CENTER);
-        
+        paneImage.add(imageScroll, BorderLayout.CENTER);
+
         clear(colorSample);
         clear(canvasImage);
-        
+
     }
-    
+
     /**
      * Méthode venant de BasicPaint
-     * @param image 
+     *
+     * @param image
      */
     public void setImage(BufferedImage image) {
         this.originalImage = image;
         int w = image.getWidth();
         int h = image.getHeight();
-        canvasImage = new BufferedImage(w,h,BufferedImage.TYPE_INT_ARGB);
+        canvasImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g = this.canvasImage.createGraphics();
         g.setRenderingHints(renderingHints);
@@ -608,8 +624,8 @@ public abstract class Interface{
         g.setColor(this.color);
         g.dispose();
 
-        selection = new Rectangle(0,0,w,h); 
-        if (this.imageLabel!=null) {
+        selection = new Rectangle(0, 0, w, h);
+        if (this.imageLabel != null) {
             imageLabel.setIcon(new ImageIcon(canvasImage));
             this.imageLabel.repaint();
         }
@@ -617,8 +633,10 @@ public abstract class Interface{
         //    gui.invalidate();
         //}
     }
-    
-    /** Clears the entire image area by painting it with the current color. */
+
+    /**
+     * Clears the entire image area by painting it with the current color.
+     */
     public void clear(BufferedImage bi) {
         Graphics2D g = bi.createGraphics();
         g.setRenderingHints(renderingHints);
@@ -648,6 +666,5 @@ public abstract class Interface{
     public static int getEpaisseur() {
         return epaisseur;
     }
-    
-    
+
 }

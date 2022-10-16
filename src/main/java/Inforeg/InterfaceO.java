@@ -6,7 +6,6 @@ Auteur : Béryl CASSEL
 Date de création : 08/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
-
 import Inforeg.Graph.GraphO;
 import Inforeg.Draw.Draw;
 import Inforeg.Algo.Connexe;
@@ -37,127 +36,131 @@ import javax.swing.event.ChangeListener;
 
 public class InterfaceO extends Interface implements Connexe {
 
-    public InterfaceO(Draw d){
+    public InterfaceO(Draw d) {
         super(d);
     }
 
-    /** Actions */
-
-    public final AbstractAction Dijkstra = new AbstractAction(){
+    /**
+     * Actions
+     */
+    public final AbstractAction Dijkstra = new AbstractAction() {
         {
-            putValue(Action.NAME,"Dijkstra");
+            putValue(Action.NAME, "Dijkstra");
             putValue(Action.MNEMONIC_KEY, KeyEvent.VK_D);
-            putValue(Action.SHORT_DESCRIPTION,"Applique l'algorithme de Dijkstra pour trouver \n"
-                                            + "le plus court chemin entre 2 sommets \n"
-                                            + "-Cliquez sur le nœud de départ \n"
-                                            + "-Cliquez sur le nœud d'arrivée \n"
-                                            + "(CTRL+D)");
+            putValue(Action.SHORT_DESCRIPTION, "Applique l'algorithme de Dijkstra pour trouver \n"
+                    + "le plus court chemin entre 2 sommets \n"
+                    + "-Cliquez sur le nœud de départ \n"
+                    + "-Cliquez sur le nœud d'arrivée \n"
+                    + "(CTRL+D)");
             putValue(Action.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_D,KeyEvent.CTRL_DOWN_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_D, KeyEvent.CTRL_DOWN_MASK));
         }
 
         @Override
-        public void actionPerformed(ActionEvent e){
-            if (mode==Interface.TRAITEMENT_MODE){
+        public void actionPerformed(ActionEvent e) {
+            if (mode == Interface.TRAITEMENT_MODE) {
                 activeTraitement = Interface.DIJKSTRA_TRAITEMENT;
                 d.reinit();
                 d.repaint();
-                JOptionPane.showMessageDialog(null, "Sélectionnez un sommet de départ et un sommet d'arrivée pour calculer le plus court chemin entre les deux s'il existe.", 
-                                            "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Sélectionnez un sommet de départ et un sommet d'arrivée pour calculer le plus court chemin entre les deux s'il existe.",
+                        "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
             }
         }
     };
 
     public final AbstractAction FordFulkerson = new AbstractAction() {
         {
-            putValue(Action.NAME,"Ford Fulkerson");
+            putValue(Action.NAME, "Ford Fulkerson");
             putValue(Action.MNEMONIC_KEY, KeyEvent.VK_F);
-            putValue(Action.SHORT_DESCRIPTION,"Applique l'algorithme de Ford Fulkerson pour calculer \n"
-                                            + "le flot maximal entre 2 sommets \n"
-                                            + "-Cliquez sur le nœud source \n"
-                                            + "-Cliquez sur le nœud de sortie \n"
-                                            + "(CTRL+F)");
+            putValue(Action.SHORT_DESCRIPTION, "Applique l'algorithme de Ford Fulkerson pour calculer \n"
+                    + "le flot maximal entre 2 sommets \n"
+                    + "-Cliquez sur le nœud source \n"
+                    + "-Cliquez sur le nœud de sortie \n"
+                    + "(CTRL+F)");
             putValue(Action.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_F,KeyEvent.CTRL_DOWN_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK));
         }
+
         @Override
-            public void actionPerformed(ActionEvent ea) {
-                activeTraitement = Interface.FORD_FULKERSON_TRAITEMENT;
-                d.reinit();
-                d.repaint();
-                JOptionPane.showMessageDialog(null, "Sélectionnez un sommet source et un sommet cible pour calculer le flot maximal entre les deux.", 
-                                        "Ford-Fulkerson - Flot maximal", JOptionPane.INFORMATION_MESSAGE);
-            }
+        public void actionPerformed(ActionEvent ea) {
+            activeTraitement = Interface.FORD_FULKERSON_TRAITEMENT;
+            d.reinit();
+            d.repaint();
+            JOptionPane.showMessageDialog(null, "Sélectionnez un sommet source et un sommet cible pour calculer le flot maximal entre les deux.",
+                    "Ford-Fulkerson - Flot maximal", JOptionPane.INFORMATION_MESSAGE);
+        }
     };
 
     public final AbstractAction ConnexiteO = new AbstractAction() {
         {
-            putValue(Action.NAME,"Connexité");
+            putValue(Action.NAME, "Connexité");
             putValue(Action.MNEMONIC_KEY, KeyEvent.VK_L);
-            putValue(Action.SHORT_DESCRIPTION,"Vérifie si le graphe est fortement connexe \n"
-                                            + "(CTRL+L)");
+            putValue(Action.SHORT_DESCRIPTION, "Vérifie si le graphe est fortement connexe \n"
+                    + "(CTRL+L)");
             putValue(Action.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_L,KeyEvent.CTRL_DOWN_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK));
         }
+
         @Override
-            public void actionPerformed(ActionEvent ea) {
-                if (mode==Interface.TRAITEMENT_MODE){
-                    if (connexe((GraphO) d.getG())){
-                        JOptionPane.showMessageDialog(d, "Le graphe est fortement connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        JOptionPane.showMessageDialog(d, "Le graphe n'est pas fortement connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
-                    }
+        public void actionPerformed(ActionEvent ea) {
+            if (mode == Interface.TRAITEMENT_MODE) {
+                if (connexe((GraphO) d.getG())) {
+                    JOptionPane.showMessageDialog(d, "Le graphe est fortement connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(d, "Le graphe n'est pas fortement connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
+        }
     };
 
     public final AbstractAction ExportGraphO = new AbstractAction() {
         {
-            putValue(Action.NAME,"Export Matrice d'Adjacence");
+            putValue(Action.NAME, "Export Matrice d'Adjacence");
             putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
-            putValue(Action.SHORT_DESCRIPTION,"Affiche la matrice d'adjacence du graphe (CTRL+A)");
+            putValue(Action.SHORT_DESCRIPTION, "Affiche la matrice d'adjacence du graphe (CTRL+A)");
             putValue(Action.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_A,KeyEvent.CTRL_DOWN_MASK));
+                    KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
         }
+
         @Override
-            public void actionPerformed(ActionEvent ea) {
-                d.exportGraphe();
-                JOptionPane.showMessageDialog(d, "La matrice d'adjacence du graphe orienté est :\n\n" + d.getG().afficher(), "Matrice d'adjacence", JOptionPane.INFORMATION_MESSAGE);
-            }
+        public void actionPerformed(ActionEvent ea) {
+            d.exportGraphe();
+            JOptionPane.showMessageDialog(d, "La matrice d'adjacence du graphe orienté est :\n\n" + d.getG().afficher(), "Matrice d'adjacence", JOptionPane.INFORMATION_MESSAGE);
+        }
     };
 
     /**
      * JPanel pour les boutons 
-     **/
-    
+     *
+     */
     @Override
-    public void initToolBar(){
+    public void initToolBar() {
         //paneButtons = new JPanel();
         toolBarButtons = new JToolBar(null, JToolBar.VERTICAL);
         //Panel le long de l'axe Y
         toolBarButtons.setLayout(new BoxLayout(toolBarButtons, BoxLayout.Y_AXIS));
-        
+
         //intialise les boutons 
         select = new JRadioButton("Select");
         noeud = new JRadioButton("Noeud");
-        arc = new JRadioButton("Arc"); 
+        arc = new JRadioButton("Arc");
         label = new JRadioButton("Label");
         edition = new JRadioButton("Édition");
         traitement = new JRadioButton("Traitement");
-        
+
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
-        
+
         JButton colorButton = new JButton("Color");
         colorButton.setMnemonic('o');
         colorButton.setToolTipText("Choose a Color");
         ActionListener colorListener;
         colorListener = (ActionEvent arg0) -> {
             Color c = JColorChooser.showDialog(frame, "Choose a color", color);
-            if (c!=null) {
-                for (int i=1;i<colorSample.getHeight();i++){
-                    for (int j=1;j<colorSample.getHeight();j++){
-                        colorSample.setRGB(i,j,c.getRGB());
+            if (c != null) {
+                for (int i = 1; i < colorSample.getHeight(); i++) {
+                    for (int j = 1; j < colorSample.getHeight(); j++) {
+                        colorSample.setRGB(i, j, c.getRGB());
                     }
                 }
                 setColor(c);
@@ -168,21 +171,21 @@ public class InterfaceO extends Interface implements Connexe {
         colorButton.setIcon(new ImageIcon(colorSample));
         toolBarButtons.add(colorButton);
         setColor(this.color);
-        
+
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
-        
+
         //Taille
-        final SpinnerNumberModel spinnerNumTaille = new SpinnerNumberModel(20,1,100,1);
+        final SpinnerNumberModel spinnerNumTaille = new SpinnerNumberModel(20, 1, 100, 1);
         JSpinner spinnerTaille = new JSpinner(spinnerNumTaille);
         ChangeListener listenerTaille = new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent arg0) {
                 Object o = spinnerNumTaille.getValue();
-                Integer i = (Integer)o; 
+                Integer i = (Integer) o;
                 taille = i;
                 d.tailleCirc();
-                } 
+            }
         };
         spinnerTaille.addChangeListener(listenerTaille);
         spinnerTaille.setMaximumSize(spinnerTaille.getPreferredSize());
@@ -193,18 +196,18 @@ public class InterfaceO extends Interface implements Connexe {
         spinnerTaille.setAlignmentX(JSpinner.LEFT_ALIGNMENT);
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
-        
+
         //Epaisseur
-        final SpinnerNumberModel spinnerNumEpaisseur = new SpinnerNumberModel(20,1,100,1);
+        final SpinnerNumberModel spinnerNumEpaisseur = new SpinnerNumberModel(20, 1, 100, 1);
         JSpinner spinnerEpaisseur = new JSpinner(spinnerNumEpaisseur);
         ChangeListener strokeListener = new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent arg0) {
                 Object o = spinnerNumEpaisseur.getValue();
-                Integer i = (Integer)o; 
-                epaisseur= i;
+                Integer i = (Integer) o;
+                epaisseur = i;
                 d.epaisseurLines();
-                } 
+            }
         };
         spinnerEpaisseur.addChangeListener(strokeListener);
         spinnerEpaisseur.setMaximumSize(spinnerEpaisseur.getPreferredSize());
@@ -216,8 +219,7 @@ public class InterfaceO extends Interface implements Connexe {
         spinnerEpaisseur.setAlignmentX(JSpinner.LEFT_ALIGNMENT);
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
-        
-        
+
         JLabel l1 = new JLabel("  Édition");
         JLabel l2 = new JLabel("  Mode");
         //On crée un ButtonGroup pour que seul l'un puisse être activé à la fois 
@@ -245,39 +247,39 @@ public class InterfaceO extends Interface implements Connexe {
 
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
-        JLabel l = new JLabel("  Traitement"); 
+        JLabel l = new JLabel("  Traitement");
         toolBarButtons.add(l);
         toolBarButtons.addSeparator();
-          
+
         //Action Listener
         ActionListener toolGroupListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (ae.getSource()==select) { 
+                if (ae.getSource() == select) {
                     activeTool = SELECT_TOOL;
-                } else if (ae.getSource()==noeud) {
-                    activeTool = NOEUD_TOOL;   
-                } else if (ae.getSource()==arc) {
+                } else if (ae.getSource() == noeud) {
+                    activeTool = NOEUD_TOOL;
+                } else if (ae.getSource() == arc) {
                     activeTool = ARC_TOOL;
-                } else if (ae.getSource()==label){
+                } else if (ae.getSource() == label) {
                     activeTool = LABEL_TOOL;
-                } 
+                }
 
             }
         };
         ActionListener modeGroupListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                if (ae.getSource()==edition) {
+                if (ae.getSource() == edition) {
                     mode = EDITION_MODE;
                     select.setEnabled(true);
                     noeud.setEnabled(true);
                     arc.setEnabled(true);
                     label.setEnabled(true);
-                    Dijkstra.setEnabled(false); 
+                    Dijkstra.setEnabled(false);
                     FordFulkerson.setEnabled(false);
                     ConnexiteO.setEnabled(false);
-                } else if (ae.getSource()==traitement) {
+                } else if (ae.getSource() == traitement) {
                     d.reinit();
                     d.repaint();
                     mode = TRAITEMENT_MODE;
@@ -285,7 +287,7 @@ public class InterfaceO extends Interface implements Connexe {
                     noeud.setEnabled(false);
                     arc.setEnabled(false);
                     label.setEnabled(false);
-                    Dijkstra.setEnabled(true); 
+                    Dijkstra.setEnabled(true);
                     FordFulkerson.setEnabled(true);
                     ConnexiteO.setEnabled(true);
                     d.exportGraphe();
@@ -305,20 +307,20 @@ public class InterfaceO extends Interface implements Connexe {
         toolBarButtons.setAlignmentX(FlowLayout.CENTER);
         toolBarButtons.setFloatable(false);
         toolBarButtons.setBorderPainted(true);
-        
+
     }
 
     @Override
-    public void addToolBar(){
+    public void addToolBar() {
         toolBarButtons.add(Dijkstra);
         toolBarButtons.addSeparator();
         toolBarButtons.add(FordFulkerson);
         toolBarButtons.addSeparator();
         toolBarButtons.add(ConnexiteO);
     }
-    
+
     @Override
-    public void addMenuBar(){
+    public void addMenuBar() {
         JMenu traitMenu = new JMenu("Traitement");
         traitMenu.add(Dijkstra);
         traitMenu.add(FordFulkerson);
@@ -326,5 +328,5 @@ public class InterfaceO extends Interface implements Connexe {
         menuBar.add(traitMenu);
         exporter.add(new JMenuItem(ExportGraphO));
     }
-    
+
 }
