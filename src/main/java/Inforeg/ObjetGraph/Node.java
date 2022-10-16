@@ -12,13 +12,11 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import Inforeg.UI.Vector2D;
-
 /**
  *
  * @author inky19
  */
 public class Node extends Ellipse2D.Double {
-
     // Global coordinate of the node
     private double cx;
     private double cy;
@@ -28,60 +26,62 @@ public class Node extends Ellipse2D.Double {
     private Color color;
     private String label;
     private int id;
-
-    public Node() {
+    
+    public Node(){
         super();
-        this.cx = 0;
+        this.
+        cx = 0;
         cy = 0;
         label = "";
         this.id = 0;
     }
-
-    public Node(double cx, double cy, double r, String label, int id) {
+    
+    public Node(double cx, double cy, double r, String label, int id){
         this.cx = cx;
         this.cy = cy;
-        this.r = r;
+        this.r  = r;
         this.color = Color.WHITE;
         this.id = id;
         this.label = label;
     }
-
-    public Node(double cx, double cy, double width, double height, Color color, String label, int id) {
-        super(cx - width / 2, cy - height / 2, width, height);
+    
+    public Node(double cx, double cy, double r, Color color, String label, int id){
+        //super(cx-width/2,cy-height/2,width,height);
         this.cx = cx;
         this.cy = cy;
+        this.r = r;
         this.color = color;
         this.label = label;
         this.id = id;
     }
-
-    public void updateSize(double r) {
+    
+    public void updateSize(double r){
         super.height = height;
         super.width = width;
-        super.x = cx - width / 2;
-        super.y = cy - height / 2;
+        super.x = cx-width/2;
+        super.y = cy-height/2;
         this.r = r;
     }
-
-    public void updatePos(double x, double y) {
+    
+    public void updatePos(double x, double y){       
         cx = x;
         cy = y;
     }
-
+    
     public void paint(Draw d, Graphics2D g, boolean selected) {
         // Update position and scale
-        Vector2D v = d.toDrawCoordinates(cx - r, cy - r);
+        Vector2D v = d.toDrawCoordinates(cx-r, cy-r);
         this.x = v.x;
         this.y = v.y;
-        double h = d.toDrawScale(2 * r);
+        double h = d.toDrawScale(2*r);
         this.height = h;
         this.width = h;
-
-        g.setStroke(new BasicStroke((float) d.toDrawScale(7)));
+        
+        g.setStroke(new BasicStroke((float)d.toDrawScale(7)));
         //Outline
-        if (selected) {
-            g.setPaint(Color.GREEN);
-        } else {
+        if(selected){
+            g.setPaint(Color.GREEN); 
+        }else{
             g.setPaint(Color.BLACK);
         }
         g.draw(this);
@@ -92,7 +92,7 @@ public class Node extends Ellipse2D.Double {
         g.fill(this);
         //Label
         if (label != null) {
-            Font font = new Font("Arial", Font.PLAIN, (int) d.toDrawScale(15));
+            Font font = new Font("Arial",Font.PLAIN,(int) d.toDrawScale(15));
             FontMetrics metrics = g.getFontMetrics(font);
             // Determine the X coordinate for the text
             int font_x = (int) (this.x + (this.width - metrics.stringWidth(label)) / 2);
@@ -101,7 +101,7 @@ public class Node extends Ellipse2D.Double {
             // Set the font
             g.setColor(Color.BLACK);
             g.setFont(font);
-            g.drawString(label, font_x, font_y);
+            g.drawString(label,font_x,font_y);
         }
     }
 
@@ -112,8 +112,8 @@ public class Node extends Ellipse2D.Double {
     public void setCx(double cx) {
         this.cx = cx;
     }
-
-    public void addCx(double dx) {
+    
+    public void addCx(double dx){
         this.cx += dx;
     }
 
@@ -124,8 +124,8 @@ public class Node extends Ellipse2D.Double {
     public void setCy(double cy) {
         this.cy = cy;
     }
-
-    public void addCy(double dy) {
+    
+    public void addCy(double dy){
         this.cy += dy;
     }
 
@@ -140,14 +140,7 @@ public class Node extends Ellipse2D.Double {
     public Color getColor() {
         return color;
     }
-
-    public String getColorHex() {
-        String r = Integer.toHexString(color.getRed());
-        String g = Integer.toHexString(color.getGreen());
-        String b = Integer.toHexString(color.getBlue());
-        return (r + g + b);
-    }
-
+    
     public void setColor(Color color) {
         this.color = color;
     }
@@ -163,5 +156,7 @@ public class Node extends Ellipse2D.Double {
     public int getId() {
         return id;
     }
-
+    
+    
+    
 }

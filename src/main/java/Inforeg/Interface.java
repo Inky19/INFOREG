@@ -158,32 +158,15 @@ public abstract class Interface {
             // Si un fichier de sauvegarde existe déjà, on l'écrase et on effectue une nouvelle sauvegarde
             if (d.getPathSauvegarde() != " ") {
                 File f = new File(d.getPathSauvegarde());
-                (new SauvDraw(f)).sauvegarderDraw(d);
+                saveManager.saveToFile(d, d.getPathSauvegarde());
                 // Sinon, on créé un nouveau fichier de sauvegarde
             } else {
                 System.out.println("save");
-                String name = saveManager.save(d);
-                System.out.println("Tab name :" + name);
-                if (name != null) {
-                    tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), name);
+                saveManager.save(d);
+                System.out.println("Tab name :" + d.getFileName());
+                if (d != null) {
+                    tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
                 }
-                /*
-                try {
-                    JFileChooser dialogue = new JFileChooser(".");
-                    if (dialogue.showOpenDialog(null)==JFileChooser.APPROVE_OPTION){
-                        File fichier = dialogue.getSelectedFile();
-                        String source = fichier.getName();
-                        if (source.length() < 8 || !source.toLowerCase().substring(source.length()-8).equals(".inforeg")) {
-                            d.setPathSauvegarde(fichier.getPath() + ".inforeg");
-                        } else {
-                            d.setPathSauvegarde(fichier.getPath());
-                        }
-                        (new SauvDraw(fichier)).sauvegarderDraw(d);
-                    }
-                } catch (Exception NullPointerException){
-                    System.out.println("Opération annulée");
-                }
-                 */
             }
         }
     ;
@@ -296,14 +279,7 @@ public abstract class Interface {
         ActionListener listener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String title = "Graphe " + String.valueOf(tabsPanel.getTabCount());
-                Draw newD = new Draw();
-                newD.setPondere(d.getPondere());
-                newD.setOriente(d.getOriente());
-                newD.setInterface(Interface.this);
-                tabsPanel.addTab(title, tabIco, newD);
-                tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, tabIco));
-                tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
+                addNewTab();
             }
         };
 
@@ -320,12 +296,14 @@ public abstract class Interface {
                         tabsPanel.setSelectedIndex(currentTab);
                     }
                 }
-                System.out.println("Tab changed to: " + sourceTabbedPane.getTitleAt(index));
-
             }
         };
-
-        tabsPanel.addTab("Graphe 1", tabIco, d);
+        if (d.getFileName() == null || d.getFileName().equals("")){
+            tabsPanel.addTab("Graphe 1", tabIco, d);
+        } else {
+            tabsPanel.addTab(d.getFileName(), tabIco, d);
+        }
+        
         tabsPanel.setTabComponentAt(1, new ButtonTabComponent(tabsPanel, tabIco));
         //tabsPanel.setMnemonicAt(0, KeyEvent.VK_1);
         addTabButton.setFocusable(false);
@@ -336,12 +314,42 @@ public abstract class Interface {
         tabsPanel.setVisible(true);
 
     }
+    
+    private void addNewTab(){
+        String title = "Graphe " + String.valueOf(tabsPanel.getTabCount());
+        ImageIcon tabIco = new ImageIcon("asset/icons/tab.png");
+        Draw newD = new Draw();
+        newD.setPondere(d.getPondere());
+        newD.setOriente(d.getOriente());
+        newD.setInterface(Interface.this);
+        tabsPanel.addTab(title, tabIco, newD);
+        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, tabIco));
+        tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
+    }
+    
+    private void addNewTab(Draw newD){
+        ImageIcon tabIco = new ImageIcon("asset/icons/tab.png");
+        newD.setInterface(Interface.this);
+        tabsPanel.addTab(newD.getFileName(), tabIco, newD);
+        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, tabIco));
+        tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
+    }
 
     public void initLeftMenuBar() {
 
         menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("Fichier");
         JMenuItem ouvrir = new JMenuItem("Ouvrir");
+        ouvrir.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent ae){
+                Draw newD = saveManager.load();
+                newD.repaint();
+                d = newD;
+                addNewTab(newD);                
+            }
+        });
+        
         exporter = new JMenu("Exporter");
 
         JMenuItem exportLatex = new JMenuItem("Exporter au format LaTeX");

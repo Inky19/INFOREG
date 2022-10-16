@@ -85,13 +85,14 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * Valeur du prochain id disponible pour créer un noeud
      */
     private int nextNodeId;
-
+    
     private int src = -1;
     private int dest = -1;
     public int oriente = -1;
     public static final int ORIENTE = 0;
     public static final int NONORIENTE = 1;
     private String pathSauvegarde = " ";
+    private String fileName;
 
     //Pour les Arcs :
     /**
@@ -209,6 +210,10 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         return numOfCircles;
     }
 
+    public void setNumOfCircles(int numOfCircles) {
+        this.numOfCircles = numOfCircles;
+    }
+    
     public String getPathSauvegarde() {
         return pathSauvegarde;
     }
@@ -229,6 +234,10 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         return numOfLines;
     }
 
+    public void setNumOfLines(int numOfLines) {
+        this.numOfLines = numOfLines;
+    }
+    
     public void setCurrentColor(Color c) {
         this.currentColor = c;
     }
@@ -249,7 +258,18 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         this.Interface = inter;
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+    
+    
+
     public Draw() {
+        fileName = "";
         nextNodeId = 0;
         this.setLayout(new BorderLayout());
         JToolBar tools = new JToolBar(null, JToolBar.HORIZONTAL);
@@ -296,6 +316,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         if (currentCircleIndex < 0 && currentArcIndex < 0) { // not inside a circle
                             add(x, y);
                             // On ajoute l'action à la pile
+                            System.out.println("Added node");
                             transitions.createLog("addCircle", nodes.get(numOfCircles - 1));
                         }
                     }
@@ -543,6 +564,20 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         float h = r.height;
         float w = r.width;
         return new Vector2D((x - w / 2) * zoom / 100 + w / 2 + cameraX, (y - h / 2) * zoom / 100 + h / 2 + cameraY);
+    }
+    
+    /**
+     * Renvoie le nœud correspondant à l'id en paramètre dans la liste nodes.
+     * @param id Id du nœud recherché
+     * @return Nœud correspondant à l'id en paramètre. Renvoie null si non trouvé.
+     */
+    public Node getNodeFromId(int id){
+        for (Node node: nodes){
+            if (node.getId() == id){
+                return node;
+            }
+        }
+        return null;
     }
 
     /**
@@ -887,4 +922,5 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         }
     }
 
+    
 }

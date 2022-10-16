@@ -8,7 +8,9 @@ import Inforeg.ObjetGraph.Arc;
 import Inforeg.Draw.Draw;
 import Inforeg.Interface;
 import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Nail;
 import Inforeg.ObjetGraph.Node;
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,7 +37,7 @@ public abstract class saveManager {
      *
      * @param d Draw à sauvegarder
      */
-    public static String save(Draw d) {
+    public static void save(Draw d) {
         JFileChooser fileExplorer = new JFileChooser();
         int res = fileExplorer.showOpenDialog(null);
         if (res == JFileChooser.APPROVE_OPTION) {
@@ -43,10 +45,10 @@ public abstract class saveManager {
             String[] filePath = formatPath(file);
             String name = filePath[0];
             String path = filePath[1];
+            d.setPathSauvegarde(path);
+            d.setFileName(name.substring(0, name.length() - 8)); // Nom sans l'extension .inforeg
             saveToFile(d, path);
-            return name.substring(0, name.length() - 8);
         }
-        return null;
     }
 
     /**
@@ -61,7 +63,7 @@ public abstract class saveManager {
             BufferedWriter fileBuffer = new BufferedWriter(new FileWriter(path));
 
             // Ligne contenant des informations sur le type de graphe et sur la version du logiciel avec laquelle le fichier a été généré
-            fileBuffer.write("Inforeg " + Interface.VERSION + sep + d.getPondere() + sep + d.getOriente() + sep + d.getNextNodeId());
+            fileBuffer.write("Inforeg" + sep + Interface.VERSION + sep + d.getPondere() + sep + d.getOriente() + sep + d.getNextNodeId());
             fileBuffer.newLine();
 
             // Sauvegarde des nœuds
@@ -71,18 +73,18 @@ public abstract class saveManager {
             ArrayList<Node> nodes = d.getNodes();
             for (Node node : nodes) {
                 fileBuffer.newLine();
-                fileBuffer.write("Node" + sep + node.getId() + sep + node.getLabel() + sep + node.getCx() + sep + node.getCy() + sep + node.getR() + sep + node.getColorHex());
+                fileBuffer.write("Node" + sep + node.getId() + sep + node.getLabel() + sep + node.getCx() + sep + node.getCy() + sep + node.getR() + sep + color2Hex(node.getColor()));
             }
 
             // Sauvegarde des arcs
             // Structure d'une ligne :
-            // Arc, <lablel nœud1>, <lablel nœud2>, <clouX>, <clouY>, <ponderation>
+            // Arc, <id nœud1>, <id nœud2>, <clouX>, <clouY>, <ponderation>
             fileBuffer.newLine();
             fileBuffer.write("########## ARCS ##########");
             ArrayList<MyLine> arcs = d.getLines();
             for (MyLine arc : arcs) {
                 fileBuffer.newLine();
-                fileBuffer.write("Arc" + sep + arc.getFrom().getId() + sep + arc.getTo().getId() + sep + arc.getClou().getCx() + sep + arc.getClou().getCy() + arc.getPoids());
+                fileBuffer.write("Arc" + sep + arc.getFrom().getId() + sep + arc.getTo().getId() + sep + arc.getClou().getCx() + sep + arc.getClou().getCy() + sep + arc.getClou().getR() + sep + arc.getPoids() + sep + color2Hex(arc.getColor()));
             }
             fileBuffer.flush();
             fileBuffer.close();
@@ -91,7 +93,7 @@ public abstract class saveManager {
         }
     }
 
-    public Draw load() {
+    public static Draw load() {
         JFileChooser fileExplorer = new JFileChooser();
         int res = fileExplorer.showOpenDialog(null);
 
@@ -102,11 +104,58 @@ public abstract class saveManager {
             String path = filePath[1];
 
             Draw d = new Draw();
+            d.setFileName(name.substring(0, name.length() - 8)); // Nom sans l'extension .inforeg
             d.setPathSauvegarde(path);
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(file));
+
                 String line = reader.readLine();
-                String[] data = line.split(sep);
+                while (line != null) {
+                    String[] data = line.split(sep);
+                    String colorHex = "";
+                    Color color = Color.BLACK;
+                    switch (data[0]) {
+                        case "Node":
+                            int id = Integer.parseInt(data[1]);
+                            String label = data[2];
+                            double cx = Double.parseDouble(data[3]);
+                            double cy = Double.parseDouble(data[4]);
+                            double r = Double.parseDouble(data[5]);
+                            colorHex = data[6];
+                            color = hex2Color(colorHex);
+
+                            Node node = new Node(cx, cy, r, color, label, id);
+                            d.getNodes().add(node);
+                            break;
+                        case "Arc":
+                            int id1 = Integer.parseInt(data[1]);
+                            int id2 = Integer.parseInt(data[2]);
+                            double nailx = Double.parseDouble(data[3]);
+                            double naily = Double.parseDouble(data[4]);
+                            double radius = Double.parseDouble(data[5]);
+                            int pond = Integer.parseInt(data[6]);
+                            colorHex = data[7];
+                            
+                            Node n1 = d.getNodeFromId(id1);
+                            Node n2 = d.getNodeFromId(id2);
+                            Nail nail = new Nail(nailx, naily, radius);
+                            color = hex2Color(colorHex);
+                            MyLine arc = new MyLine(n1, n2, pond, color, nail);
+                            d.getLines().add(arc);
+
+                            break;
+                        case "Inforeg":
+                            d.setPondere(Boolean.parseBoolean(data[2]));
+                            d.setOriente(Integer.parseInt(data[3]));
+                            d.setNextNodeId(Integer.parseInt(data[4]));
+                            break;
+                    }
+                    line = reader.readLine();
+                }
+                d.setNumOfCircles(d.getNodes().size());
+                d.setNumOfLines(d.getLines().size());
+                reader.close();
+                return d;
 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Une erreur s'est produite lors de la lecture du fichier.", "Erreur de chargement", JOptionPane.ERROR_MESSAGE);
@@ -135,5 +184,25 @@ public abstract class saveManager {
             path = file.getPath();
         }
         return new String[]{name, path};
+    }
+
+    public static String color2Hex(Color color) {
+        String r = Integer.toHexString(color.getRed());
+        String g = Integer.toHexString(color.getGreen());
+        String b = Integer.toHexString(color.getBlue());
+        String[] rgb = new String[] {r,g,b};
+        for (int i = 0; i < 3; i++){
+            if (rgb[i].length()<2){
+                rgb[i] = "0" + rgb[i];
+            }
+        }
+        return (rgb[0] + rgb[1] + rgb[2]);
+    }
+
+    public static Color hex2Color(String colorHex) {
+        int R = Integer.decode("0x" + colorHex.substring(0, 2));
+        int G = Integer.decode("0x" + colorHex.substring(2, 4));
+        int B = Integer.decode("0x" + colorHex.substring(4, 6));
+        return new Color(R, G, B);
     }
 }
