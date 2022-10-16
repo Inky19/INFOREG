@@ -9,6 +9,7 @@ Date de dernière modification : 18/03/2022
 Commentaires ajoutés
 =============================================*/
 import Inforeg.Draw.Draw;
+import Inforeg.Save.saveManager;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -88,37 +89,13 @@ public class StartMenu {
         charge.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                //On parcours le répertoire de fichiers
-                JFileChooser dialogue = new JFileChooser(".");
-                if (dialogue.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                    File fichier = dialogue.getSelectedFile();
-                    String source = fichier.getName();
-
-                    //Si le fichier n'a pas pour extension ".inforeg" on ne l'accepte pas
-                    if (source.length() < 8 || !source.toLowerCase().substring(source.length() - 8).equals(".inforeg")) {
-                        JOptionPane.showMessageDialog(null, "Seuls les fichiers inforeg sont acceptés !", "Mauvaise extension !", JOptionPane.INFORMATION_MESSAGE);
-                    } else {
-                        try {
-                            Draw d = (new ChargeDraw(fichier)).chargerDraw();
-                            switch (d.getOriente()) {
-                                case Draw.ORIENTE:
-                                    SwingUtilities.invokeLater(new InterfaceO(d)::createAndShowGui);
-                                    break;
-                                case Draw.NONORIENTE:
-                                    SwingUtilities.invokeLater(new InterfaceNO(d)::createAndShowGui);
-                                    break;
-                                default:
-                                    JOptionPane.showMessageDialog(null, "Sauvegarde inexistante", "No Save !!", JOptionPane.INFORMATION_MESSAGE);
-                                    break;
-                            }
-
-                            // Si le fichier est mal écrit:
-                        } catch (Exception e) {
-                            JOptionPane.showMessageDialog(null, "Le fichier sélectionné ne peut pas être utilisé", "Fichier corrompu !", JOptionPane.INFORMATION_MESSAGE);
-                        }
-
-                    }
+                Draw d = saveManager.load();
+                if (d.getOriente()==Draw.ORIENTE){
+                    SwingUtilities.invokeLater(new InterfaceO(d)::createAndShowGui);
+                } else {
+                    SwingUtilities.invokeLater(new InterfaceNO(d)::createAndShowGui);
                 }
+                J.dispatchEvent(new WindowEvent(J, WindowEvent.WINDOW_CLOSING));
             }
         });
 

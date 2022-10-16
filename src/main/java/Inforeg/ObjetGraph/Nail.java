@@ -63,4 +63,9 @@ public class Nail extends Ellipse2D.Double {
         return cy;
     }
 
+    public double getR() {
+        return r;
+    }
+    
+    
 }

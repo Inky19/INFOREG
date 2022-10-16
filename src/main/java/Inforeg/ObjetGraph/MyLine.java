@@ -35,7 +35,7 @@ public class MyLine {
     /**
      * Couleur
      */
-    private Color c;
+    private Color color;
     /**
      * Nail
      */
@@ -58,11 +58,18 @@ public class MyLine {
         this.from = fromPoint;
         this.to = toPoint;
         this.poids = pds;
-        this.c = c;
+        this.color = c;
         int x = (int) (from.getCx() + to.getCx()) / 2;
         int y = (int) (from.getCy() + to.getCy()) / 2;
-        System.out.println(x + " " + y);
         this.clou = new Nail(x, y, RCLOU, c);
+    }
+    
+    public MyLine(Node fromPoint, Node toPoint, int pds, Color c, Nail nail){
+        this.from = fromPoint;
+        this.to = toPoint;
+        this.poids = pds;
+        this.color = c;
+        this.clou = nail;
     }
 
     public Nail getClou() {
@@ -70,7 +77,7 @@ public class MyLine {
     }
 
     public void paint(Draw d, Graphics2D g, boolean selected) {
-        g.setPaint(c);
+        g.setPaint(color);
         g.setStroke(new BasicStroke((float) d.toDrawScale(LINE_WIDTH)));
         Vector2D v1 = d.toDrawCoordinates(from.getCx(), from.getCy());
         Vector2D v3 = d.toDrawCoordinates(clou.cx, clou.cy);
@@ -95,7 +102,7 @@ public class MyLine {
 
             clou.paint(d, g, selected);
 
-            g.setPaint(c); //reset color pour poids
+            g.setPaint(color); //reset color pour poids
             if (d.oriente == Draw.ORIENTE) {
                 int[] t = new int[4];
                 int x4 = (x3 + x2) / 2;
@@ -117,11 +124,11 @@ public class MyLine {
     }
 
     public Color getC() {
-        return c;
+        return color;
     }
 
     public void setC(Color col) {
-        this.c = col;
+        this.color = col;
     }
 
     /**
@@ -177,4 +184,9 @@ public class MyLine {
         this.clou = nouv;
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    
 }
