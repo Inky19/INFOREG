@@ -8,7 +8,6 @@ Date de création : 11/03/2022
 Date de dernière modification : 18/03/2022
 Commentaires ajoutés
 =============================================*/
-
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.MyLine;
 import Inforeg.ObjetGraph.Nail;
@@ -35,25 +34,27 @@ public class ChargeDraw {
 
     /**
      * Constructeur d'une charge
+     *
      * @param source : fichier à charger
      */
-    public ChargeDraw(File source){
+    public ChargeDraw(File source) {
         this.source = source;
     }
 
     /**
      * Méthode renvoyant un Draw correspondant à la charge
+     *
      * @param inter
      * @return un Draw à afficher dans notre interface
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public Draw chargerDraw() throws FileNotFoundException, IOException{
+    public Draw chargerDraw() throws FileNotFoundException, IOException {
         Draw d = new Draw();
         //On mémorise le chemin d'accès au fichier dans le Draw pour faciliter sa sauvegarde future
         d.setPathSauvegarde(this.source.getPath());
 
-        try (BufferedReader fichier = new BufferedReader(new FileReader(source.getPath()))) {
+        try ( BufferedReader fichier = new BufferedReader(new FileReader(source.getPath()))) {
             String ligne = fichier.readLine();
             StringTokenizer tokenizer = new StringTokenizer(ligne, del);
 
@@ -65,36 +66,37 @@ public class ChargeDraw {
             d.setCircleW((double) Integer.parseInt(tokenizer.nextToken()));
             d.setLineWidth((float) Integer.parseInt(tokenizer.nextToken()));
             int b = Integer.parseInt(tokenizer.nextToken());
-            if (b==0){
+            if (b == 0) {
                 d.setPondere(false);
             }
 
             //On ajoute les cercles sauvegardés au Draw
-            for (int j=0;j<nC;j++){
-                addCircle(fichier.readLine(),j, d);
+            for (int j = 0; j < nC; j++) {
+                addCircle(fichier.readLine(), j, d);
             }
             //On ajoute les arcs sauvegardés au Draw
-            for (int i=0;i<nA;i++){
+            for (int i = 0; i < nA; i++) {
                 addArc(fichier.readLine(), d);
             }
             fichier.close();
         }
         return d;
     }
-    
+
     /**
      * Ajoute un cercle sauvegardé au Draw passé en paramètre
+     *
      * @param ligne : ligne de sauvegarde du cercle (coordonnées, label)
      * @param ind : indice du cercle dans la liste d.circ
      * @param d : Draw à modifier
      */
-    private void addCircle(String ligne, int ind, Draw d){
+    private void addCircle(String ligne, int ind, Draw d) {
         StringTokenizer tokenizer = new StringTokenizer(ligne, del);
 
         //On rajout ele cercle à la liste d.circ
         int x = Integer.parseInt(tokenizer.nextToken());
         int y = Integer.parseInt(tokenizer.nextToken());
-        d.add(x,y);
+        d.add(x, y);
 
         //On ajoute le label du cercle à la liste d.circLbl
         d.getNodes().get(ind).setLabel(tokenizer.nextToken());
@@ -102,24 +104,26 @@ public class ChargeDraw {
 
     /**
      * Ajoute un arc au Draw passé en paramètre
-     * @param ligne : ligne de sauvegarde de l'arc (nœuds correspondants, poids, clou)
+     *
+     * @param ligne : ligne de sauvegarde de l'arc (nœuds correspondants, poids,
+     * clou)
      * @param d : Draw à modifier
      */
-    private void addArc(String ligne, Draw d){
+    private void addArc(String ligne, Draw d) {
         StringTokenizer tokenizer = new StringTokenizer(ligne, del);
         int x1 = Integer.parseInt(tokenizer.nextToken());
         int y1 = Integer.parseInt(tokenizer.nextToken());
         int x2 = Integer.parseInt(tokenizer.nextToken());
         int y2 = Integer.parseInt(tokenizer.nextToken());
-        Node from = d.getNodes().get(d.findEllipse(x1,y1));
-        Node to = d.getNodes().get(d.findEllipse(x2,y2));
+        Node from = d.getNodes().get(d.findEllipse(x1, y1));
+        Node to = d.getNodes().get(d.findEllipse(x2, y2));
         int p = Integer.parseInt(tokenizer.nextToken());
         int rgb = Integer.parseInt(tokenizer.nextToken());
         Color c = new Color(rgb);
-        MyLine arc = new MyLine(from,to, p, c);
+        MyLine arc = new MyLine(from, to, p, c);
         int x3 = Integer.parseInt(tokenizer.nextToken());
         int y3 = Integer.parseInt(tokenizer.nextToken());
-        Nail clou = new Nail(x3,y3,MyLine.RCLOU);
+        Nail clou = new Nail(x3, y3, MyLine.RCLOU);
         arc.setClou(clou);
         d.addLine(arc);
     }

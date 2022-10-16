@@ -6,34 +6,29 @@ Auteur : Jorge QUISPE CCAMA
 Date de création : 04/02/2022
 Date de dernière modification : 28/03/2022
 =============================================*/
-
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.GraphO;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
-public class FordFulkerson implements Processing{
-    
-
+public class FordFulkerson implements Processing {
 
     /* Returns true if there is a path from source 's' to
       sink 't' in residual graph. Also fills parent[] to
       store the path */
-    
-    
-    private boolean bfs(int rGraph[][], int s, int t, int parent[], int V)
-    {
+    private boolean bfs(int rGraph[][], int s, int t, int parent[], int V) {
         // Create a visited array and mark all vertices as
         // not visited
         boolean visited[] = new boolean[V];
-        for (int i = 0; i < V; ++i)
+        for (int i = 0; i < V; ++i) {
             visited[i] = false;
+        }
 
         // Create a queue, enqueue source vertex and mark
         // source vertex as visited
         LinkedList<Integer> queue
-            = new LinkedList<Integer>();
+                = new LinkedList<Integer>();
         queue.add(s);
         visited[s] = true;
         parent[s] = -1;
@@ -44,7 +39,7 @@ public class FordFulkerson implements Processing{
 
             for (int v = 0; v < V; v++) {
                 if (visited[v] == false
-                    && rGraph[u][v] > 0) {
+                        && rGraph[u][v] > 0) {
                     // If we find a connection to the sink
                     // node, then there is no point in BFS
                     // anymore We just have to set its parent
@@ -67,29 +62,28 @@ public class FordFulkerson implements Processing{
 
     // Returns tne maximum flow from s to t in the given
     // graph
-    public void fordFulkerson(Draw d, int src, int dest)
-    {
-        
-        
+    public void fordFulkerson(Draw d, int src, int dest) {
+
         GraphO g = (GraphO) d.getG();
-        
+
         int V = g.getNbsommets();
-            
+
         int u, v;
 
         // Create a residual graph and fill the residual
         // graph with given capacities in the original graph
         // as residual capacities in residual graph
-
         // Residual graph where rGraph[i][j] indicates
         // residual capacity of edge from i to j (if there
         // is an edge. If rGraph[i][j] is 0, then there is
         // not)
         int rGraph[][] = new int[V][V];
 
-        for (u = 0; u < V; u++)
-            for (v = 0; v < V; v++)
+        for (u = 0; u < V; u++) {
+            for (v = 0; v < V; v++) {
                 rGraph[u][v] = g.getAdj()[u][v];
+            }
+        }
 
         // This array is filled by BFS and to store path
         int parent[] = new int[V];
@@ -106,7 +100,7 @@ public class FordFulkerson implements Processing{
             for (v = dest; v != src; v = parent[v]) {
                 u = parent[v];
                 path_flow
-                    = Math.min(path_flow, rGraph[u][v]);
+                        = Math.min(path_flow, rGraph[u][v]);
             }
 
             // update residual capacities of the edges and
@@ -120,8 +114,7 @@ public class FordFulkerson implements Processing{
             // Add path flow to overall flow
             max_flow += path_flow;
         }
-        JOptionPane.showMessageDialog(null, "Le flot maximal du graphe entre les sommets " + d.getNodes().get(src).getLabel() +" et " + d.getNodes().get(dest).getLabel() + " est de " + max_flow +".", 
-                                        "Ford-Fulkerson - Flot maximal", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Le flot maximal du graphe entre les sommets " + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + " est de " + max_flow + ".",
+                "Ford-Fulkerson - Flot maximal", JOptionPane.INFORMATION_MESSAGE);
     }
 }
-

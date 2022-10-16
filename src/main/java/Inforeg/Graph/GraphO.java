@@ -11,24 +11,24 @@ Auteur : Béryl CASSEL
 Date de création : 27/01/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
-
 public class GraphO extends Graph {
 
-    public GraphO(Draw d){
+    public GraphO(Draw d) {
         super(d);
     }
-    
+
     @Override
     /**
-     * Méthode d'ajout d'un arc orienté dans le graphe
-     * Avec sauvegarde du graphe initial
+     * Méthode d'ajout d'un arc orienté dans le graphe Avec sauvegarde du graphe
+     * initial
+     *
      * @param a = Arc à ajouter
      */
-    public void addArc(Arc a){
+    public void addArc(Arc a) {
         int s = a.getSrc();
         int d = a.getDest();
-        if ((s<this.nbsommets) && (d<this.nbsommets)){
-            if (this.adj[s][d] == 0){
+        if ((s < this.nbsommets) && (d < this.nbsommets)) {
+            if (this.adj[s][d] == 0) {
                 /*Si l'arc n'existe pas, on copie l'ancienne version
                 du graphe et on modifie la matrice d'adjacence*/
                 this.adj[s][d] = a.getPoids();
@@ -42,19 +42,19 @@ public class GraphO extends Graph {
     }
 
     @Override
-    public int findArc(int src, int dest){
+    public int findArc(int src, int dest) {
         boolean trouve = false;
         int n = 0;
-        while ((n<this.lstArcs.size()) && (!trouve)){
+        while ((n < this.lstArcs.size()) && (!trouve)) {
             int s = this.lstArcs.get(n).getSrc();
             int d = this.lstArcs.get(n).getDest();
-            if ((src == s) && (dest == d)){
+            if ((src == s) && (dest == d)) {
                 trouve = true;
             } else {
                 n++;
             }
         }
-        if (trouve){
+        if (trouve) {
             return n;
         } else {
             return -1;

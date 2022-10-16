@@ -9,6 +9,7 @@ package Inforeg.UI;
  * @author Rémi
  */
 public class Vector2D {
+
     public double x;
     public double y;
 
@@ -16,6 +17,5 @@ public class Vector2D {
         this.x = x;
         this.y = y;
     }
-    
-    
+
 }

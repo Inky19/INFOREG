@@ -27,8 +27,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
-
+ */
 package Inforeg.UI;
 
 import javax.swing.*;
@@ -38,11 +37,11 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * Component to be used as tabComponent;
- * Contains a JLabel to show the text and 
- * a JButton to close the tab it belongs to 
- */ 
+ * Component to be used as tabComponent; Contains a JLabel to show the text and
+ * a JButton to close the tab it belongs to
+ */
 public class ButtonTabComponent extends JPanel {
+
     private final JTabbedPane pane;
 
     public ButtonTabComponent(final JTabbedPane pane, ImageIcon ico) {
@@ -53,7 +52,7 @@ public class ButtonTabComponent extends JPanel {
         }
         this.pane = pane;
         setOpaque(false);
-        
+
         //make JLabel read titles from JTabbedPane
         JLabel label = new JLabel() {
             public String getText() {
@@ -67,10 +66,10 @@ public class ButtonTabComponent extends JPanel {
         add(label);
         //add more space between the label and the button
         label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
-        if (ico != null){
+        if (ico != null) {
             label.setIcon(ico);
         }
-        
+
         //tab button
         JButton button = new TabButton();
         add(button);
@@ -79,6 +78,7 @@ public class ButtonTabComponent extends JPanel {
     }
 
     private class TabButton extends JButton implements ActionListener {
+
         public TabButton() {
             int size = 17;
             setPreferredSize(new Dimension(size, size));
@@ -148,5 +148,3 @@ public class ButtonTabComponent extends JPanel {
         }
     };
 }
-
-

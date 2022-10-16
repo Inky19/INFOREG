@@ -8,7 +8,6 @@ Date de création : 08/03/2022
 Date de dernière modification : 18/03/2022
 Commentaires ajoutés
 =============================================*/
-
 import Inforeg.Draw.Draw;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -32,47 +31,46 @@ import javax.swing.SwingUtilities;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
-public class StartMenu {  
+public class StartMenu {
 
     public static void main(String[] args) throws IOException {
 
         // Création de la fenêtre d'accueil
         JFrame J = new JFrame("INFOREG");
         J.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        J.setSize(600,400);
+        J.setSize(600, 400);
         J.setLocationRelativeTo(null);
         JPanel mainPanel = (JPanel) J.getContentPane();
         JPanel logoPanel = new JPanel();
         JPanel buttonsPanel = new JPanel();
-        
+
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.PAGE_AXIS));
         JPanel create = new JPanel();
-        mainPanel.setLayout(new FlowLayout(FlowLayout.CENTER,5,5));
-        
+        mainPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+
         // Icone de l'application
         ImageIcon icon = new ImageIcon("asset/icon.png");
         J.setIconImage(icon.getImage());
-        
+
         BufferedImage bannerImg = ImageIO.read(new File("asset/logoINFOREG.png"));
         Image bannerImgResized = bannerImg.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
         JLabel banner = new JLabel(new ImageIcon(bannerImgResized));
 
-        
         JCheckBox graphOriente = new JCheckBox("Orienté");
-        
+
         JCheckBox graphPond = new JCheckBox("Pondéré");
-        
+
         // Bouton générant un nouveau graphe
         JButton nouveau = new JButton("Créer");
         nouveau.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                Draw d = new Draw();                
-                if (!graphPond.isSelected()){
+                Draw d = new Draw();
+                if (!graphPond.isSelected()) {
                     d.setPondere(false);
                 }
-                
-                if (graphOriente.isSelected()){
+
+                if (graphOriente.isSelected()) {
                     d.setOriente(Draw.ORIENTE);
                     SwingUtilities.invokeLater(new InterfaceO(d)::createAndShowGui);
                 } else {
@@ -92,17 +90,17 @@ public class StartMenu {
             public void actionPerformed(ActionEvent ae) {
                 //On parcours le répertoire de fichiers
                 JFileChooser dialogue = new JFileChooser(".");
-                if (dialogue.showOpenDialog(null)==JFileChooser.APPROVE_OPTION){
+                if (dialogue.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                     File fichier = dialogue.getSelectedFile();
                     String source = fichier.getName();
 
                     //Si le fichier n'a pas pour extension ".inforeg" on ne l'accepte pas
-                    if (source.length() < 8 || !source.toLowerCase().substring(source.length()-8).equals(".inforeg")) {
+                    if (source.length() < 8 || !source.toLowerCase().substring(source.length() - 8).equals(".inforeg")) {
                         JOptionPane.showMessageDialog(null, "Seuls les fichiers inforeg sont acceptés !", "Mauvaise extension !", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         try {
                             Draw d = (new ChargeDraw(fichier)).chargerDraw();
-                            switch (d.getOriente()){
+                            switch (d.getOriente()) {
                                 case Draw.ORIENTE:
                                     SwingUtilities.invokeLater(new InterfaceO(d)::createAndShowGui);
                                     break;
@@ -114,16 +112,16 @@ public class StartMenu {
                                     break;
                             }
 
-                        // Si le fichier est mal écrit:
+                            // Si le fichier est mal écrit:
                         } catch (Exception e) {
                             JOptionPane.showMessageDialog(null, "Le fichier sélectionné ne peut pas être utilisé", "Fichier corrompu !", JOptionPane.INFORMATION_MESSAGE);
                         }
-                        
+
                     }
                 }
             }
         });
-        
+
         logoPanel.add(banner);
         create.add(graphOriente);
         create.add(graphPond);
@@ -132,7 +130,7 @@ public class StartMenu {
         buttonsPanel.add(charge);
         mainPanel.add(logoPanel);
         mainPanel.add(buttonsPanel);
-        
+
         J.setVisible(true);
     }
 

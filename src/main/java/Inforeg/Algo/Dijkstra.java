@@ -7,34 +7,34 @@ Auteur : Samy AMAL
 Date de création : 04/02/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
-
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.GraphO;
 import java.awt.Color;
 
 import javax.swing.JOptionPane;
 
-public class Dijkstra implements Processing{
+public class Dijkstra implements Processing {
 
     /**
-     * Méthode appliquant l'algorithme de Dijkstra sur le graphe
-     * orienté représenté par le Draw d afin de déterminer (si
-     * existence) le plus court chemin entre les sommets src et dest
+     * Méthode appliquant l'algorithme de Dijkstra sur le graphe orienté
+     * représenté par le Draw d afin de déterminer (si existence) le plus court
+     * chemin entre les sommets src et dest
+     *
      * @param d : Draw représentant le graphe à étudié
      * @param src : sommet de départ du parcours
      * @param dest : sommet de destination du parcours
      * @return true si il existe un chemin, false sinon
      */
-    public void dijkstra(Draw d, int src, int dest){
+    public void dijkstra(Draw d, int src, int dest) {
 
         int[] dist;
         int[] predecesseur;
 
         GraphO g = (GraphO) d.getG();
-        dist = new int[g.getNbsommets()]; 
+        dist = new int[g.getNbsommets()];
         // The output array. dist[i] will hold
         // the shortest distance from src to i
-        
+
         predecesseur = new int[g.getNbsommets()];
 
         // vu[i] will true if vertex i is included in shortest
@@ -64,44 +64,43 @@ public class Dijkstra implements Processing{
 
             // Update dist value of the adjacent vertices of the
             // picked vertex.
-            for (int v = 0; v < g.getNbsommets(); v++)
-
-                // Update dist[v] only if is not in sptSet, there is an
-                // edge from u to v, and total weight of path from src to
-                // v through u is smaller than current value of dist[v]
-                if (!vu[v] && g.getAdj()[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + g.getAdj()[u][v] < dist[v]){
+            for (int v = 0; v < g.getNbsommets(); v++) // Update dist[v] only if is not in sptSet, there is an
+            // edge from u to v, and total weight of path from src to
+            // v through u is smaller than current value of dist[v]
+            {
+                if (!vu[v] && g.getAdj()[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + g.getAdj()[u][v] < dist[v]) {
                     dist[v] = dist[u] + g.getAdj()[u][v];
-                    predecesseur[v]= u;
+                    predecesseur[v] = u;
                 }
+            }
         }
         int s = dest;
         int p = predecesseur[s];
         int count = 0;
         //index dist min and last dist
-        while ((s!=src) && (count<d.getNumOfCircles()) && (p!=-1)){
+        while ((s != src) && (count < d.getNumOfCircles()) && (p != -1)) {
             int ind = d.findLine(p, s);
-            if (ind!=-1){
+            if (ind != -1) {
                 d.getLines().get(ind).setC(Color.RED);
                 s = p;
                 p = predecesseur[p];
                 count++;
             } else {
                 p = -1;
-            }  
+            }
         }
-        if (s!=src){
+        if (s != src) {
             d.reinit();
             JOptionPane.showMessageDialog(null, "Il n'existe pas de chemin entre les sommets "
-                                            + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel()+ ".", 
-                                            "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
+                    + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + ".",
+                    "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
         } else {
             d.repaint();
             JOptionPane.showMessageDialog(null, "Il existe un plus court chemin entre les sommets "
-                                                + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel()
-                                                + ", de distance " + dist[dest] + ".", 
-                                                "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
+                    + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel()
+                    + ", de distance " + dist[dest] + ".",
+                    "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
         }
-    }   
+    }
 
 }
-

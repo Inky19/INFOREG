@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 class Enregistrement {
+
     String action; // ajouter/supprimer des noeud/arc, modifier l'étiquette
     Ellipse2D.Double noeud; // noeud
     double x; // position
@@ -24,7 +25,7 @@ class Enregistrement {
     String newLbl; // lbl/poid actualisé(e)
     double x2; // position supplémentaire
     double y2; // position supplémentaire
-   
+
     // Constructor pour les actions sur les nœuds
     public Enregistrement(String action, Ellipse2D.Double circ) {
         this.action = action;
@@ -32,7 +33,7 @@ class Enregistrement {
         this.x = circ.x;
         this.y = circ.y;
     }
-    
+
     // Constructor pour les actions sur les arcs
     public Enregistrement(String action, MyLine line) {
         this.action = action;
@@ -48,7 +49,7 @@ class Enregistrement {
         this.newLbl = newLbl;
         this.noeud = circ;
     }
-    
+
     // Constructor pour les actions de modification des poids
     public Enregistrement(String action, MyLine line, String currentLbl, String newLbl) {
         this.action = action;
@@ -56,7 +57,7 @@ class Enregistrement {
         this.newLbl = newLbl;
         this.arc = line;
     }
-    
+
     // Constructor pour les actions de mouvement
     public Enregistrement(String action, Ellipse2D.Double circ, double x, double y, double x2, double y2) {
         this.action = action;
@@ -66,7 +67,7 @@ class Enregistrement {
         this.x2 = x2;
         this.y2 = y2;
     }
-    
+
     // Constructor pour les actions de mouvement
     public Enregistrement(String action, MyLine line, Ellipse2D.Double fromClou, Ellipse2D.Double toClou) {
         this.action = action;
@@ -75,81 +76,83 @@ class Enregistrement {
         this.noeud2 = toClou;
     }
 }
-public class History{
+
+public class History {
+
     // piles Ctrl+Z et Ctrl+Y
     protected ConcurrentHashMap<Integer, Enregistrement> previousStates;
     protected ConcurrentHashMap<Integer, Enregistrement> nextStates;
 
-    public History(){
-       this.previousStates = new ConcurrentHashMap<>();
-       this.nextStates = new ConcurrentHashMap<>();
+    public History() {
+        this.previousStates = new ConcurrentHashMap<>();
+        this.nextStates = new ConcurrentHashMap<>();
     }
-    
+
     public void createLog(String action, Ellipse2D.Double circ) {
-        this.addPreviousState(new Enregistrement(action,circ));
-        this.clearNextStates();
-    }
-    
-    public void createLog(String action, MyLine line) {
-        this.addPreviousState(new Enregistrement(action,line));
-        this.clearNextStates();
-    }
-    
-    public void createLog(String action, Ellipse2D.Double circ, String currentLbl, String newLbl) {
-        this.addPreviousState(new Enregistrement(action,circ,currentLbl,newLbl));
-        this.clearNextStates();
-    }
-    
-    public void createLog(String action, MyLine line, String currentLbl, String newLbl) {
-        this.addPreviousState(new Enregistrement(action,line,currentLbl,newLbl));
-        this.clearNextStates();
-    }
-    
-    public void createLog(String action, Ellipse2D.Double circ, double x, double y, double x2, double y2) {
-        this.addPreviousState(new Enregistrement(action,circ,x,y,x2,y2));
-        this.clearNextStates();
-    }
-    
-    public void reCreateLog(String action, Ellipse2D.Double circ, double x, double y, double x2, double y2) {
-        this.addPreviousState(new Enregistrement(action,circ,x,y,x2,y2));
-    }
-    
-    public void createLog(String action, MyLine line, Ellipse2D.Double fromClou, Ellipse2D.Double toClou) {
-        this.addPreviousState(new Enregistrement(action,line,fromClou,toClou));
+        this.addPreviousState(new Enregistrement(action, circ));
         this.clearNextStates();
     }
 
-    public Enregistrement getPreviousState(){
-        Enregistrement pS = previousStates.get(previousStates.size()-1);
-        previousStates.remove(previousStates.size()-1);
+    public void createLog(String action, MyLine line) {
+        this.addPreviousState(new Enregistrement(action, line));
+        this.clearNextStates();
+    }
+
+    public void createLog(String action, Ellipse2D.Double circ, String currentLbl, String newLbl) {
+        this.addPreviousState(new Enregistrement(action, circ, currentLbl, newLbl));
+        this.clearNextStates();
+    }
+
+    public void createLog(String action, MyLine line, String currentLbl, String newLbl) {
+        this.addPreviousState(new Enregistrement(action, line, currentLbl, newLbl));
+        this.clearNextStates();
+    }
+
+    public void createLog(String action, Ellipse2D.Double circ, double x, double y, double x2, double y2) {
+        this.addPreviousState(new Enregistrement(action, circ, x, y, x2, y2));
+        this.clearNextStates();
+    }
+
+    public void reCreateLog(String action, Ellipse2D.Double circ, double x, double y, double x2, double y2) {
+        this.addPreviousState(new Enregistrement(action, circ, x, y, x2, y2));
+    }
+
+    public void createLog(String action, MyLine line, Ellipse2D.Double fromClou, Ellipse2D.Double toClou) {
+        this.addPreviousState(new Enregistrement(action, line, fromClou, toClou));
+        this.clearNextStates();
+    }
+
+    public Enregistrement getPreviousState() {
+        Enregistrement pS = previousStates.get(previousStates.size() - 1);
+        previousStates.remove(previousStates.size() - 1);
         return pS;
     }
 
-    public Enregistrement getNextState(){
-        Enregistrement pN = nextStates.get(nextStates.size()-1);
-        nextStates.remove(nextStates.size()-1);
+    public Enregistrement getNextState() {
+        Enregistrement pN = nextStates.get(nextStates.size() - 1);
+        nextStates.remove(nextStates.size() - 1);
         return pN;
     }
 
-    public Collection<Enregistrement> getPreviousStates(){
+    public Collection<Enregistrement> getPreviousStates() {
         return previousStates.values();
     }
 
-    public Collection<Enregistrement> getNextStates(){
+    public Collection<Enregistrement> getNextStates() {
         return nextStates.values();
     }
 
-    public boolean addPreviousState(Enregistrement log){
+    public boolean addPreviousState(Enregistrement log) {
         Enregistrement put = previousStates.put(previousStates.size(), log);
-        return put!=null;
+        return put != null;
     }
 
-    public void clearNextStates(){
+    public void clearNextStates() {
         nextStates.clear(); // On élimine les actions futures
     }
 
-    public boolean addNextState(Enregistrement log){
+    public boolean addNextState(Enregistrement log) {
         Enregistrement put = nextStates.put(nextStates.size(), log);
-        return put!=null;
+        return put != null;
     }
 }

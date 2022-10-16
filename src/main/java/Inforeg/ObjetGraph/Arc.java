@@ -7,7 +7,6 @@ Date de création : 26/01/2022
 Date de dernière modification : 08/03/2022
 Commentaires Ajoutés
 =============================================*/
-
 public class Arc implements Comparable<Arc> {
 
     /**
@@ -32,12 +31,13 @@ public class Arc implements Comparable<Arc> {
 
     /**
      * Constructeur d'un Arc orienté
+     *
      * @param s = sommet source de l'Arc
      * @param d = sommet de destination de l'Arc
      * @param p = poids de l'Arc
      * @param ind = indice de la ligne correspondante
      */
-    public Arc(int s, int d, int p, int ind){
+    public Arc(int s, int d, int p, int ind) {
         this.src = s;
         this.dest = d;
         this.poids = p;
@@ -45,16 +45,18 @@ public class Arc implements Comparable<Arc> {
     }
 
     /**
-     * Getter de l'indice de la ligne représentant cet arc dans la
-     * liste lines du Draw de notre interface
+     * Getter de l'indice de la ligne représentant cet arc dans la liste lines
+     * du Draw de notre interface
+     *
      * @return l'indice de l'arc dans la liste lines
      */
     public int getLine() {
-		return line;
-	}
+        return line;
+    }
 
-	/**
+    /**
      * Getter du sommet source
+     *
      * @return la valeur de l'attribut src
      */
     public int getSrc() {
@@ -63,6 +65,7 @@ public class Arc implements Comparable<Arc> {
 
     /**
      * Getter du poids de l'Arc
+     *
      * @return la valeur de l'attribut poids
      */
     public int getPoids() {
@@ -71,14 +74,16 @@ public class Arc implements Comparable<Arc> {
 
     /**
      * Getter du sommet de destination de l'Arc
+     *
      * @return la valeur de l'attribut dest
      */
     public int getDest() {
         return dest;
     }
-    
+
     /**
      * Setter du sommet source
+     *
      * @param src
      */
     public void setSrc(int src) {
@@ -87,6 +92,7 @@ public class Arc implements Comparable<Arc> {
 
     /**
      * Setter du poids de l'Arc
+     *
      * @param poids
      */
     public void setPoids(int poids) {
@@ -95,6 +101,7 @@ public class Arc implements Comparable<Arc> {
 
     /**
      * Setter du sommet de destination de l'Arc
+     *
      * @param dest
      */
     public void setDest(int dest) {
@@ -102,22 +109,24 @@ public class Arc implements Comparable<Arc> {
     }
 
     /**
-     * Méthode permettant de comparer le poids de l'Arc
-     * à celui d'un Arc passé en paramètre
+     * Méthode permettant de comparer le poids de l'Arc à celui d'un Arc passé
+     * en paramètre
+     *
      * @param compareEdge = Arc à comparer
      * @return la différence entre les deux poids des arcs
      */
-    public int compareTo(Arc compareEdge){
+    public int compareTo(Arc compareEdge) {
         return this.poids - compareEdge.poids;
     }
 
     /**
-     * Méthode permettant de générer une ligne de représentation
-     * de l'arc dans la console
+     * Méthode permettant de générer une ligne de représentation de l'arc dans
+     * la console
+     *
      * @return une ligne décrivant l'arc
      */
-    public String toString(){
+    public String toString() {
         return this.src + " -> " + this.dest + " : " + this.poids;
     }
-    
+
 }

@@ -6,7 +6,6 @@ Auteur : Jorge QUISPE CCAMA
 Date de création : 04/02/2022
 Date de dernière modification : 25/03/2022
 =============================================*/
-
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.GraphNO;
@@ -15,16 +14,14 @@ import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
+public class KruskalMST implements Connexe, Processing {
 
-public class KruskalMST implements Connexe,Processing {
-    
-
-    public void kruskalMST(Draw d){
+    public void kruskalMST(Draw d) {
 
         Arc[] arbre;
         GraphNO G = (GraphNO) d.getG();
         arbre = new Arc[G.getNbsommets()];
-        if (connexe(G)){
+        if (connexe(G)) {
             // Tnis will store the resultant MST
             //Edge result[] = new Edge[V];
 
@@ -33,33 +30,32 @@ public class KruskalMST implements Connexe,Processing {
 
             // An index variable, used for sorted edges
             for (int i = 0; i < G.getNbsommets(); i++) {
-                arbre[i] = new Arc(-1,-1,Integer.MAX_VALUE,-1);
+                arbre[i] = new Arc(-1, -1, Integer.MAX_VALUE, -1);
             }
             // Step 1:  Sort all the edges in non-decreasing
             // order of their weight.  If we are not allowed to
             // change the given graph, we can create a copy of
             // array of edges
 
-            Arc[] sortedArcs =  new Arc[G.getLstArcs().size()];
-            for(int j = 0;j<G.getLstArcs().size();j++){
-                sortedArcs[j] = G.getLstArcs().get(j) ;
+            Arc[] sortedArcs = new Arc[G.getLstArcs().size()];
+            for (int j = 0; j < G.getLstArcs().size(); j++) {
+                sortedArcs[j] = G.getLstArcs().get(j);
             }
             Arrays.sort(sortedArcs);
             // Allocate memory for creating V subsets
             subset subsets[] = new subset[G.getNbsommets()];
-            for (int i = 0; i < G.getNbsommets(); ++i)
+            for (int i = 0; i < G.getNbsommets(); ++i) {
                 subsets[i] = new subset();
+            }
             // Create V subsets with single elements
-            for (int v = 0; v < G.getNbsommets(); ++v)
-            {
+            for (int v = 0; v < G.getNbsommets(); ++v) {
                 subsets[v].parent = v;
                 subsets[v].rank = 0;
             }
 
             int i = 0; // Index used to pick next edge
             // Number of edges to be taken is equal to V-1
-            while (e < G.getNbsommets() - 1)
-            {
+            while (e < G.getNbsommets() - 1) {
                 // Step 2: Pick the smallest edge. And increment
                 // the index for next iteration
                 Arc next_edge = sortedArcs[i++];
@@ -78,8 +74,8 @@ public class KruskalMST implements Connexe,Processing {
             }
             int p = 0;
             System.out.println(arbre.length);
-            for (int j = 0;j<arbre.length;j++){
-                if (arbre[j].getLine()>=0){
+            for (int j = 0; j < arbre.length; j++) {
+                if (arbre[j].getLine() >= 0) {
                     d.getLines().get(arbre[j].getLine()).setC(Color.RED);
                     p += d.getLines().get(arbre[j].getLine()).getPoids();
                 }
@@ -91,4 +87,3 @@ public class KruskalMST implements Connexe,Processing {
     }
 
 }
-
