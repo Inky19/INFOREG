@@ -128,6 +128,30 @@ public class InterfaceNO extends Interface implements Connexe {
         }
     };
 
+    public final AbstractAction Coloration = new AbstractAction() {
+        {
+            putValue(Action.NAME, "Prim");
+            putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
+            putValue(Action.SHORT_DESCRIPTION, "Applique l'algorithme de Prim pour trouver \n"
+                    + "l'arbre couvrant minimal du graphe (CTRL+P)");
+            putValue(Action.ACCELERATOR_KEY,
+                    KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (mode == Interface.TRAITEMENT_MODE) {
+                activeTraitement = Interface.PRIM_TRAITEMENT;
+                d.reinit();
+                d.repaint();
+                (new PrimMST()).primMST(d);
+            }
+        }
+    };    
+    
+    
+    
+    
     @Override
     public void initToolBar() {
         //paneButtons = new JPanel();

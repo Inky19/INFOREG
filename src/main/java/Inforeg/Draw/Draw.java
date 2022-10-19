@@ -44,7 +44,7 @@ import Inforeg.UI.Vector2D;
 
 public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
-    private Interface Interface;
+    private Interface inter;
     /**
      * Piles Ctrl+Z et Ctrl+Y *
      */
@@ -254,7 +254,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     }
 
     public void setInterface(Interface inter) {
-        this.Interface = inter;
+        this.inter = inter;
     }
 
     public String getFileName() {
@@ -303,14 +303,14 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             public void mousePressed(MouseEvent evt) {
                 currentMousePosition = evt.getLocationOnScreen();
                 currentCameraPosition = new Point(camera);
-                if (Interface.getMode() == Interface.EDITION_MODE) {
+                if (inter.getMode() == inter.EDITION_MODE) {
                     int x = evt.getX();
                     int y = evt.getY();
                     // Vérifie si on clique où non sur un cercle existant
                     currentCircleIndex = findEllipse(x, y);
                     currentArcIndex = getArc(x, y);
                     // Si on souhaite ajouter un Nœud :
-                    if (Interface.getActiveTool() == Interface.NOEUD_TOOL) {
+                    if (inter.getActiveTool() == inter.NOEUD_TOOL) {
                         if (currentCircleIndex < 0 && currentArcIndex < 0) { // not inside a circle
                             add(x, y);
                             // On ajoute l'action à la pile
@@ -318,7 +318,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         }
                     }
                     // Si on souhaite ajouter un label à un Nœud :
-                    if (Interface.getActiveTool() == Interface.LABEL_TOOL) {
+                    if (inter.getActiveTool() == inter.LABEL_TOOL) {
                         if (currentCircleIndex >= 0) { // inside a circle
                             try {
                                 String lbl = JOptionPane.showInputDialog("Entrer label :");
@@ -347,12 +347,12 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             }
                         }
                     }
-                    if (Interface.getActiveTool() == Interface.ARC_TOOL) {
+                    if (inter.getActiveTool() == inter.ARC_TOOL) {
                         if ((currentCircleIndex >= 0) && (fromPoint == null)) {
                             fromPoint = nodes.get(currentCircleIndex);
                         }
                     }
-                    if (Interface.getActiveTool() == Interface.SELECT_TOOL) {
+                    if (inter.getActiveTool() == inter.SELECT_TOOL) {
                         if (currentCircleIndex < 0 && currentArcIndex < 0) {//not on circle or arc
                             for (int i = 0; i < getNumOfCircles(); i++) {
                                 multiSelecCirc[i] = false;
@@ -376,12 +376,12 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
             @Override
             public void mouseReleased(MouseEvent evt) {
-                if (Interface.getMode() == Interface.EDITION_MODE) {
+                if (inter.getMode() == inter.EDITION_MODE) {
                     int x = evt.getX();
                     int y = evt.getY();
                     // Vérifie si on clique où non sur un cercle existant
                     currentCircleIndex = findEllipse(x, y);
-                    if (Interface.getActiveTool() == Interface.ARC_TOOL) {
+                    if (inter.getActiveTool() == inter.ARC_TOOL) {
                         //ATTENTION : il faudra prendre le compte le cas où on pointe vers le meme cercle
                         if ((currentCircleIndex >= 0) && (fromPoint != null) && (!fromPoint.equals(nodes.get(currentCircleIndex)))) { // inside circle
                             Node p = nodes.get(currentCircleIndex);
@@ -413,7 +413,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         }
                     }
                 }
-                if (Interface.getActiveTool() == Interface.SELECT_TOOL) {
+                if (inter.getActiveTool() == inter.SELECT_TOOL) {
                     drawZone = false;
                     for (int i = 0; i < getNumOfCircles(); i++) {
                         int x = (int) nodes.get(i).getCenterX();
@@ -435,13 +435,13 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
             @Override
             public void mouseClicked(MouseEvent evt) {
-                if (Interface.getMode() == Interface.EDITION_MODE) {
+                if (inter.getMode() == Interface.EDITION_MODE) {
                     int x = evt.getX();
                     int y = evt.getY();
                     currentArcIndex = getArc(x, y);
                     currentCircleIndex = findEllipse(x, y);
                     // Si on clique deux fois sur un Nœud, on le supprime
-                    if (Interface.getActiveTool() == Interface.NOEUD_TOOL && currentCircleIndex >= 0) {
+                    if (inter.getActiveTool() == inter.NOEUD_TOOL && currentCircleIndex >= 0) {
                         if (evt.getClickCount() >= 2) {
                             // On ajoute l'action à la pile
                             // On ajoute les arcs qui seront supprimés
@@ -459,7 +459,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             remove(currentCircleIndex);
                         }
                     }
-                    if (Interface.getActiveTool() == Interface.ARC_TOOL) {
+                    if (inter.getActiveTool() == inter.ARC_TOOL) {
                         if (evt.getClickCount() >= 2 && currentArcIndex >= 0) {
                             // On ajoute l'action à la pile
                             MyLine toDelete = lines.get(currentArcIndex);
@@ -495,7 +495,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             }
                         }
                     }
-                    if (Interface.getActiveTool() == Interface.SELECT_TOOL) {
+                    if (inter.getActiveTool() == inter.SELECT_TOOL) {
                         if (currentCircleIndex < 0 && currentArcIndex < 0) {//not on circle or arc
                             for (int i = 0; i < getNumOfCircles(); i++) {
                                 multiSelecCirc[i] = false;
@@ -506,8 +506,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         }
                     }
                 }
-                if (Interface.getMode() == Interface.TRAITEMENT_MODE) {
-                    if ((Interface.getActiveTraitement() == Interface.DIJKSTRA_TRAITEMENT) || (Interface.getActiveTraitement() == Interface.FORD_FULKERSON_TRAITEMENT)) {
+                if (inter.getMode() == inter.TRAITEMENT_MODE) {
+                    if ((inter.getActiveTraitement() == inter.DIJKSTRA_TRAITEMENT) || (inter.getActiveTraitement() == inter.FORD_FULKERSON_TRAITEMENT)) {
                         int x = evt.getX();
                         int y = evt.getY();
                         if (src == -1) {
@@ -774,7 +774,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         // Global coordinates of the mouse
         int x = (int) v.x;
         int y = (int) v.y;
-        if ((Interface.getActiveTool() == Interface.NOEUD_TOOL || Interface.getActiveTool() == Interface.SELECT_TOOL) && Interface.getMode() == Interface.EDITION_MODE) {
+        if ((inter.getActiveTool() == inter.NOEUD_TOOL || inter.getActiveTool() == inter.SELECT_TOOL) && inter.getMode() == inter.EDITION_MODE) {
             if (currentCircleIndex >= 0) {
                 if (multiSelecCirc[currentCircleIndex]) {
                     double transx = x - nodes.get(currentCircleIndex).getCx();
@@ -804,7 +804,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                 }
             }
         }
-        if ((Interface.getActiveTool() == Interface.ARC_TOOL || Interface.getActiveTool() == Interface.SELECT_TOOL) && Interface.getMode() == Interface.EDITION_MODE) {
+        if ((inter.getActiveTool() == inter.ARC_TOOL || inter.getActiveTool() == inter.SELECT_TOOL) && inter.getMode() == inter.EDITION_MODE) {
 
             if (currentArcIndex >= 0) {
                 if (multiSelecArc[currentArcIndex]) {
@@ -843,7 +843,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                 }
             }
         }
-        if (Interface.getActiveTool() == Interface.SELECT_TOOL) {
+        if (inter.getActiveTool() == inter.SELECT_TOOL) {
             selectXend = event.getX();
             selectYend = event.getY();
 
@@ -858,7 +858,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             }
         }
         
-        if (Interface.getMode() == Interface.DEPLACEMENT_MODE) {
+        if (inter.getMode() == inter.DEPLACEMENT_MODE) {
             Point currentScreenLocation = event.getLocationOnScreen();
             camera.x = (int) (currentCameraPosition.x + toGlobalScale(currentMousePosition.x - currentScreenLocation.x));
             camera.y = (int) (currentCameraPosition.y + toGlobalScale(currentMousePosition.y - currentScreenLocation.y));
@@ -867,7 +867,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         }
         
         
-        if (Interface.getMode() == Interface.TRAITEMENT_MODE) {
+        if (inter.getMode() == inter.TRAITEMENT_MODE) {
             Draw.drawZone = false;
             repaint();
         }
@@ -882,10 +882,12 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public void traitement() {
         reinit();
         repaint();
-        if (Interface.getActiveTraitement() == Interface.DIJKSTRA_TRAITEMENT) {
+        if (inter.getActiveTraitement() == Interface.DIJKSTRA_TRAITEMENT) {
             (new Dijkstra()).dijkstra(this, src, dest);
-        } else if (Interface.getActiveTraitement() == Interface.FORD_FULKERSON_TRAITEMENT) {
+        } else if (inter.getActiveTraitement() == Interface.FORD_FULKERSON_TRAITEMENT) {
             (new FordFulkerson()).fordFulkerson(this, src, dest);
+        } else if (inter.getActiveTraitement() == Interface.FORD_FULKERSON_TRAITEMENT) {
+            
         }
         this.src = -1;
         this.dest = -1;
@@ -896,7 +898,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @return Taille des cercles
      */
     public double getTailleCirc() {
-        return (float) Interface.getTaille() / 20;
+        return (float) inter.getTaille() / 20;
     }
 
     /**
@@ -920,7 +922,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      */
     public void epaisseurLines() {
         if (numOfCircles > 0) {
-            double factor = (float) Interface.getEpaisseur() / 20;
+            double factor = (float) inter.getEpaisseur() / 20;
             lineWidth = (float) factor * Draw.LINIT;
             repaint();
         }

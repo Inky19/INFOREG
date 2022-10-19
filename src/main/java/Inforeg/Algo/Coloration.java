@@ -7,13 +7,18 @@ package Inforeg.Algo;
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
 import Inforeg.Graph.GraphO;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  *
  * @author Rémi
  */
 public class Coloration {
+    private ArrayList<LinkedList<Integer>> listAdj;
     boolean oriente;
     Graph g;
     
@@ -26,16 +31,47 @@ public class Coloration {
         return 0;
     }
     
+    private void updateListAdj(int[][] matrix) {
+        listAdj.clear();
+        for (int i=0; i<matrix.length; i++) {
+            listAdj.add(new LinkedList<Integer>());
+            for (int j=0; j<matrix.length; j++) {
+                if (matrix[i][j] > 0) {
+                   listAdj.get(i).add(j);
+                }
+            }
+        }
+        
+    }
     
-    private void colorationGloutonO() {
+    private int availableColor(HashSet<Integer> colors) {
+        int minColor = 0;
+        for (int e : colors) {
+            if (!colors.contains(minColor))
+                return minColor;
+            minColor++;
+        }
+        return minColor;
+    }
+    
+    
+    
+    private int[] colorationGloutonO() {
         int max = g.nbmax;
         int[][] adj = g.getAdj();
-        boolean[] vu = new boolean[max];
-        LinkedList<Integer> neighboursColors = new LinkedList<>();
-        for (int i = 0; i < max; i++) {
+        int[] color = new int[max];
+        updateListAdj(g.getAdj());
+        HashSet<Integer> neighboursColors = new HashSet<>();
+        for (int node = 0; node < max; node++) {
             neighboursColors.clear();
-            
+            for (Integer neighbour : listAdj.get(node)) {
+                if (color[neighbour] >= 0) {
+                    neighboursColors.add(color[neighbour]);
+                }
+                color[node] = availableColor(neighboursColors);
+            }
         }
+        return color;
     }
     
 }
