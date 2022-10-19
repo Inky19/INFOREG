@@ -27,9 +27,11 @@ public class Node extends Ellipse2D.Double {
     private Color color;
     private String label;
     private int id;
+    private boolean selected;
     
     public Node(){
         super();
+        selected = false;
         this.
         cx = 0;
         cy = 0;
@@ -44,6 +46,7 @@ public class Node extends Ellipse2D.Double {
         this.color = Color.WHITE;
         this.id = id;
         this.label = label;
+        selected = false;
     }
     
     public Node(double cx, double cy, double r, Color color, String label, int id){
@@ -54,6 +57,7 @@ public class Node extends Ellipse2D.Double {
         this.color = color;
         this.label = label;
         this.id = id;
+        selected = false;
     }
     
     public void updateSize(double r){
@@ -69,7 +73,7 @@ public class Node extends Ellipse2D.Double {
         cy = y;
     }
     
-    public void paint(Draw d, Graphics2D g, boolean selected) {
+    public void paint(Draw d, Graphics2D g) {
         // Update position and scale
         Point v = d.toDrawCoordinates(cx-r, cy-r);
         this.x = v.x;
@@ -156,6 +160,14 @@ public class Node extends Ellipse2D.Double {
 
     public int getId() {
         return id;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
     
     

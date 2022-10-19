@@ -536,11 +536,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         //order : draw line puis draw circles
         for (int i = 0; i < numOfLines; i++) {
-            lines.get(i).paint(this, (Graphics2D) g, multiSelecArc[i]);
+            lines.get(i).paint(this, (Graphics2D) g);
         }
         // Draw circles
         for (int i = 0; i < numOfCircles; i++) {
-            nodes.get(i).paint(this, (Graphics2D) g, multiSelecCirc[i]);
+            nodes.get(i).paint(this, (Graphics2D) g);
         }
         // Multiselect zone
         if (Draw.drawZone) {

@@ -20,6 +20,7 @@ import Inforeg.UI.Vector2D;
 
 public class MyLine {
 
+    private boolean selected;
     /**
      * Cercle/Nœud de départ
      */
@@ -55,6 +56,7 @@ public class MyLine {
      * @param c
      */
     public MyLine(Node fromPoint, Node toPoint, int pds, Color c) {
+        selected = false;
         this.from = fromPoint;
         this.to = toPoint;
         this.poids = pds;
@@ -65,6 +67,7 @@ public class MyLine {
     }
     
     public MyLine(Node fromPoint, Node toPoint, int pds, Color c, Nail nail){
+        selected = false;
         this.from = fromPoint;
         this.to = toPoint;
         this.poids = pds;
@@ -76,7 +79,7 @@ public class MyLine {
         return this.clou;
     }
 
-    public void paint(Draw d, Graphics2D g, boolean selected) {
+    public void paint(Draw d, Graphics2D g) {
         g.setPaint(color);
         g.setStroke(new BasicStroke((float) d.toDrawScale(LINE_WIDTH)));
         Point v1 = d.toDrawCoordinates(from.getCx(), from.getCy());
@@ -186,6 +189,14 @@ public class MyLine {
 
     public Color getColor() {
         return color;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     

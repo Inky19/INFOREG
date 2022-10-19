@@ -78,7 +78,7 @@ public class Dijkstra implements Processing {
         int p = predecesseur[s];
         int count = 0;
         //index dist min and last dist
-        while ((s != src) && (count < d.getNumOfCircles()) && (p != -1)) {
+        while ((s != src) && (count < d.getNodes().size()) && (p != -1)) {
             int ind = d.findLine(p, s);
             if (ind != -1) {
                 d.getLines().get(ind).setC(Color.RED);
