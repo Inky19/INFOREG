@@ -79,8 +79,8 @@ public class MyLine {
     public void paint(Draw d, Graphics2D g, boolean selected) {
         g.setPaint(color);
         g.setStroke(new BasicStroke((float) d.toDrawScale(LINE_WIDTH)));
-        Vector2D v1 = d.toDrawCoordinates(from.getCx(), from.getCy());
-        Vector2D v3 = d.toDrawCoordinates(clou.cx, clou.cy);
+        Point v1 = d.toDrawCoordinates(from.getCx(), from.getCy());
+        Point v3 = d.toDrawCoordinates(clou.cx, clou.cy);
         int x1 = (int) v1.x;
         int y1 = (int) v1.y;
         int x3 = (int) v3.x;
@@ -94,7 +94,7 @@ public class MyLine {
         if (from == to) {
             //calcArc(x1,y1,x3,y3,g);
         } else {
-            Vector2D v2 = d.toDrawCoordinates(to.getCx(), to.getCy());
+            Point v2 = d.toDrawCoordinates(to.getCx(), to.getCy());
             int x2 = (int) v2.x;
             int y2 = (int) v2.y;
             g.drawLine(x1, y1, x3, y3);

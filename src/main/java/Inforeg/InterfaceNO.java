@@ -11,6 +11,8 @@ import Inforeg.Draw.Draw;
 import Inforeg.Algo.PrimMST;
 import Inforeg.Algo.KruskalMST;
 import Inforeg.Algo.Connexe;
+import static Inforeg.Interface.TRAITEMENT_MODE;
+import static Inforeg.Interface.mode;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -140,7 +142,7 @@ public class InterfaceNO extends Interface implements Connexe {
         label = new JRadioButton("Label");
         edition = new JRadioButton("Édition");
         traitement = new JRadioButton("Traitement");
-
+        deplacement = new JRadioButton("Deplacement");
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
 
@@ -219,6 +221,7 @@ public class InterfaceNO extends Interface implements Connexe {
         ButtonGroup groupMode = new ButtonGroup();
         groupMode.add(edition);
         groupMode.add(traitement);
+        groupMode.add(deplacement);
         ButtonGroup groupAction = new ButtonGroup();
         groupAction.add(select);
         groupAction.add(noeud);
@@ -227,6 +230,7 @@ public class InterfaceNO extends Interface implements Connexe {
         //On ajoute les éléments au JPanel
         toolBarButtons.add(l2);
         toolBarButtons.addSeparator();
+        toolBarButtons.add(deplacement);
         toolBarButtons.add(edition);
         toolBarButtons.add(traitement);
         toolBarButtons.addSeparator();
@@ -284,6 +288,15 @@ public class InterfaceNO extends Interface implements Connexe {
                     Kruskal.setEnabled(true);
                     ConnexiteNO.setEnabled(true);
                     d.exportGraphe();
+                } else if (ae.getSource() == deplacement) {
+                    mode = DEPLACEMENT_MODE;
+                    select.setEnabled(false);
+                    noeud.setEnabled(false);
+                    arc.setEnabled(false);
+                    label.setEnabled(false);
+                    Prim.setEnabled(false);
+                    Kruskal.setEnabled(false);
+                    ConnexiteNO.setEnabled(false);
                 }
             }
         };
@@ -297,7 +310,7 @@ public class InterfaceNO extends Interface implements Connexe {
         edition.addActionListener(modeGroupListener);
         //edition.setSelected(true);//edition activé au démarrage
         traitement.addActionListener(modeGroupListener);
-
+        deplacement.addActionListener(modeGroupListener);
         //toolBarButtons.setLayout(new FlowLayout(FlowLayout.LEFT));
         toolBarButtons.setAlignmentX(FlowLayout.CENTER);
         toolBarButtons.setFloatable(false);

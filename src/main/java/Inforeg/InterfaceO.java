@@ -9,6 +9,8 @@ Date de dernière modification : 08/03/2022
 import Inforeg.Graph.GraphO;
 import Inforeg.Draw.Draw;
 import Inforeg.Algo.Connexe;
+import static Inforeg.Interface.TRAITEMENT_MODE;
+import static Inforeg.Interface.mode;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -147,6 +149,7 @@ public class InterfaceO extends Interface implements Connexe {
         label = new JRadioButton("Label");
         edition = new JRadioButton("Édition");
         traitement = new JRadioButton("Traitement");
+        deplacement = new JRadioButton("Déplacement");
 
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
@@ -226,6 +229,7 @@ public class InterfaceO extends Interface implements Connexe {
         ButtonGroup groupMode = new ButtonGroup();
         groupMode.add(edition);
         groupMode.add(traitement);
+        groupMode.add(deplacement);
         ButtonGroup groupAction = new ButtonGroup();
         groupAction.add(select);
         groupAction.add(noeud);
@@ -234,6 +238,7 @@ public class InterfaceO extends Interface implements Connexe {
         //On ajoute les éléments au JPanel
         toolBarButtons.add(l2);
         toolBarButtons.addSeparator();
+        toolBarButtons.add(deplacement);
         toolBarButtons.add(edition);
         toolBarButtons.add(traitement);
         toolBarButtons.addSeparator();
@@ -291,6 +296,18 @@ public class InterfaceO extends Interface implements Connexe {
                     FordFulkerson.setEnabled(true);
                     ConnexiteO.setEnabled(true);
                     d.exportGraphe();
+                } else if (ae.getSource() == deplacement) {
+                    d.reinit();
+                    d.repaint();
+                    mode = DEPLACEMENT_MODE;
+                    select.setEnabled(false);
+                    noeud.setEnabled(false);
+                    arc.setEnabled(false);
+                    label.setEnabled(false);
+                    Dijkstra.setEnabled(false);
+                    FordFulkerson.setEnabled(false);
+                    ConnexiteO.setEnabled(false);
+                    d.exportGraphe();
                 }
             }
         };
@@ -301,6 +318,7 @@ public class InterfaceO extends Interface implements Connexe {
         arc.addActionListener(toolGroupListener);
         label.addActionListener(toolGroupListener);
         edition.addActionListener(modeGroupListener);
+        deplacement.addActionListener(modeGroupListener);
         //edition.setSelected(true);//edition activé au démarrage
         traitement.addActionListener(modeGroupListener);
         //toolBarButtons.setLayout(new FlowLayout(FlowLayout.LEFT));
