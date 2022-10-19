@@ -33,7 +33,7 @@ public abstract class Graph {
     protected ArrayList<Arc> lstArcs;
 
     public Graph(Draw d){
-        this.nbsommets = d.getNumOfCircles();
+        this.nbsommets = d.getNodes().size();
         this.adj = new int[nbsommets][nbsommets];
         this.lstArcs = new ArrayList<Arc>();
         for (int i=0;i<nbsommets;i++){
@@ -42,7 +42,7 @@ public abstract class Graph {
             }
         }
         ArrayList<MyLine> lines = d.getLines();
-        for (int i=0;i<d.getNumOfLines();i++){
+        for (int i=0;i<d.getLines().size();i++){
             MyLine l = lines.get(i);
             int p = l.getPoids();
             int src = d.findEllipse(l.getFromPoint().x,l.getFromPoint().y);

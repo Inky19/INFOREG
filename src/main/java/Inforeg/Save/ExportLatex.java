@@ -440,7 +440,7 @@ public class ExportLatex {
         ArrayList<Node> circ = d.getNodes();
         String coord = "";
 
-        for (int i = 0; i < d.getNumOfCircles(); i++) {
+        for (int i = 0; i < d.getNodes().size(); i++) {
             int x = (int) circ.get(i).getCenterX();
             int y = (int) circ.get(i).getCenterY();
             coord = coord + "\\node[draw,circle,fill=" + noeudFill + "] (" + String.valueOf(i) + ") at ("
@@ -460,7 +460,7 @@ public class ExportLatex {
     public String writeLinesPond(Draw d) {
         String arcs = "";
         ArrayList<MyLine> lines = d.getLines();
-        for (int i = 0; i < d.getNumOfLines(); i++) {
+        for (int i = 0; i < d.getNodes().size(); i++) {
             MyLine l = lines.get(i);
             int src = d.findEllipse(l.getFromPoint().x, l.getFromPoint().y);
             int dest = d.findEllipse(l.getToPoint().x, l.getToPoint().y);
@@ -486,7 +486,7 @@ public class ExportLatex {
     public String writeLinesNonPond(Draw d) {
         String arcs = "";
         ArrayList<MyLine> lines = d.getLines();
-        for (int i = 0; i < d.getNumOfLines(); i++) {
+        for (int i = 0; i < d.getNodes().size(); i++) {
             MyLine l = lines.get(i);
             int src = d.findEllipse(l.getFromPoint().x, l.getFromPoint().y);
             int dest = d.findEllipse(l.getToPoint().x, l.getToPoint().y);

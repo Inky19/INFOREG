@@ -154,8 +154,6 @@ public abstract class saveManager {
                     }
                     line = reader.readLine();
                 }
-                d.setNumOfCircles(d.getNodes().size());
-                d.setNumOfLines(d.getLines().size());
                 reader.close();
                 return d;
 
