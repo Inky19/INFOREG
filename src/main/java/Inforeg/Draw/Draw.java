@@ -156,8 +156,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     //Camera
     private Point currentMousePosition;
     private Point currentCameraPosition;
-    private int cameraX = 0;
-    private int cameraY = 0;
+    private Point camera = new Point(0,0);
     private float zoom = 100f;
     private static final int MAX_ZOOM = 500;
     private static final int MIN_ZOOM = 50;
@@ -284,8 +283,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         zoomSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent event) {
+                zoom = zoomSlider.getValue();
                 int value = 10 * (int) (zoomSlider.getValue() / 10);
-                zoom = value;
                 zoomLabel.setText(value + "%");
                 repaint();
             }
@@ -297,14 +296,13 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         tools.setOpaque(false);
         tools.setBorderPainted(true);
         this.add(tools, BorderLayout.SOUTH);
-        currentCameraPosition = new Point(cameraX, cameraY);
+        currentCameraPosition = new Point(camera);
 
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
                 currentMousePosition = evt.getLocationOnScreen();
-                currentCameraPosition.x = cameraX;
-                currentCameraPosition.y = cameraY;
+                currentCameraPosition = new Point(camera);
                 if (Interface.getMode() == Interface.EDITION_MODE) {
                     int x = evt.getX();
                     int y = evt.getY();
@@ -558,11 +556,18 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param x
      * @param y
      */
-    public Vector2D toDrawCoordinates(double x, double y) {
+    public Point toDrawCoordinates(double x, double y) {
         Rectangle r = this.getBounds();
-        float h = r.height;
-        float w = r.width;
-        return new Vector2D((x - w / 2) * zoom / 100 + w / 2 + cameraX, (y - h / 2) * zoom / 100 + h / 2 + cameraY);
+        int zoomX = r.height/2; //Update zoom x to center of window
+        int zoomY = r.width/2; //Update zoom y to center of window
+        //int newX = (int) ((x - zoomX + camera.x) * zoom / 100 + zoomX);
+        //int newY = (int) ((y - zoomY  + camera.y) * zoom / 100 + zoomY);
+        int W = r.width, H = r.height;
+        int w = (int) (W * 100/zoom);
+        int h = (int) (H * 100/zoom);
+        int newX = (int) (( x - camera.x + w/2) * zoom/100);
+        int newY = (int) (( y - camera.y + h/2) * zoom/100);
+        return new Point(newX,newY);
     }
     
     /**
@@ -586,11 +591,19 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param x
      * @param y
      */
-    public Vector2D toGlobalCoordinates(double x, double y) {
+    public Point toGlobalCoordinates(double x, double y) {
         Rectangle r = this.getBounds();
-        float h = r.height;
-        float w = r.width;
-        return new Vector2D((x - w / 2 - cameraX) * 100 / zoom + w / 2, (y - h / 2 - cameraY) * 100 / zoom + h / 2);
+        //float zoomX = r.height/2;
+        //float zoomY = r.width/2;
+        //int newX = (int) ((x - r.height/2) * 100 / zoom + zoomX - zoomX);
+        //int newY = (int) ((y - r.width/2) * 100 / zoom + zoomY - zoomY);
+        int W = r.width, H = r.height;
+        int w = (int) (W * 100/zoom);
+        int h = (int) (H * 100/zoom);
+        int newX = (int) (x * 100 / zoom + camera.x - w/2);
+        int newY = (int) (y * 100 / zoom + camera.y - h/2);        
+        
+        return new Point(newX,newY);
     }
 
     public double toDrawScale(double h) {
@@ -638,7 +651,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         if (numOfCircles < MAX) {
             nextNodeId++;
             //On ajoute un cercle à la liste nodes et on actualise les attributs concernés
-            Vector2D v = toGlobalCoordinates(x, y);
+            Point v = toGlobalCoordinates((int)x,(int)y);
             nodes.add(new Node(v.x, v.y, circleW, String.valueOf(numOfCircles), nextNodeId));
             currentCircleIndex = numOfCircles;
             numOfCircles++;
@@ -757,7 +770,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public void mouseDragged(MouseEvent event) {
         int mouseX = event.getX();
         int mouseY = event.getY();
-        Vector2D v = toGlobalCoordinates(mouseX, mouseY);
+        Point v = toGlobalCoordinates(mouseX, mouseY);
         // Global coordinates of the mouse
         int x = (int) v.x;
         int y = (int) v.y;
@@ -844,12 +857,18 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                 repaint();
             }
         }
-        if (Interface.getMode() == Interface.TRAITEMENT_MODE) {
+        
+        if (Interface.getMode() == Interface.DEPLACEMENT_MODE) {
             Point currentScreenLocation = event.getLocationOnScreen();
-            cameraX = currentScreenLocation.x - currentMousePosition.x + currentCameraPosition.x;
-            cameraY = currentScreenLocation.y - currentMousePosition.y + currentCameraPosition.y;
+            camera.x = (int) (currentCameraPosition.x + toGlobalScale(currentMousePosition.x - currentScreenLocation.x));
+            camera.y = (int) (currentCameraPosition.y + toGlobalScale(currentMousePosition.y - currentScreenLocation.y));
             Draw.drawZone = false;
-            cameraX += 1;
+            repaint();
+        }
+        
+        
+        if (Interface.getMode() == Interface.TRAITEMENT_MODE) {
+            Draw.drawZone = false;
             repaint();
         }
     }

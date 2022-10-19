@@ -86,6 +86,7 @@ public abstract class Interface {
     protected JRadioButton label;
     protected JRadioButton edition;
     protected JRadioButton traitement;
+    protected JRadioButton deplacement;
     protected JButton save;
     protected JButton load;
     protected JButton clearSelection;
@@ -123,6 +124,7 @@ public abstract class Interface {
     protected static int mode;
     public static final int EDITION_MODE = 1;
     public static final int TRAITEMENT_MODE = 2;
+    public static final int DEPLACEMENT_MODE = 3;
     protected static int activeTraitement;
     public static final int PRIM_TRAITEMENT = 21;
     public static final int DIJKSTRA_TRAITEMENT = 22;

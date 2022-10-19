@@ -12,6 +12,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import Inforeg.UI.Vector2D;
+import java.awt.Point;
 /**
  *
  * @author inky19
@@ -70,7 +71,7 @@ public class Node extends Ellipse2D.Double {
     
     public void paint(Draw d, Graphics2D g, boolean selected) {
         // Update position and scale
-        Vector2D v = d.toDrawCoordinates(cx-r, cy-r);
+        Point v = d.toDrawCoordinates(cx-r, cy-r);
         this.x = v.x;
         this.y = v.y;
         double h = d.toDrawScale(2*r);
