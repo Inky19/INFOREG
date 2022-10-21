@@ -114,6 +114,13 @@ public class FordFulkerson implements Processing {
             // Add path flow to overall flow
             max_flow += path_flow;
         }
+        for (int i = 0 ; i<V; i++) {
+            for (int j=0;j<V;j++) {
+                System.out.print(rGraph[i][j]+ " ");
+            }
+            System.out.println();
+        }
+
         JOptionPane.showMessageDialog(null, "Le flot maximal du graphe entre les sommets " + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + " est de " + max_flow + ".",
                 "Ford-Fulkerson - Flot maximal", JOptionPane.INFORMATION_MESSAGE);
     }

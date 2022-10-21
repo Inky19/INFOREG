@@ -10,6 +10,7 @@ import Inforeg.Graph.GraphO;
 import Inforeg.Draw.Draw;
 import Inforeg.Algo.Connexe;
 import static Inforeg.Interface.TRAITEMENT_MODE;
+import static Inforeg.Interface.activeTraitement;
 import static Inforeg.Interface.mode;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -114,7 +115,7 @@ public class InterfaceO extends Interface implements Connexe {
             }
         }
     };
-
+   
     public final AbstractAction ExportGraphO = new AbstractAction() {
         {
             putValue(Action.NAME, "Export Matrice d'Adjacence");
@@ -334,7 +335,7 @@ public class InterfaceO extends Interface implements Connexe {
         toolBarButtons.addSeparator();
         toolBarButtons.add(FordFulkerson);
         toolBarButtons.addSeparator();
-        toolBarButtons.add(ConnexiteO);
+        toolBarButtons.add(ConnexiteO);      
     }
 
     @Override

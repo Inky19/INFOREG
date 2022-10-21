@@ -97,7 +97,7 @@ public class Node extends Ellipse2D.Double {
         g.fill(this);
         //Label
         if (label != null) {
-            Font font = new Font("Arial",Font.PLAIN,(int) d.toDrawScale(15));
+            Font font = new Font("Arial",Font.BOLD,(int) d.toDrawScale(15));
             FontMetrics metrics = g.getFontMetrics(font);
             // Determine the X coordinate for the text
             int font_x = (int) (this.x + (this.width - metrics.stringWidth(label)) / 2);

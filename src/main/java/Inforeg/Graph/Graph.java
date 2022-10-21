@@ -11,6 +11,7 @@ Date de dernière modification : 29/03/2022
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Node;
 import java.util.ArrayList;
 
 public abstract class Graph {
@@ -30,10 +31,16 @@ public abstract class Graph {
      */
     protected int[][] adj;
 
+    private ArrayList<Node> nodes = new ArrayList<>();
+    private ArrayList<MyLine> lines = new ArrayList<>(); 
+    
     protected ArrayList<Arc> lstArcs;
 
     public Graph(Draw d){
-        this.nbsommets = d.getNodes().size();
+        this.lines = new ArrayList<>();
+        this.nodes = new ArrayList<>();
+        
+        this.nbsommets = nodes.size();
         this.adj = new int[nbsommets][nbsommets];
         this.lstArcs = new ArrayList<Arc>();
         for (int i=0;i<nbsommets;i++){
@@ -41,17 +48,21 @@ public abstract class Graph {
                 this.adj[i][j] = 0;
             }
         }
-        ArrayList<MyLine> lines = d.getLines();
-        for (int i=0;i<d.getLines().size();i++){
+    }
+    
+    public void updateArc() {
+        for (int i=0;i<lines.size();i++){
             MyLine l = lines.get(i);
             int p = l.getPoids();
-            int src = d.findEllipse(l.getFromPoint().x,l.getFromPoint().y);
-            int dest = d.findEllipse(l.getToPoint().x,l.getToPoint().y);
-            Arc a = new Arc(src,dest,p,i);
-            addArc(a);
+            //int src = nodes.get(0);
+            //int dest = d.findEllipse(l.getToPoint().x,l.getToPoint().y);
+            //Arc a = new Arc(src,dest,p,i);
+            //addArc(a);
         }
     }
-
+    
+    
+    
     public ArrayList<Arc> getLstArcs() {
         return lstArcs;
     }
@@ -150,6 +161,14 @@ public abstract class Graph {
     public abstract void addArc(Arc a);
 
     public abstract int findArc(int src, int dest);
+
+    public ArrayList<Node> getNodes() {
+        return nodes;
+    }
+
+    public ArrayList<MyLine> getLines() {
+        return lines;
+    }
 
     
 }

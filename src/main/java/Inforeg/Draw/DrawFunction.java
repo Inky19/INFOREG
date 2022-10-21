@@ -33,7 +33,7 @@ public interface DrawFunction {
 
         // Parameters
         //------------
-        double h = 50; // >0 and <=p
+        double h = 100; // >0 and <=p
 
         // Computation
         //------------
