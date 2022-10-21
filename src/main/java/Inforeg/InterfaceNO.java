@@ -6,6 +6,7 @@ Auteur : Béryl CASSEL
 Date de création : 08/03/2022
 Date de dernière modification : 24/03/2022
 =============================================*/
+import Inforeg.Algo.Coloration;
 import Inforeg.Graph.GraphNO;
 import Inforeg.Draw.Draw;
 import Inforeg.Algo.PrimMST;
@@ -130,21 +131,19 @@ public class InterfaceNO extends Interface implements Connexe {
 
     public final AbstractAction Coloration = new AbstractAction() {
         {
-            putValue(Action.NAME, "Prim");
+            putValue(Action.NAME, "Coloration");
             putValue(Action.MNEMONIC_KEY, KeyEvent.VK_P);
-            putValue(Action.SHORT_DESCRIPTION, "Applique l'algorithme de Prim pour trouver \n"
-                    + "l'arbre couvrant minimal du graphe (CTRL+P)");
-            putValue(Action.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_P, KeyEvent.CTRL_DOWN_MASK));
+            putValue(Action.SHORT_DESCRIPTION, "Applique l'algorithme de coloration gloutonne de graphe");
+
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
             if (mode == Interface.TRAITEMENT_MODE) {
-                activeTraitement = Interface.PRIM_TRAITEMENT;
+                activeTraitement = Interface.COLORATION_TRAITEMENT;
                 d.reinit();
                 d.repaint();
-                (new PrimMST()).primMST(d);
+                (new Coloration(d)).colorationGlouton();
             }
         }
     };    
@@ -300,6 +299,7 @@ public class InterfaceNO extends Interface implements Connexe {
                     Prim.setEnabled(false);
                     Kruskal.setEnabled(false);
                     ConnexiteNO.setEnabled(false);
+                    Coloration.setEnabled(false);
                 } else if (ae.getSource() == traitement) {
                     d.reinit();
                     d.repaint();
@@ -311,6 +311,7 @@ public class InterfaceNO extends Interface implements Connexe {
                     Prim.setEnabled(true);
                     Kruskal.setEnabled(true);
                     ConnexiteNO.setEnabled(true);
+                    Coloration.setEnabled(true);
                     d.exportGraphe();
                 } else if (ae.getSource() == deplacement) {
                     mode = DEPLACEMENT_MODE;
@@ -321,6 +322,7 @@ public class InterfaceNO extends Interface implements Connexe {
                     Prim.setEnabled(false);
                     Kruskal.setEnabled(false);
                     ConnexiteNO.setEnabled(false);
+                    Coloration.setEnabled(false);
                 }
             }
         };
@@ -349,6 +351,8 @@ public class InterfaceNO extends Interface implements Connexe {
         toolBarButtons.add(Kruskal);
         toolBarButtons.addSeparator();
         toolBarButtons.add(ConnexiteNO);
+        toolBarButtons.addSeparator();
+        toolBarButtons.add(Coloration);
     }
 
     @Override
@@ -357,6 +361,7 @@ public class InterfaceNO extends Interface implements Connexe {
         traitMenu.add(Prim);
         traitMenu.add(Kruskal);
         traitMenu.add(ConnexiteNO);
+        traitMenu.add(Coloration);
         menuBar.add(traitMenu);
         exporter.add(new JMenuItem(ExportGraphNO));
     }

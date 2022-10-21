@@ -8,15 +8,13 @@ Date de création : 03/03/2022
 Date de dernière modification : 11/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
-import Inforeg.ObjetGraph.Nail;
-import Inforeg.ObjetGraph.Node;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Ellipse2D;
-import Inforeg.UI.Vector2D;
+import static java.lang.Math.sqrt;
 
 public class MyLine {
 
@@ -37,6 +35,10 @@ public class MyLine {
      * Couleur
      */
     private Color color;
+    /**
+     * Flux
+     */
+    private Integer flow = null;
     /**
      * Nail
      */
@@ -61,8 +63,14 @@ public class MyLine {
         this.to = toPoint;
         this.poids = pds;
         this.color = c;
-        int x = (int) (from.getCx() + to.getCx()) / 2;
-        int y = (int) (from.getCy() + to.getCy()) / 2;
+        int x, y;
+        if (from!=to) {
+            x = (int) (from.getCx() + to.getCx()) / 2;
+            y = (int) (from.getCy() + to.getCy()) / 2;          
+        } else {
+            x = (int) (from.getCx() + from.getHeight());
+            y = (int) (from.getCy() + from.getHeight());              
+        }
         this.clou = new Nail(x, y, RCLOU, c);
     }
     
@@ -90,20 +98,21 @@ public class MyLine {
         int y3 = (int) v3.y;
 
         if (d.pondere) {
-            Font font = new Font("Arial", Font.PLAIN, (int) d.toDrawScale(15));
+            Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(15));
             g.setFont(font);
             g.drawString("" + poids, x3, y3 - (int) d.toDrawScale(10));
         }
         if (from == to) {
-            //calcArc(x1,y1,x3,y3,g);
+            g.setStroke(new BasicStroke((float) d.toDrawScale(LINE_WIDTH)));
+            double radius = sqrt((x1-x3)*(x1-x3) + (y1-y3)*(y1-y3))/2;
+            g.draw(new Ellipse2D.Double((x1+x3)/2-radius,(y1+y3)/2-radius, 2*radius, 2*radius));
+            //d.calcArc(x1,y1,x3,y3,g);
         } else {
             Point v2 = d.toDrawCoordinates(to.getCx(), to.getCy());
             int x2 = (int) v2.x;
             int y2 = (int) v2.y;
             g.drawLine(x1, y1, x3, y3);
             g.drawLine(x3, y3, x2, y2);
-
-            clou.paint(d, g, selected);
 
             g.setPaint(color); //reset color pour poids
             if (d.oriente == Draw.ORIENTE) {
@@ -114,8 +123,9 @@ public class MyLine {
                 g.setStroke(new BasicStroke((float) d.toDrawScale(LINE_WIDTH)));
                 g.drawLine(x4, y4, t[0], t[1]);
                 g.drawLine(x4, y4, t[2], t[3]);
-            }
+            } 
         }
+        clou.paint(d, g, selected);
     }
 
     public int getPoids() {
