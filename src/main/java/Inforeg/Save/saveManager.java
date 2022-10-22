@@ -103,7 +103,7 @@ public abstract class saveManager {
             String name = filePath[0];
             String path = filePath[1];
 
-            Draw d = new Draw();
+            Draw d = new Draw(true,true);
             d.setFileName(name.substring(0, name.length() - 8)); // Nom sans l'extension .inforeg
             d.setPathSauvegarde(path);
             try {
@@ -148,7 +148,7 @@ public abstract class saveManager {
                             break;
                         case "Inforeg":
                             d.setPondere(Boolean.parseBoolean(data[2]));
-                            d.setOriente(Integer.parseInt(data[3]));
+                            d.setOriente(Boolean.parseBoolean(data[3]));
                             d.setNextNodeId(Integer.parseInt(data[4]));
                             break;
                     }

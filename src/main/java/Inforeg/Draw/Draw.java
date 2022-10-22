@@ -87,7 +87,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     
     private int src = -1;
     private int dest = -1;
-    public int oriente = -1;
+    public boolean oriente;
     public static final int ORIENTE = 0;
     public static final int NONORIENTE = 1;
     private String pathSauvegarde = " ";
@@ -101,7 +101,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     /**
      * Liste des Arcs
      */
-    private ArrayList<MyLine> lines = new ArrayList<>();
+    //private ArrayList<MyLine> lines = new ArrayList<>();
     /**
      * Arc courant
      */
@@ -203,11 +203,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         this.pathSauvegarde = nomSauvegarde;
     }
 
-    public int getOriente() {
+    public boolean getOriente() {
         return oriente;
     }
 
-    public void setOriente(int oriente) {
+    public void setOriente(boolean oriente) {
         this.oriente = oriente;
     }
     
@@ -241,12 +241,20 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     
     
 
-    public Draw() {
+    public Draw(boolean oriente, boolean pondere) {
         this.G = new GraphO(this);
- 
+        this.oriente = oriente;
+        this.pondere = pondere;
+        if (oriente) {
+            G = new GraphO(this);
+        } else {
+            G = new GraphNO(this);
+        }
+        
         move = false;
         fileName = "";
         nextNodeId = 0;
+        // Zoom Toolbar
         this.setLayout(new BorderLayout());
         JToolBar tools = new JToolBar(null, JToolBar.HORIZONTAL);
         tools.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -268,13 +276,14 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                 
             }
         });
-        //zoomSlider.setAlignmentX(FlowLayout.RIGHT);
+        
         tools.add(zoomSlider);
         tools.add(zoomLabel);
         tools.setFloatable(false);
         tools.setOpaque(false);
         tools.setBorderPainted(true);
         this.add(tools, BorderLayout.SOUTH);
+        // Init camera position
         currentCameraPosition = new Point(camera);
 
         addMouseListener(new MouseAdapter() {
@@ -320,8 +329,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                             String text = JOptionPane.showInputDialog("Entrer le nouveau poids de l'Arc (seuls les entiers seront acceptés):");
                                             try {
                                                 int pds = Integer.parseInt(text);
-                                                int currentPds = lines.get(currentArcIndex).getPoids();
-                                                MyLine line = lines.get(currentArcIndex);
+                                                int currentPds = G.getLines().get(currentArcIndex).getPoids();
+                                                MyLine line = G.getLines().get(currentArcIndex);
                                                 line.setPoids(pds);
                                                 repaint();
                                                 // On ajoute l'action à la pile
@@ -344,7 +353,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                         for (Node n: G.getNodes()){
                                             n.setSelected(false);
                                         }
-                                        for (MyLine a: lines){
+                                        for (MyLine a: G.getLines()){
                                             a.setSelected(false);
                                         }
                                         selectXstart = x;
@@ -357,7 +366,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                     for (Node n: G.getNodes()){
                                         n.setSelected(false);
                                     }
-                                    for (MyLine a: lines){
+                                    for (MyLine a: G.getLines()){
                                         a.setSelected(false);
                                     }
                             }
@@ -418,7 +427,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                     n.setSelected(true);
                                 }
                             }
-                            for (MyLine a: lines){
+                            for (MyLine a: G.getLines()){
                                 int x = a.getClouPoint().x;
                                 int y = a.getClouPoint().y;
                                 if (zoneR.contains(x, y)) {
@@ -446,9 +455,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         if (evt.getClickCount() >= 2) {
                             // On ajoute l'action à la pile
                             // On ajoute les arcs qui seront supprimés
-                            if (lines.size() > 0) {
-                                for (int i = 0; i < lines.size(); i++) {
-                                    MyLine l = lines.get(i);
+                            if (G.getLines().size() > 0) {
+                                for (int i = 0; i < G.getLines().size(); i++) {
+                                    MyLine l = G.getLines().get(i);
                                     if (l.getFrom().equals(G.getNodes().get(currentCircleIndex)) || l.getTo().equals(G.getNodes().get(currentCircleIndex))) {
                                         transitions.createLog("deleteLine", l);
                                     }
@@ -463,7 +472,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     if (inter.getActiveTool() == inter.ARC_TOOL) {
                         if (evt.getClickCount() >= 2 && currentArcIndex >= 0) {
                             // On ajoute l'action à la pile
-                            MyLine toDelete = lines.get(currentArcIndex);
+                            MyLine toDelete = G.getLines().get(currentArcIndex);
                             transitions.createLog("deleteLine", toDelete);
                             //
                             removeArc(currentArcIndex);
@@ -497,7 +506,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             for (Node n: G.getNodes()){
                                 n.setSelected(false);
                             }
-                            for (MyLine a: lines){
+                            for (MyLine a: G.getLines()){
                                 a.setSelected(false);
                             }
                         }
@@ -536,7 +545,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         }
         
         //order : draw line puis draw circles
-        for (MyLine a: lines){
+        for (MyLine a: G.getLines()){
             a.paint(this, (Graphics2D) g);
         }
         // Draw circles
@@ -635,8 +644,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     }
 
     public int getArc(int x, int y) {
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).getClou().contains(x, y)) {
+        for (int i = 0; i < G.getLines().size(); i++) {
+            if (G.getLines().get(i).getClou().contains(x, y)) {
                 return i;
             }
         }
@@ -684,27 +693,16 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param line = ligne à ajouter
      */
     public void addLine(MyLine line) {
-        if (lines.size() < MAX) {
+        if (G.getLines().size() < MAX) {
             //On ajoute la ligne à la liste lines
-            lines.add(line);
+            G.getLines().add(line);
             //On actualise l'affichage avec la nouvelle ligne
             repaint();
         }
     }
 
-    public int findLine(int src, int dest) {
-        boolean trouve = false;
-        int n = 0;
-        while ((n < this.lines.size()) && (!trouve)) {
-            if ((this.lines.get(n).getFrom().equals(G.getNodes().get(src)))
-                    && (this.lines.get(n).getTo().equals(G.getNodes().get(dest)))) {
-                trouve = true;
-                return n;
-            } else {
-                n++;
-            }
-        }
-        return -1;
+    public MyLine findLine(int src, int dest) {
+        return G.findLine(src, dest);
     }
 
     @Override
@@ -719,10 +717,10 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         }
         // On supprime toutes les lignes qui sont relié au cercle supprimé
         if (G.getNodes().size() > 0) {
-            ArrayList<MyLine> linesCopy = new ArrayList<>(lines);
+            ArrayList<MyLine> linesCopy = new ArrayList<>(G.getLines());
             for (MyLine l : linesCopy) {
                 if (l.getFrom().equals(G.getNodes().get(n)) || l.getTo().equals(G.getNodes().get(n))) {
-                    lines.remove(l);
+                    G.getLines().remove(l);
                 }
             }
         }
@@ -735,13 +733,19 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         }
         repaint();
     }
-
+    
+    public void removeArc(MyLine arc) {
+        G.getLstArcs().remove(arc);
+    }
+    
+    
+    
     public void removeArc(int n) {
-        if (n < 0 || n >= lines.size()) {
+        if (n < 0 || n >= G.getLines().size()) {
             return;
         } else {
-            MyLine l = lines.get(n);
-            lines.remove(l);
+            MyLine l = G.getLines().get(n);
+            G.getLines().remove(l);
         }
         repaint();
     }
@@ -785,7 +789,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             n.addCy(transy);
                         }
                     }
-                    for (MyLine a: lines){
+                    for (MyLine a: G.getLines()){
                         if (a.isSelected()) {
                             Nail clou = a.getClou();
                             clou.cx += transx;
@@ -805,9 +809,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         if ((inter.getActiveTool() == inter.ARC_TOOL || inter.getActiveTool() == inter.SELECT_TOOL) && inter.getMode() == inter.EDITION_MODE) {
 
             if (currentArcIndex >= 0) {
-                if (lines.get(currentArcIndex).isSelected()) {
+                if (G.getLines().get(currentArcIndex).isSelected()) {
                     double transx;
-                    Nail transClou = lines.get(currentArcIndex).getClou();
+                    Nail transClou = G.getLines().get(currentArcIndex).getClou();
                     transx = x - transClou.cx;
                     double transy;
                     transy = y - transClou.cy;
@@ -818,7 +822,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             n.addCy(transy);
                         }
                     }
-                    for (MyLine a: lines){
+                    for (MyLine a: G.getLines()){
                         if (a.isSelected()){
                             Nail clou = a.getClou();
                             clou.cx += transx;
@@ -827,7 +831,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     }
                     repaint();
                 } else {
-                    MyLine line = lines.get(currentArcIndex);
+                    MyLine line = G.getLines().get(currentArcIndex);
                     line.getClou().cx = x;
                     line.getClou().cy = y;
                             
@@ -873,8 +877,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     }
 
     public void reinit() {
-        for (MyLine a: lines){
+        for (MyLine a: G.getLines()){
             a.setC(Color.BLUE);
+            a.setFlow(null);
         }
     }
 
@@ -931,14 +936,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * Méthode permettant d'actualiser le Graph G représenté par le Draw
      */
     public void exportGraphe() {
-        switch (this.oriente) {
-            case Draw.ORIENTE:
-                this.G = new GraphO(this);
-                break;
-            case Draw.NONORIENTE:
-                this.G = new GraphNO(this);
-                break;
-        }
+        G.updateVariable();
     }
 
     

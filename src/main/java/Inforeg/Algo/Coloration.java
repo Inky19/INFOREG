@@ -23,8 +23,8 @@ import java.util.LinkedList;
  * Les couleurs sont représentées par des entiers qui sont convertis en couleur en utilisant la variable static COLORS.
  */
 public class Coloration {  
-    private final ArrayList<LinkedList<Integer>> listAdj;
-    private final HashMap<Node,Integer> hashNode;
+    private ArrayList<LinkedList<Integer>> listAdj;
+    private HashMap<Node,Integer> hashNode;
     private final Draw d;
     private static final String[] COLORS = new String[]{"#e6194B","#f58231","#ffe119","#bfef45","#3cb44b","#42d4f4","#4363d8","#911eb4","#f032e6","#800000"}; 
     
@@ -41,17 +41,15 @@ public class Coloration {
         listAdj.clear();
         ArrayList<Node> nodes = d.getNodes();
         ArrayList<MyLine> arcs = d.getLines();
-        int id = 0;
+        hashNode = d.getG().getHashNode();
         for (Node node : nodes) {
-            hashNode.put(node, id);
             listAdj.add(new LinkedList<>());
-            id++;
         }
         for (MyLine arc : arcs) {
             int idFrom = hashNode.get(arc.getFrom());
             int idTo = hashNode.get(arc.getTo());
             listAdj.get(idFrom).add(idTo);
-            if (d.oriente==Draw.NONORIENTE) {
+            if (!d.oriente) {
                listAdj.get(idTo).add(idFrom); 
             }    
         }

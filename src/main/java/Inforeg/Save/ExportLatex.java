@@ -400,7 +400,7 @@ public class ExportLatex {
                 + "\\begin{tikzpicture}[scale=0.04]\n";
         //deuxieme partie
         String latex2 = writeCoordinates(d);
-        if (d.getOriente() == 0) {//orienté
+        if (d.getOriente()) {//orienté
             latex2 += "\\tikzstyle{style}=[->," + styleLine + "]\n";
             if (d.getPondere()) {//pondéré
                 latex2 += writeLinesPond(d);

@@ -9,6 +9,7 @@ Date de dernière modification : 08/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.GraphO;
+import Inforeg.ObjetGraph.MyLine;
 import java.awt.Color;
 
 import javax.swing.JOptionPane;
@@ -79,9 +80,9 @@ public class Dijkstra implements Processing {
         int count = 0;
         //index dist min and last dist
         while ((s != src) && (count < d.getNodes().size()) && (p != -1)) {
-            int ind = d.findLine(p, s);
-            if (ind != -1) {
-                d.getLines().get(ind).setC(Color.RED);
+            MyLine l = d.findLine(p, s);
+            if (l != null) {
+                l.setC(Color.RED);
                 s = p;
                 p = predecesseur[p];
                 count++;
