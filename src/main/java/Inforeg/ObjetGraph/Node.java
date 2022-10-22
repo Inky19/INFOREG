@@ -25,13 +25,17 @@ public class Node extends Ellipse2D.Double {
     private double r;
     // Color of the node
     private Color color;
+    private final static Color MULTISELECTED_COLOR = Color.GREEN;
+    private final static Color SELECTED_COLOR = Color.decode("#ddb9ff");
+    //
     private String label;
     private int id;
+    private boolean multiSelected;
     private boolean selected;
     
     public Node(){
         super();
-        selected = false;
+        multiSelected = false;
         this.
         cx = 0;
         cy = 0;
@@ -46,7 +50,7 @@ public class Node extends Ellipse2D.Double {
         this.color = Color.WHITE;
         this.id = id;
         this.label = label;
-        selected = false;
+        multiSelected = false;
     }
     
     public Node(double cx, double cy, double r, Color color, String label, int id){
@@ -57,7 +61,7 @@ public class Node extends Ellipse2D.Double {
         this.color = color;
         this.label = label;
         this.id = id;
-        selected = false;
+        multiSelected = false;
     }
     
     public void updateSize(double r){
@@ -75,7 +79,7 @@ public class Node extends Ellipse2D.Double {
     
     public void paint(Draw d, Graphics2D g) {
         // Update position and scale
-        Point v = d.toDrawCoordinates(cx-r, cy-r);
+        Vector2D v = d.toDrawCoordinates(cx-r, cy-r);
         this.x = v.x;
         this.y = v.y;
         double h = d.toDrawScale(2*r);
@@ -84,16 +88,17 @@ public class Node extends Ellipse2D.Double {
         
         g.setStroke(new BasicStroke((float)d.toDrawScale(7)));
         //Outline
-        if(selected){
-            g.setPaint(Color.GREEN); 
-        }else{
+        if(multiSelected){
+            g.setPaint(MULTISELECTED_COLOR); 
+        }else if(selected) {
+            g.setPaint(SELECTED_COLOR);
+        } else {
             g.setPaint(Color.BLACK);
         }
         g.draw(this);
         g.setStroke(new BasicStroke(1));
         //Inside
         g.setPaint(color);
-
         g.fill(this);
         //Label
         if (label != null) {
@@ -163,10 +168,14 @@ public class Node extends Ellipse2D.Double {
     }
 
     public boolean isSelected() {
-        return selected;
+        return multiSelected;
     }
 
     public void setSelected(boolean selected) {
+        this.multiSelected = selected;
+    }
+    
+    public void setSelect(boolean selected) {
         this.selected = selected;
     }
     

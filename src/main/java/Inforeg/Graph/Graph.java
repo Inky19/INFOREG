@@ -11,6 +11,7 @@ import Inforeg.ObjetGraph.Arc;
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.MyLine;
 import Inforeg.ObjetGraph.Node;
+import static java.lang.Integer.max;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -21,27 +22,25 @@ public abstract class Graph {
      * Nombre de Noeuds du Graph
      */
     protected int nbsommets;
-
-    /**
-     * Nombre maximal de sommets que peut contenir un graphe
-     */
-    public final static int nbmax = 1000;
-
     boolean oriente;
     // Structures de données de dessin
     private ArrayList<Node> nodes = new ArrayList<>();
     private ArrayList<MyLine> lines = new ArrayList<>();
+    private int nextLabel;
+    private int nextId;
     // Structure de données de traitement
     protected int[][] adj;
     protected ArrayList<Arc> lstArcs;
     // Passage de noeud à int
-    private HashMap<Node, Integer> hashNode;
+    private final HashMap<Node, Integer> hashNode;
 
     public Graph(Draw d) {
         this.oriente = d.getOriente();
         this.lines = new ArrayList<>();
         this.nodes = new ArrayList<>();
-
+        this.nextLabel = 0;
+        this.nextId = 0;
+        
         this.lstArcs = new ArrayList<Arc>();
 
         hashNode = new HashMap<>();
@@ -78,7 +77,84 @@ public abstract class Graph {
     public ArrayList<Arc> getLstArcs() {
         return lstArcs;
     }
-
+    
+    public void addNode(Node node) {
+        nodes.add(node);
+        if (node.getId() >= nextId) {
+            nextId = node.getId() + 1;
+        }
+        
+        nextLabel = getMinAvailableLabel();
+    }
+   
+    public void addNode(double x, double y, double radius) {
+        nodes.add(new Node(x,y,radius, Integer.toString(nextLabel),nextId));
+        nextId++;
+        nextLabel = getMinAvailableLabel();
+    }
+    
+    public void removeNode(Node node) {
+        for (MyLine arc : lines) {
+            if (arc.getFrom()==node || arc.getTo()==node) {
+                lines.remove(arc);
+            }
+        }
+    }
+    
+    public void removeLine(MyLine arc) {
+        lines.remove(arc);
+    }    
+    
+    public void addLine(MyLine arc) {
+        lines.add(arc);
+    }     
+    
+    public boolean lineExist(MyLine arc) {
+        Node from = arc.getFrom();
+        Node to = arc.getTo();
+        for (MyLine line : lines) {
+            if (oriente) {
+                if (line.getFrom()==from && line.getTo()==to) {
+                    return true;
+                }
+            } else {
+                if ((line.getFrom()==from && line.getTo()==to)||line.getFrom()==to && line.getTo()==from) {
+                    return true;
+                }    
+            }
+        }
+        return false;
+    }
+    
+    
+    
+    private int getMinAvailableLabel() {
+        // max label
+        int maxLabel = 0;
+        for (Node node : nodes) {
+            try {
+                int lbl = Integer.parseInt(node.getLabel());
+                maxLabel = max(maxLabel,lbl);
+            } catch(NumberFormatException e) {}
+        }       
+        boolean[] taken = new boolean[maxLabel+1];
+        for (int i=0; i < taken.length;i++) {
+            taken[i] = false;
+        }
+        for (Node node : nodes) {
+            try {
+                int lbl = Integer.parseInt(node.getLabel());
+                taken[lbl] = true;
+            } catch(NumberFormatException e) {}
+        }
+        int minLbl = 0;
+        while (minLbl<taken.length && taken[minLbl]) {
+            minLbl++;
+        }
+        return minLbl;
+        
+    }
+    
     public void setLstArcs(ArrayList<Arc> lstArcs) {
         this.lstArcs = lstArcs;
     }

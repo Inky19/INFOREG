@@ -59,11 +59,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     /**
      * Rayon des cercles représentant les Nœuds, initialisé au rayon initial
      */
-    private static double circleW = Draw.RINIT;
+    private static double nodeRadius = Draw.RINIT;
     /**
      * Nombre maximum de nœuds d'un graphe, défini dans la classe Graph
      */
-    public static final int MAX = Graph.nbmax;
+    public static final int MAX = 1000;
     /**
      * Liste des cerlces représentant les Nœuds
      */
@@ -188,11 +188,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     }
 
     public double getCircleW() {
-        return Draw.circleW;
+        return Draw.nodeRadius;
     }
 
     public void setCircleW(double r) {
-        Draw.circleW = r;
+        Draw.nodeRadius = r;
     }
     
     public String getPathSauvegarde() {
@@ -306,7 +306,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             switch (inter.getActiveTool()){
                                 case Interface.NOEUD_TOOL:
                                     if (currentCircleIndex < 0 && currentArcIndex < 0) { // not inside a circle
-                                        add(x, y);
+                                        addNode(x, y);
                                         // On ajoute l'action à la pile
                                         transitions.createLog("addCircle", G.getNodes().get(G.getNodes().size() - 1));
                                     }
@@ -345,7 +345,47 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                 case Interface.ARC_TOOL:
                                     if ((currentCircleIndex >= 0) && (fromPoint == null)) {
                                         fromPoint = G.getNodes().get(currentCircleIndex);
+                                        fromPoint.setSelect(true);
+                                    } else if (fromPoint != null && currentCircleIndex == -1) {
+                                        fromPoint.setSelect(false);
+                                        fromPoint = null;
+                                    }  
+                                    else if ((currentCircleIndex >= 0) && (fromPoint != null)) { // inside circle
+                                        Node p = G.getNodes().get(currentCircleIndex);
+                                        if (pondere) {
+                                            String text = JOptionPane.showInputDialog("Entrer le poids de l'Arc (seuls les entiers seront acceptés):");
+                                            try {
+                                                int pds = Integer.parseInt(text);
+                                                MyLine newLine = new MyLine(fromPoint, p, pds, currentColor);
+                                                if (!G.lineExist(newLine)) {
+                                                    addLine(newLine);
+                                                    // On ajoute l'action à la pile
+                                                    transitions.createLog("addLine", newLine);
+                                                }
+                                                fromPoint.setSelect(false);
+                                                fromPoint = null;
+
+
+                                            } catch (Exception e) {
+                                                System.out.println("Pas un entier !");
+                                                //fromPoint = null;
+                                            } finally {
+                                                fromPoint.setSelect(false);
+                                                fromPoint = null;
+                                            }
+                                        } else {
+                                            MyLine newLine = new MyLine(fromPoint, p, 1, currentColor);
+                                            if (!G.lineExist(newLine)) {
+                                                addLine(newLine);
+                                                // On ajoute l'action à la pile
+                                                transitions.createLog("addLine", newLine);
+                                            }
+                                            fromPoint.setSelect(false);
+                                            fromPoint = null;
+                                        }
+                                
                                     }
+                            repaint();
                                     break;
                                 
                                 case Interface.SELECT_TOOL:
@@ -386,37 +426,6 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             int y = evt.getY();
                             // Vérifie si on clique où non sur un cercle existant
                             currentCircleIndex = findEllipse(x, y);
-                            if (inter.getActiveTool() == inter.ARC_TOOL) {
-                                //ATTENTION : il faudra prendre le compte le cas où on pointe vers le meme cercle
-                                if ((currentCircleIndex >= 0) && (fromPoint != null) && (!fromPoint.equals(G.getNodes().get(currentCircleIndex)))) { // inside circle
-                                    Node p = G.getNodes().get(currentCircleIndex);
-                                    if (pondere) {
-                                        String text = JOptionPane.showInputDialog("Entrer le poids de l'Arc (seuls les entiers seront acceptés):");
-                                        try {
-                                            int pds = Integer.parseInt(text);
-                                            MyLine newLine = new MyLine(fromPoint, p, pds, currentColor);
-                                            addLine(newLine);
-                                            repaint();
-                                            //fromPoint = null;
-                                            // On ajoute l'action à la pile
-                                            transitions.createLog("addLine", newLine);
-                                        } catch (Exception e) {
-                                            System.out.println("Pas un entier !");
-                                            //fromPoint = null;
-                                        } finally {
-                                            fromPoint = null;
-                                        }
-                                    } else {
-                                        MyLine newLine = new MyLine(fromPoint, p, 1, currentColor);
-                                        addLine(newLine);
-                                        // On ajoute l'action à la pile
-                                        transitions.createLog("addLine", newLine);
-                                        //
-                                        fromPoint = null;
-                                    }
-                                }
-                            }
-                            repaint();
                         }
                         if (inter.getActiveTool() == inter.SELECT_TOOL) {
                             drawZone = false;
@@ -477,29 +486,6 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             //
                             removeArc(currentArcIndex);
                         }
-                        if (evt.getClickCount() >= 2 && currentCircleIndex >= 0) {
-                            if (pondere) {
-                                String text = JOptionPane.showInputDialog("Entrer le poids de l'Arc (seuls les entiers seront acceptés):");
-                                try {
-                                    int pds = Integer.parseInt(text);
-                                    MyLine arc = new MyLine(G.getNodes().get(currentCircleIndex), G.getNodes().get(currentCircleIndex), pds, currentColor);
-                                    addLine(arc);
-                                    repaint();
-                                    // On ajoute l'action à la pile
-                                    transitions.createLog("addLine", arc);
-                                } catch (Exception e) {
-                                    System.out.println("Pas un entier !");
-
-                                } finally {
-                                    fromPoint = null;
-                                }
-                            } else {
-                                MyLine arc = new MyLine(G.getNodes().get(currentCircleIndex), G.getNodes().get(currentCircleIndex), 1, currentColor);
-                                addLine(arc);
-                                // On ajoute l'action à la pile
-                                transitions.createLog("addLine", arc);
-                            }
-                        }
                     }
                     if (inter.getActiveTool() == inter.SELECT_TOOL) {
                         if (currentCircleIndex < 0 && currentArcIndex < 0) {//not on circle or arc
@@ -549,8 +535,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             a.paint(this, (Graphics2D) g);
         }
         // Draw circles
-        for (Node n: G.getNodes()){
-            n.paint(this, (Graphics2D) g);
+        for (Node n : G.getNodes()){
+            n.paint(this, (Graphics2D) g);  
         }
         // Multiselect zone
         if (Draw.drawZone) {
@@ -566,14 +552,14 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param x
      * @param y
      */
-    public Point toDrawCoordinates(double x, double y) {
+    public Vector2D toDrawCoordinates(double x, double y) {
         Rectangle r = this.getBounds();
         int W = r.width, H = r.height;
         int w = (int) (W * 100/zoom);
         int h = (int) (H * 100/zoom);
         int newX = (int) (( x - camera.x + w/2) * zoom/100);
         int newY = (int) (( y - camera.y + h/2) * zoom/100);
-        return new Point(newX,newY);
+        return new Vector2D(newX,newY);
     }
     
     /**
@@ -597,14 +583,14 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param x
      * @param y
      */
-    public Point toGlobalCoordinates(double x, double y) {
+    public Vector2D toGlobalCoordinates(double x, double y) {
         Rectangle r = this.getBounds();
         int W = r.width, H = r.height;
         int w = (int) (W * 100/zoom);
         int h = (int) (H * 100/zoom);
         int newX = (int) (x * 100 / zoom + camera.x - w/2);
         int newY = (int) (y * 100 / zoom + camera.y - h/2);        
-        return new Point(newX,newY);
+        return new Vector2D(newX,newY);
     }
 
     /**
@@ -658,13 +644,14 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param x = abcsisse du cercle à dessiner
      * @param y = ordonnée du cercle à dessiner
      */
-    public void add(double x, double y) {
+    public void addNode(double x, double y) {
         if (G.getNodes().size() < MAX) {
             nextNodeId++;
             //On ajoute un cercle à la liste nodes et on actualise les attributs concernés
-            Point v = toGlobalCoordinates((int)x,(int)y);
+            Vector2D v = toGlobalCoordinates((int)x,(int)y);
             currentCircleIndex = G.getNodes().size();
-            G.getNodes().add(new Node(v.x, v.y, circleW, String.valueOf(G.getNodes().size()), nextNodeId));
+            //G.addNode(new Node(v.x, v.y, nodeRadius, String.valueOf(G.getNodes().size()), nextNodeId));
+            G.addNode(v.x, v.y, nodeRadius);
             //On actualise l'affichage avec le nouveau cercle
             repaint();
         }
@@ -693,12 +680,10 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param line = ligne à ajouter
      */
     public void addLine(MyLine line) {
-        if (G.getLines().size() < MAX) {
             //On ajoute la ligne à la liste lines
-            G.getLines().add(line);
-            //On actualise l'affichage avec la nouvelle ligne
-            repaint();
-        }
+        G.addLine(line);
+        //On actualise l'affichage avec la nouvelle ligne
+        repaint(); 
     }
 
     public MyLine findLine(int src, int dest) {
@@ -735,7 +720,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     }
     
     public void removeArc(MyLine arc) {
-        G.getLstArcs().remove(arc);
+        G.removeLine(arc);
     }
     
     
@@ -772,7 +757,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         move = true;
         int mouseX = event.getX();
         int mouseY = event.getY();
-        Point v = toGlobalCoordinates(mouseX, mouseY);
+        Vector2D v = toGlobalCoordinates(mouseX, mouseY);
         // Global coordinates of the mouse
         int x = (int) v.x;
         int y = (int) v.y;
@@ -911,10 +896,10 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public void tailleCirc() {
         if (G.getNodes().size() > 0) {
             double factor = getTailleCirc();
-            circleW = factor * Draw.RINIT;
+            nodeRadius = factor * Draw.RINIT;
             //lineWidth = (float) factor*Draw.LINIT;
             for (Node n: G.getNodes()){
-                n.updateSize(circleW);
+                n.updateSize(nodeRadius);
             }
             repaint();
         }

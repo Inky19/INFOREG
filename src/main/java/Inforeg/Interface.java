@@ -454,7 +454,7 @@ public abstract class Interface {
                         if (temp != null) {
                             piles.addPreviousState(temp);
                         }
-                        Ellipse2D.Double noeud = circles.get(d.find(lastReg.noeud));
+                        Node noeud = circles.get(d.find(lastReg.noeud));
                         noeud.x = previousReg.x;
                         noeud.y = previousReg.y;
                         d.repaint();
@@ -465,7 +465,7 @@ public abstract class Interface {
                         lastReg = piles.getPreviousState();
                         break;
                     case "deleteCircle":
-                        d.add(lastReg.x, lastReg.y);
+                        d.addNode(lastReg.x, lastReg.y);
                         break;
                     case "addLine":
                         int fromIndex = d.find(lastReg.noeud);
@@ -511,7 +511,7 @@ public abstract class Interface {
                 // Ensuite, on déplace l'action sur l'autre pile
                 switch (nextReg.action) {
                     case "addCircle":
-                        d.add(nextReg.x, nextReg.y);
+                        d.addNode(nextReg.x, nextReg.y);
                         break;
                     case "moveCircle":
                         Ellipse2D.Double noeud = circles.get(d.find(nextReg.noeud));
