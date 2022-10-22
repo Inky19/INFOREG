@@ -38,7 +38,7 @@ public class Nail extends Ellipse2D.Double {
     }
 
     public void paint(Draw d, Graphics2D g, boolean selected) {
-        Point v = d.toDrawCoordinates(cx - r, cy - r);
+        Vector2D v = d.toDrawCoordinates(cx - r, cy - r);
         this.x = v.x;
         this.y = v.y;
         double h = d.toDrawScale(2 * r);
