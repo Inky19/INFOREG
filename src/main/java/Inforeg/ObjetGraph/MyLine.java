@@ -115,7 +115,7 @@ public class MyLine {
             g.drawLine(x3, y3, x2, y2);
 
             g.setPaint(color); //reset color pour poids
-            if (d.oriente == Draw.ORIENTE) {
+            if (d.oriente) {
                 int[] t = new int[4];
                 int x4 = (x3 + x2) / 2;
                 int y4 = (y3 + y2) / 2;
@@ -126,6 +126,12 @@ public class MyLine {
             } 
         }
         clou.paint(d, g, selected);
+        if (flow != null) {
+            Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(15));
+            g.setFont(font);
+            g.setPaint(Color.BLACK);
+            g.drawString("" + flow, x3, y3 + (int) d.toDrawScale(10));
+        }
     }
 
     public int getPoids() {
@@ -209,5 +215,12 @@ public class MyLine {
         this.selected = selected;
     }
 
+    public Integer getFlow() {
+        return flow;
+    }
+
+    public void setFlow(Integer flow) {
+        this.flow = flow;
+    }
     
 }

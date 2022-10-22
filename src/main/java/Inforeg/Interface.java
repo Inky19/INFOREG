@@ -308,9 +308,7 @@ public abstract class Interface {
     private void addNewTab(){
         String title = "Graphe " + String.valueOf(tabsPanel.getTabCount());
         ImageIcon tabIco = new ImageIcon("asset/icons/tab.png");
-        Draw newD = new Draw();
-        newD.setPondere(d.getPondere());
-        newD.setOriente(d.getOriente());
+        Draw newD = new Draw(d.getOriente(),d.getPondere());
         newD.setInterface(Interface.this);
         tabsPanel.addTab(title, tabIco, newD);
         tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, tabIco));

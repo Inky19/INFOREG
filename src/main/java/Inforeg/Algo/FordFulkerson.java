@@ -8,6 +8,8 @@ Date de dernière modification : 28/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.GraphO;
+import Inforeg.ObjetGraph.MyLine;
+import java.awt.Color;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
@@ -114,11 +116,17 @@ public class FordFulkerson implements Processing {
             // Add path flow to overall flow
             max_flow += path_flow;
         }
+        MyLine l;
         for (int i = 0 ; i<V; i++) {
             for (int j=0;j<V;j++) {
-                System.out.print(rGraph[i][j]+ " ");
+                l = d.findLine(i,j);
+                if (l != null) {
+                    l.setFlow(l.getPoids() - rGraph[i][j]);
+                    if (rGraph[i][j] == 0) {
+                        l.setC(Color.red);
+                    }
+                }
             }
-            System.out.println();
         }
 
         JOptionPane.showMessageDialog(null, "Le flot maximal du graphe entre les sommets " + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + " est de " + max_flow + ".",
