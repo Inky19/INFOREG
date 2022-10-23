@@ -94,11 +94,18 @@ public abstract class Graph {
     }
     
     public void removeNode(Node node) {
-        for (MyLine arc : lines) {
-            if (arc.getFrom()==node || arc.getTo()==node) {
+        try {
+            int lbl = Integer.parseInt(node.getLabel());
+            nextLabel = lbl;
+        } catch(NumberFormatException e) {}
+        ArrayList<MyLine> linesCopy = new ArrayList<>(lines);
+        for (MyLine arc : linesCopy) {
+            if (arc.getFrom()== node || arc.getTo()== node) {
                 lines.remove(arc);
+                System.out.println(true);
             }
         }
+        nodes.remove(node);
     }
     
     public void removeLine(MyLine arc) {

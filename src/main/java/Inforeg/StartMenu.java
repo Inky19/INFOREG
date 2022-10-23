@@ -40,6 +40,7 @@ public class StartMenu {
         JFrame J = new JFrame("INFOREG");
         J.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         J.setSize(600, 400);
+        J.setResizable(false);
         J.setLocationRelativeTo(null);
         JPanel mainPanel = (JPanel) J.getContentPane();
         JPanel logoPanel = new JPanel();
@@ -56,7 +57,7 @@ public class StartMenu {
         BufferedImage bannerImg = ImageIO.read(new File("asset/logoINFOREG.png"));
         Image bannerImgResized = bannerImg.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
         JLabel banner = new JLabel(new ImageIcon(bannerImgResized));
-
+        
         JCheckBox graphOriente = new JCheckBox("Orienté");
 
         JCheckBox graphPond = new JCheckBox("Pondéré");

@@ -103,15 +103,22 @@ public abstract class saveManager {
             String name = filePath[0];
             String path = filePath[1];
 
-            Draw d = new Draw(true,true);
-            d.setFileName(name.substring(0, name.length() - 8)); // Nom sans l'extension .inforeg
-            d.setPathSauvegarde(path);
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(file));
-
+                // Recupération des propriétés de Draw = Première ligne
                 String line = reader.readLine();
+                String[] data = line.split(sep);
+                Boolean pondere = Boolean.parseBoolean(data[2]);
+                Boolean oriente = Boolean.parseBoolean(data[3]);
+                
+                Draw d = new Draw(oriente,pondere);
+                d.setNextNodeId(Integer.parseInt(data[4]));
+                d.setFileName(name.substring(0, name.length() - 8)); // Nom sans l'extension .inforeg
+                d.setPathSauvegarde(path);
+                
+                line = reader.readLine();
                 while (line != null) {
-                    String[] data = line.split(sep);
+                    data = line.split(sep);
                     String colorHex = "";
                     Color color = Color.BLACK;
                     switch (data[0]) {
