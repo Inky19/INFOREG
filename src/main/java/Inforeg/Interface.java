@@ -162,11 +162,13 @@ public abstract class Interface {
             if (d.getPathSauvegarde() != " ") {
                 File f = new File(d.getPathSauvegarde());
                 saveManager.saveToFile(d, d.getPathSauvegarde());
+                setSaveStatus(d, true);
                 // Sinon, on créé un nouveau fichier de sauvegarde
             } else {
                 saveManager.save(d);
                 if (d != null) {
                     tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
+                    tabsPanel.updateUI();
                 }
             }
         }
@@ -290,6 +292,7 @@ public abstract class Interface {
         };
         if (d.getFileName() == null || d.getFileName().equals("")){
             tabsPanel.addTab("Graphe 1", tabIco, d);
+            d.setFileName("Graphe 1");
         } else {
             tabsPanel.addTab(d.getFileName(), tabIco, d);
         }
@@ -309,6 +312,7 @@ public abstract class Interface {
         String title = "Graphe " + String.valueOf(tabsPanel.getTabCount());
         ImageIcon tabIco = new ImageIcon("asset/icons/tab.png");
         Draw newD = new Draw(d.getOriente(),d.getPondere());
+        newD.setFileName(title);
         newD.setInterface(Interface.this);
         tabsPanel.addTab(title, tabIco, newD);
         tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, tabIco));
@@ -642,7 +646,17 @@ public abstract class Interface {
         g.dispose();
         imageLabel.repaint();
     }
-
+    
+    public void setSaveStatus(Draw d, boolean saved) {
+        if (saved) {
+            tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
+        } else {
+            tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName()+"*"); 
+        }
+        tabsPanel.updateUI();
+    }
+    
+    
     public static int getMode() {
         return mode;
     }

@@ -473,9 +473,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                 }
                             }
                             // La reconstruction du noeud sera placée au haut de la pile
-                            transitions.createLog("deleteCircle", getNodes().get(currentCircleIndex));
+                            transitions.createLog("deleteCircle", G.getNodes().get(currentCircleIndex));
                             //
-                            remove(currentCircleIndex);
+                            removeNode(currentCircleIndex);
                         }
                     }
                     if (inter.getActiveTool() == inter.ARC_TOOL) {
@@ -645,16 +645,15 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param y = ordonnée du cercle à dessiner
      */
     public void addNode(double x, double y) {
-        if (G.getNodes().size() < MAX) {
-            nextNodeId++;
-            //On ajoute un cercle à la liste nodes et on actualise les attributs concernés
-            Vector2D v = toGlobalCoordinates((int)x,(int)y);
-            currentCircleIndex = G.getNodes().size();
-            //G.addNode(new Node(v.x, v.y, nodeRadius, String.valueOf(G.getNodes().size()), nextNodeId));
-            G.addNode(v.x, v.y, nodeRadius);
-            //On actualise l'affichage avec le nouveau cercle
-            repaint();
-        }
+        inter.setSaveStatus(this, false);
+        nextNodeId++;
+        //On ajoute un cercle à la liste nodes et on actualise les attributs concernés
+        Vector2D v = toGlobalCoordinates((int)x,(int)y);
+        currentCircleIndex = G.getNodes().size();
+        //G.addNode(new Node(v.x, v.y, nodeRadius, String.valueOf(G.getNodes().size()), nextNodeId));
+        G.addNode(v.x, v.y, nodeRadius);
+        //On actualise l'affichage avec le nouveau cercle
+        repaint();
     }
 
     public int find(Ellipse2D.Double circ) {
@@ -690,42 +689,26 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         return G.findLine(src, dest);
     }
 
-    @Override
     /**
      * Supprime un Nœud sélectionné
      *
      * @param n = indice du Nœud dans la liste circ
      */
-    public void remove(int n) {
-        if (n < 0 || n >= G.getNodes().size()) {
-            return;
-        }
-        // On supprime toutes les lignes qui sont relié au cercle supprimé
-        if (G.getNodes().size() > 0) {
-            ArrayList<MyLine> linesCopy = new ArrayList<>(G.getLines());
-            for (MyLine l : linesCopy) {
-                if (l.getFrom().equals(G.getNodes().get(n)) || l.getTo().equals(G.getNodes().get(n))) {
-                    G.getLines().remove(l);
-                }
-            }
-        }
-        //On remplace le cercle d'indic n par le dernier cercel ajouté
-        //et on supprime le denrier cercle
-        G.getNodes().set(n, G.getNodes().get(G.getNodes().size()-1));
-        G.getNodes().remove(G.getNodes().size()-1);
-        if (currentCircleIndex == n) {
-            currentCircleIndex = -1;
-        }
+    public void removeNode(int n) {
+        inter.setSaveStatus(this, false);
+        G.removeNode(G.getNodes().get(n));
         repaint();
     }
     
     public void removeArc(MyLine arc) {
+        inter.setSaveStatus(this, false);
         G.removeLine(arc);
     }
     
     
     
     public void removeArc(int n) {
+        inter.setSaveStatus(this, false);
         if (n < 0 || n >= G.getLines().size()) {
             return;
         } else {
