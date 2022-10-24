@@ -645,7 +645,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param y = ordonnée du cercle à dessiner
      */
     public void addNode(double x, double y) {
-        inter.setSaveStatus(this, false);
+        inter.tabSaved(false);
         nextNodeId++;
         //On ajoute un cercle à la liste nodes et on actualise les attributs concernés
         Vector2D v = toGlobalCoordinates((int)x,(int)y);
@@ -679,6 +679,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param line = ligne à ajouter
      */
     public void addLine(MyLine line) {
+        inter.tabSaved(false);
             //On ajoute la ligne à la liste lines
         G.addLine(line);
         //On actualise l'affichage avec la nouvelle ligne
@@ -695,20 +696,19 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param n = indice du Nœud dans la liste circ
      */
     public void removeNode(int n) {
-        inter.setSaveStatus(this, false);
+        inter.tabSaved(false);
         G.removeNode(G.getNodes().get(n));
         repaint();
     }
     
     public void removeArc(MyLine arc) {
-        inter.setSaveStatus(this, false);
+        inter.tabSaved(false);
         G.removeLine(arc);
     }
     
     
     
     public void removeArc(int n) {
-        inter.setSaveStatus(this, false);
         if (n < 0 || n >= G.getLines().size()) {
             return;
         } else {
@@ -746,7 +746,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         int y = (int) v.y;
         if ((inter.getActiveTool() == inter.NOEUD_TOOL || inter.getActiveTool() == inter.SELECT_TOOL) && inter.getMode() == inter.EDITION_MODE) {
             if (currentCircleIndex >= 0) {
-                
+                inter.tabSaved(false);
                 if (G.getNodes().get(currentCircleIndex).isSelected()) {
                     double transx = x - G.getNodes().get(currentCircleIndex).getCx();
                     double transy = y - G.getNodes().get(currentCircleIndex).getCy();
@@ -777,6 +777,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         if ((inter.getActiveTool() == inter.ARC_TOOL || inter.getActiveTool() == inter.SELECT_TOOL) && inter.getMode() == inter.EDITION_MODE) {
 
             if (currentArcIndex >= 0) {
+                inter.tabSaved(false);
                 if (G.getLines().get(currentArcIndex).isSelected()) {
                     double transx;
                     Nail transClou = G.getLines().get(currentArcIndex).getClou();
@@ -851,6 +852,12 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         }
     }
 
+    public void doRedraw(){
+         getTopLevelAncestor().revalidate();
+         getTopLevelAncestor().repaint();
+     }
+    
+    
     public void traitement() {
         reinit();
         repaint();
