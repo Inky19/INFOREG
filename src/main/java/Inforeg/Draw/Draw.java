@@ -42,6 +42,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import Inforeg.UI.Vector2D;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.plaf.IconUIResource;
 
 public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
@@ -277,10 +283,35 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             }
         });
         
+        JButton fitToScreen = new JButton(new ImageIcon("asset/icons/fit.png"));
+        fitToScreen.setPreferredSize(new Dimension(24, 24));
+        fitToScreen.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int x = 0 , y = 0;
+                Double minX = Double.MAX_VALUE;
+                Double minY = Double.MAX_VALUE;
+                Double maxX = Double.MIN_VALUE;
+                Double maxY = Double.MIN_VALUE;
+                ArrayList<Node> nodes = G.getNodes();
+                for (Node n : nodes) {
+                    minX = Double.min(n.getCx(),minX);
+                    minY = Double.min(n.getCy(),minY);
+                    maxX = Double.max(n.getCx(),maxX);
+                    maxY = Double.max(n.getCy(),maxY);
+                    x += n.getCx();
+                    y += n.getCy();
+                }
+                //zoom = (float) (100f*Double.max(Draw.this.getBounds().getWidth()/(maxX-minX),Draw.this.getBounds().getHeight()/(maxY-minY)));
+                camera = new Point((int) x/nodes.size(), (int) y/nodes.size());
+                repaint();
+            }
+        });
+        tools.add(fitToScreen);        
         tools.add(zoomSlider);
         tools.add(zoomLabel);
         tools.setFloatable(false);
         tools.setOpaque(false);
+        tools.setFocusable(false);
         tools.setBorderPainted(true);
         this.add(tools, BorderLayout.SOUTH);
         // Init camera position
@@ -679,7 +710,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param line = ligne à ajouter
      */
     public void addLine(MyLine line) {
-            //On ajoute la ligne à la liste lines
+        inter.setSaveStatus(this, false);
         G.addLine(line);
         //On actualise l'affichage avec la nouvelle ligne
         repaint(); 
