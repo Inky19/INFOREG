@@ -37,7 +37,7 @@ public abstract class saveManager {
      *
      * @param d Draw à sauvegarder
      */
-    public static void save(Draw d) {
+    public static boolean save(Draw d) {
         JFileChooser fileExplorer = new JFileChooser();
         int res = fileExplorer.showOpenDialog(null);
         if (res == JFileChooser.APPROVE_OPTION) {
@@ -47,8 +47,9 @@ public abstract class saveManager {
             String path = filePath[1];
             d.setPathSauvegarde(path);
             d.setFileName(name.substring(0, name.length() - 8)); // Nom sans l'extension .inforeg
-            saveToFile(d, path);
-        }
+            return saveToFile(d, path);
+            }
+        return false;
     }
 
     /**
@@ -58,7 +59,7 @@ public abstract class saveManager {
      * @param d Draw à sauvegarder
      * @param path Emplacement du fichier cible
      */
-    public static void saveToFile(Draw d, String path) {
+    public static boolean saveToFile(Draw d, String path) {
         try {
             BufferedWriter fileBuffer = new BufferedWriter(new FileWriter(path));
 
@@ -88,9 +89,11 @@ public abstract class saveManager {
             }
             fileBuffer.flush();
             fileBuffer.close();
+            return true;
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Une erreur s'est produite lors de l'écriture du fichier.", "Erreur de sauvegarde", JOptionPane.ERROR_MESSAGE);
         }
+        return false;
     }
 
     public static Draw load() {

@@ -172,19 +172,20 @@ public abstract class Interface {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            boolean save_success = false;
             // Si un fichier de sauvegarde existe déjà, on l'écrase et on effectue une nouvelle sauvegarde
             if (d.getPathSauvegarde() != " ") {
                 File f = new File(d.getPathSauvegarde());
-                saveManager.saveToFile(d, d.getPathSauvegarde());
+                save_success = saveManager.saveToFile(d, d.getPathSauvegarde());
                 // Sinon, on créé un nouveau fichier de sauvegarde
             } else {
-                saveManager.save(d);
+                save_success = saveManager.save(d);
                 if (d != null) {
                     tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
                     tabsPanel.updateUI();
                 }
             }
-            tabSaved(true);
+            tabSaved(save_success);
         }
     ;
     };
@@ -198,13 +199,14 @@ public abstract class Interface {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-                saveManager.save(d);
+                boolean save_success = saveManager.save(d);
                 if (d != null) {
                     tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
+                    tabsPanel.updateUI();
                 }
+                tabSaved(save_success);
         }
     ;
-
     };
 
     /**
@@ -394,7 +396,7 @@ public abstract class Interface {
         JButton labelButton = new JButton("Label", labelIco);
         labelButton.setMaximumSize(nodeButton.getMaximumSize());
         labelButton.setHorizontalAlignment(SwingConstants.LEFT);
-        nodeButton.addActionListener(new ActionListener(){  
+        labelButton.addActionListener(new ActionListener(){  
             public void actionPerformed(ActionEvent e){  
                 mode = EDITION_MODE;
                 activeTool = LABEL_TOOL;
@@ -407,7 +409,17 @@ public abstract class Interface {
         toolBarButtons.add(l2);
         toolBarButtons.addSeparator();
         
+        JButton connexeButton = new JButton("Connexe");
+        connexeButton.addActionListener(new ActionListener(){  
+            public void actionPerformed(ActionEvent e){  
+                mode = TRAITEMENT_MODE;
+                connexe();
+            }  
+        });  
+        toolBarButtons.add(connexeButton);
     };
+    
+    public abstract void connexe();
 
     public abstract void addToolBar();
 
