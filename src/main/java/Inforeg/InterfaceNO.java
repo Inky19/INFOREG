@@ -90,6 +90,11 @@ public class InterfaceNO extends Interface implements Connexe {
         }
 
     };
+    
+    @Override
+    public void connexe(){
+        
+    }
 
     public final AbstractAction ConnexiteNO = new AbstractAction() {
         {
@@ -154,10 +159,6 @@ public class InterfaceNO extends Interface implements Connexe {
     @Override
     public void initToolBar() {
         super.initToolBar();
-
-
-
-        
 
         JLabel l1 = new JLabel("  Édition");
         JLabel l2 = new JLabel("  Mode");
