@@ -86,13 +86,7 @@ public abstract class Interface {
     /**
      * Les boutons.
      */
-    protected JRadioButton select;
-    protected JRadioButton noeud;
-    protected JRadioButton arc;
-    protected JRadioButton label;
-    protected JRadioButton edition;
-    protected JRadioButton traitement;
-    protected JRadioButton deplacement;
+    
     protected JButton save;
     protected JButton load;
     protected JButton clearSelection;
@@ -268,14 +262,7 @@ public abstract class Interface {
         //Panel le long de l'axe Y
         toolBarButtons.setLayout(new BoxLayout(toolBarButtons, BoxLayout.Y_AXIS));
 
-        //intialise les boutons 
-        select = new JRadioButton("Select");
-        noeud = new JRadioButton("Noeud");
-        arc = new JRadioButton("Arc");
-        label = new JRadioButton("Label");
-        edition = new JRadioButton("Édition");
-        traitement = new JRadioButton("Traitement");
-        deplacement = new JRadioButton("Deplacement");
+        
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
         
