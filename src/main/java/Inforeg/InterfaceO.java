@@ -8,7 +8,7 @@ Date de dernière modification : 08/03/2022
 =============================================*/
 import Inforeg.Graph.GraphO;
 import Inforeg.Draw.Draw;
-import Inforeg.Algo.Connexe;
+import static Inforeg.Graph.GraphFunction.connected;
 import static Inforeg.Interface.TRAITEMENT_MODE;
 import static Inforeg.Interface.activeTraitement;
 import static Inforeg.Interface.mode;
@@ -27,7 +27,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-public class InterfaceO extends Interface implements Connexe {
+public class InterfaceO extends Interface {
 
     public InterfaceO(Draw d) {
         super(d);
@@ -51,13 +51,15 @@ public class InterfaceO extends Interface implements Connexe {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (mode == Interface.TRAITEMENT_MODE) {
-                activeTraitement = Interface.DIJKSTRA_TRAITEMENT;
-                d.reinit();
-                d.repaint();
-                JOptionPane.showMessageDialog(null, "Sélectionnez un sommet de départ et un sommet d'arrivée pour calculer le plus court chemin entre les deux s'il existe.",
-                        "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
-            }
+            d.reinit();
+            d.repaint();
+            mode = TRAITEMENT_MODE;
+            activeTraitement = Interface.DIJKSTRA_TRAITEMENT;
+            d.reinit();
+            d.repaint();
+            JOptionPane.showMessageDialog(null, "Sélectionnez un sommet de départ et un sommet d'arrivée pour calculer le plus court chemin entre les deux s'il existe.",
+                    "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
+
         }
     };
 
@@ -76,6 +78,7 @@ public class InterfaceO extends Interface implements Connexe {
 
         @Override
         public void actionPerformed(ActionEvent ea) {
+            mode = TRAITEMENT_MODE;
             activeTraitement = Interface.FORD_FULKERSON_TRAITEMENT;
             d.reinit();
             d.repaint();
@@ -84,27 +87,17 @@ public class InterfaceO extends Interface implements Connexe {
         }
     };
 
-    public final AbstractAction ConnexiteO = new AbstractAction() {
-        {
-            putValue(Action.NAME, "Connexité");
-            putValue(Action.MNEMONIC_KEY, KeyEvent.VK_L);
-            putValue(Action.SHORT_DESCRIPTION, "Vérifie si le graphe est fortement connexe \n"
-                    + "(CTRL+L)");
-            putValue(Action.ACCELERATOR_KEY,
-                    KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK));
+    @Override
+    public void connexe(){
+        mode = TRAITEMENT_MODE;
+        d.getG().updateVariable();
+        if (connected(d.getG())) {
+            JOptionPane.showMessageDialog(d, "Le graphe est fortement connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(d, "Le graphe n'est pas fortement connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
         }
-
-        @Override
-        public void actionPerformed(ActionEvent ea) {
-            if (mode == Interface.TRAITEMENT_MODE) {
-                if (connexe((GraphO) d.getG())) {
-                    JOptionPane.showMessageDialog(d, "Le graphe est fortement connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(d, "Le graphe n'est pas fortement connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
-        }
-    };
+    }
+    
    
     public final AbstractAction ExportGraphO = new AbstractAction() {
         {
@@ -130,105 +123,16 @@ public class InterfaceO extends Interface implements Connexe {
     public void initToolBar() {
         super.initToolBar();
 
-        JLabel l1 = new JLabel("  Édition");
-        JLabel l2 = new JLabel("  Mode");
         //On crée un ButtonGroup pour que seul l'un puisse être activé à la fois 
-        ButtonGroup groupMode = new ButtonGroup();
-        groupMode.add(edition);
-        groupMode.add(traitement);
-        groupMode.add(deplacement);
-        ButtonGroup groupAction = new ButtonGroup();
-        groupAction.add(select);
-        groupAction.add(noeud);
-        groupAction.add(arc);
-        groupAction.add(label);
         //On ajoute les éléments au JPanel
-        toolBarButtons.add(l2);
-        toolBarButtons.addSeparator();
-        toolBarButtons.add(deplacement);
-        toolBarButtons.add(edition);
-        toolBarButtons.add(traitement);
-        toolBarButtons.addSeparator();
-        toolBarButtons.add(l1);
-        toolBarButtons.addSeparator();
-        toolBarButtons.add(select);
-        toolBarButtons.add(noeud);
-        toolBarButtons.add(arc);
-        toolBarButtons.add(label);
-        //pane.add(Box.createVerticalGlue());
 
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
-        JLabel l = new JLabel("  Traitement");
-        toolBarButtons.add(l);
-        toolBarButtons.addSeparator();
 
-        //Action Listener
-        ActionListener toolGroupListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                if (ae.getSource() == select) {
-                    activeTool = SELECT_TOOL;
-                } else if (ae.getSource() == noeud) {
-                    activeTool = NOEUD_TOOL;
-                } else if (ae.getSource() == arc) {
-                    activeTool = ARC_TOOL;
-                } else if (ae.getSource() == label) {
-                    activeTool = LABEL_TOOL;
-                }
+        Dijkstra.setEnabled(true);
+        FordFulkerson.setEnabled(true);
 
-            }
-        };
-        ActionListener modeGroupListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                if (ae.getSource() == edition) {
-                    mode = EDITION_MODE;
-                    select.setEnabled(true);
-                    noeud.setEnabled(true);
-                    arc.setEnabled(true);
-                    label.setEnabled(true);
-                    Dijkstra.setEnabled(false);
-                    FordFulkerson.setEnabled(false);
-                    ConnexiteO.setEnabled(false);
-                } else if (ae.getSource() == traitement) {
-                    d.reinit();
-                    d.repaint();
-                    mode = TRAITEMENT_MODE;
-                    select.setEnabled(false);
-                    noeud.setEnabled(false);
-                    arc.setEnabled(false);
-                    label.setEnabled(false);
-                    Dijkstra.setEnabled(true);
-                    FordFulkerson.setEnabled(true);
-                    ConnexiteO.setEnabled(true);
-                    d.exportGraphe();
-                } else if (ae.getSource() == deplacement) {
-                    d.reinit();
-                    d.repaint();
-                    mode = DEPLACEMENT_MODE;
-                    select.setEnabled(false);
-                    noeud.setEnabled(false);
-                    arc.setEnabled(false);
-                    label.setEnabled(false);
-                    Dijkstra.setEnabled(false);
-                    FordFulkerson.setEnabled(false);
-                    ConnexiteO.setEnabled(false);
-                    d.exportGraphe();
-                }
-            }
-        };
-
-        select.addActionListener(toolGroupListener);
-        //select.setSelected(true);//select activé au démarrage
-        noeud.addActionListener(toolGroupListener);
-        arc.addActionListener(toolGroupListener);
-        label.addActionListener(toolGroupListener);
-        edition.addActionListener(modeGroupListener);
-        deplacement.addActionListener(modeGroupListener);
-        //edition.setSelected(true);//edition activé au démarrage
-        traitement.addActionListener(modeGroupListener);
-        //toolBarButtons.setLayout(new FlowLayout(FlowLayout.LEFT));
+            
         toolBarButtons.setAlignmentX(FlowLayout.CENTER);
         toolBarButtons.setFloatable(false);
         toolBarButtons.setBorderPainted(true);
@@ -241,7 +145,6 @@ public class InterfaceO extends Interface implements Connexe {
         toolBarButtons.addSeparator();
         toolBarButtons.add(FordFulkerson);
         toolBarButtons.addSeparator();
-        toolBarButtons.add(ConnexiteO);      
     }
 
     @Override
@@ -249,14 +152,9 @@ public class InterfaceO extends Interface implements Connexe {
         JMenu traitMenu = new JMenu("Traitement");
         traitMenu.add(Dijkstra);
         traitMenu.add(FordFulkerson);
-        traitMenu.add(ConnexiteO);
         menuBar.add(traitMenu);
         exporter.add(new JMenuItem(ExportGraphO));
     }
 
-    @Override
-    public void connexe() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 
 }
