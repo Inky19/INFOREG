@@ -42,6 +42,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import Inforeg.UI.Vector2D;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.plaf.IconUIResource;
 
 public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
@@ -150,7 +156,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     private float zoom = 100f;
     private static final int MAX_ZOOM = 500;
     private static final int MIN_ZOOM = 50;
-
+    // Icones et images
+    private static final ImageIcon fitIco = new ImageIcon("asset/icons/fit.png");
+    
     public int getNextNodeId() {
         return nextNodeId;
     }
@@ -277,10 +285,38 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             }
         });
         
+        JButton fitToScreen = new JButton(fitIco);
+        fitToScreen.setPreferredSize(new Dimension(24, 24));
+        fitToScreen.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<Node> nodes = G.getNodes();
+                if (nodes.size()>0) {
+                    Double minX = Double.MAX_VALUE;
+                    Double minY = Double.MAX_VALUE;
+                    Double maxX = Double.MIN_VALUE;
+                    Double maxY = Double.MIN_VALUE;
+                    for (Node n : nodes) {
+                        minX = Double.min(n.getCx(),minX);
+                        minY = Double.min(n.getCy(),minY);
+                        maxX = Double.max(n.getCx(),maxX);
+                        maxY = Double.max(n.getCy(),maxY);
+                    }
+                    float zoomX = (float) (90*Draw.this.getBounds().getWidth()/(maxX-minX+2*Draw.this.nodeRadius));
+                    float zoomY = (float) (90*Draw.this.getBounds().getHeight()/(maxY-minY+2*Draw.this.nodeRadius));
+                    zoom = Float.min(zoomX,zoomY);
+                    zoomSlider.setValue((int)zoom);
+                    zoomLabel.setText((int)zoom+"%");
+                    camera = new Point((int)(maxX+minX)/2, (int)(maxY+minY)/2);
+                    repaint();    
+                }
+            }
+        });
+        tools.add(fitToScreen);        
         tools.add(zoomSlider);
         tools.add(zoomLabel);
         tools.setFloatable(false);
         tools.setOpaque(false);
+        tools.setFocusable(false);
         tools.setBorderPainted(true);
         this.add(tools, BorderLayout.SOUTH);
         // Init camera position
@@ -370,8 +406,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                                 System.out.println("Pas un entier !");
                                                 //fromPoint = null;
                                             } finally {
-                                                fromPoint.setSelect(false);
-                                                fromPoint = null;
+                                                if (fromPoint!=null) {
+                                                    fromPoint.setSelect(false);
+                                                    fromPoint = null;                                                    
+                                                }
+
                                             }
                                         } else {
                                             MyLine newLine = new MyLine(fromPoint, p, 1, currentColor);

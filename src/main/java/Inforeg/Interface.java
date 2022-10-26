@@ -403,7 +403,7 @@ public abstract class Interface {
         toolBarButtons.add(labelButton);
         
         toolBarButtons.addSeparator();
-         JLabel l2 = new JLabel("  Traitement :");
+        JLabel l2 = new JLabel("  Traitement :");
         toolBarButtons.add(l2);
         toolBarButtons.addSeparator();
         
@@ -478,6 +478,7 @@ public abstract class Interface {
         }
         tabsPanel.revalidate();
         tabsPanel.repaint();
+        tabsPanel.updateUI();
     }
     
     private void addNewTab(){
@@ -581,15 +582,17 @@ public abstract class Interface {
         menuBar.add(aboutMenu);
 
         //CTRL Z / CTRL Y
-        ImageIcon iconBack = new ImageIcon("back.png");
-        ImageIcon iconForward = new ImageIcon("forward.png");
+        ImageIcon iconBack = new ImageIcon("asset/icons/back.png");
+        ImageIcon iconForward = new ImageIcon("asset/icons/forward.png");
         //resize
-        Image imageBack = iconBack.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
-        Image imageForward = iconForward.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_AREA_AVERAGING);
-        iconBack = new ImageIcon(imageBack);
-        iconForward = new ImageIcon(imageForward);
+        //Image imageBack = iconBack.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
+        //Image imageForward = iconForward.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_AREA_AVERAGING);
+        //iconBack = new ImageIcon(imageBack);
+        //iconForward = new ImageIcon(imageForward);
         History piles = d.getTransitions();
         back = new JButton(iconBack);
+        back.setPreferredSize(new Dimension(50, 32));
+        back.setFocusPainted(false);
         back.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 Collection<Enregistrement> pileZ = piles.getPreviousStates();
@@ -675,6 +678,8 @@ public abstract class Interface {
             }
         });
         forward = new JButton(iconForward);
+        forward.setPreferredSize(new Dimension(50, 32));
+        forward.setFocusPainted(false);
         forward.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 Collection<Enregistrement> pileY = piles.getNextStates();
