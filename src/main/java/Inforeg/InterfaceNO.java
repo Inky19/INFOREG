@@ -153,90 +153,11 @@ public class InterfaceNO extends Interface implements Connexe {
     
     @Override
     public void initToolBar() {
-        //paneButtons = new JPanel();
-        toolBarButtons = new JToolBar(null, JToolBar.VERTICAL);
-        //Panel le long de l'axe Y
-        toolBarButtons.setLayout(new BoxLayout(toolBarButtons, BoxLayout.Y_AXIS));
+        super.initToolBar();
 
-        //intialise les boutons 
-        select = new JRadioButton("Select");
-        noeud = new JRadioButton("Noeud");
-        arc = new JRadioButton("Arc");
-        label = new JRadioButton("Label");
-        edition = new JRadioButton("Édition");
-        traitement = new JRadioButton("Traitement");
-        deplacement = new JRadioButton("Deplacement");
-        //ajoute un séparateur de taille par défaut
-        toolBarButtons.addSeparator();
 
-        JButton colorButton = new JButton("Color");
-        colorButton.setMnemonic('o');
-        colorButton.setToolTipText("Choose a Color");
-        ActionListener colorListener;
-        colorListener = (ActionEvent arg0) -> {
-            Color c = JColorChooser.showDialog(frame, "Choose a color", color);
-            if (c != null) {
-                for (int i = 1; i < colorSample.getHeight(); i++) {
-                    for (int j = 1; j < colorSample.getHeight(); j++) {
-                        colorSample.setRGB(i, j, c.getRGB());
-                    }
-                }
-                setColor(c);
-                d.setCurrentColor(c);
-            }
-        };
-        colorButton.addActionListener(colorListener);
-        colorButton.setIcon(new ImageIcon(colorSample));
-        toolBarButtons.add(colorButton);
-        setColor(this.color);
 
-        //ajoute un séparateur de taille par défaut
-        toolBarButtons.addSeparator();
-
-        //Taille
-        final SpinnerNumberModel spinnerNumTaille = new SpinnerNumberModel(20, 1, 100, 1);
-        JSpinner spinnerTaille = new JSpinner(spinnerNumTaille);
-        ChangeListener listenerTaille = new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent arg0) {
-                Object o = spinnerNumTaille.getValue();
-                Integer i = (Integer) o;
-                taille = i;
-                d.tailleCirc();
-            }
-        };
-        spinnerTaille.addChangeListener(listenerTaille);
-        spinnerTaille.setMaximumSize(spinnerTaille.getPreferredSize());
-        JLabel spinnerTailleLabel = new JLabel(" Taille Noeuds");
-        spinnerTailleLabel.setLabelFor(spinnerTaille);
-        toolBarButtons.add(spinnerTailleLabel);
-        toolBarButtons.add(spinnerTaille);
-        spinnerTaille.setAlignmentX(JSpinner.LEFT_ALIGNMENT);
-        //ajoute un séparateur de taille par défaut
-        toolBarButtons.addSeparator();
-
-        //Epaisseur
-        final SpinnerNumberModel spinnerNumEpaisseur = new SpinnerNumberModel(20, 1, 100, 1);
-        JSpinner spinnerEpaisseur = new JSpinner(spinnerNumEpaisseur);
-        ChangeListener strokeListener = new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent arg0) {
-                Object o = spinnerNumEpaisseur.getValue();
-                Integer i = (Integer) o;
-                epaisseur = i;
-                d.epaisseurLines();
-            }
-        };
-        spinnerEpaisseur.addChangeListener(strokeListener);
-        spinnerEpaisseur.setMaximumSize(spinnerEpaisseur.getPreferredSize());
-        JLabel spinnerEpaisseurLabel = new JLabel(" Epaisseur Arcs");
-        spinnerEpaisseurLabel.setLabelFor(spinnerEpaisseur);
-
-        toolBarButtons.add(spinnerEpaisseurLabel);
-        toolBarButtons.add(spinnerEpaisseur);
-        spinnerEpaisseur.setAlignmentX(JSpinner.LEFT_ALIGNMENT);
-        //ajoute un séparateur de taille par défaut
-        toolBarButtons.addSeparator();
+        
 
         JLabel l1 = new JLabel("  Édition");
         JLabel l2 = new JLabel("  Mode");
@@ -257,13 +178,6 @@ public class InterfaceNO extends Interface implements Connexe {
         toolBarButtons.add(edition);
         toolBarButtons.add(traitement);
         toolBarButtons.addSeparator();
-        toolBarButtons.add(l1);
-        toolBarButtons.addSeparator();
-        toolBarButtons.add(select);
-        toolBarButtons.add(noeud);
-        toolBarButtons.add(arc);
-        toolBarButtons.add(label);
-        //pane.add(Box.createVerticalGlue());
 
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
@@ -271,22 +185,6 @@ public class InterfaceNO extends Interface implements Connexe {
         toolBarButtons.add(l);
         toolBarButtons.addSeparator();
 
-        //Action Listener
-        ActionListener toolGroupListener = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                if (ae.getSource() == select) {
-                    activeTool = SELECT_TOOL;
-                } else if (ae.getSource() == noeud) {
-                    activeTool = NOEUD_TOOL;
-                } else if (ae.getSource() == arc) {
-                    activeTool = ARC_TOOL;
-                } else if (ae.getSource() == label) {
-                    activeTool = LABEL_TOOL;
-                }
-
-            }
-        };
         ActionListener modeGroupListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -326,12 +224,6 @@ public class InterfaceNO extends Interface implements Connexe {
                 }
             }
         };
-
-        select.addActionListener(toolGroupListener);
-        //select.setSelected(true);//select activé au démarrage
-        noeud.addActionListener(toolGroupListener);
-        arc.addActionListener(toolGroupListener);
-        label.addActionListener(toolGroupListener);
 
         edition.addActionListener(modeGroupListener);
         //edition.setSelected(true);//edition activé au démarrage

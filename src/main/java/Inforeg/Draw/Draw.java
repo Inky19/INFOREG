@@ -156,7 +156,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     private float zoom = 100f;
     private static final int MAX_ZOOM = 500;
     private static final int MIN_ZOOM = 50;
-
+    // Icones et images
+    private static final ImageIcon fitIco = new ImageIcon("asset/icons/fit.png");
+    
     public int getNextNodeId() {
         return nextNodeId;
     }
@@ -283,27 +285,30 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             }
         });
         
-        JButton fitToScreen = new JButton(new ImageIcon("asset/icons/fit.png"));
+        JButton fitToScreen = new JButton(fitIco);
         fitToScreen.setPreferredSize(new Dimension(24, 24));
         fitToScreen.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int x = 0 , y = 0;
-                Double minX = Double.MAX_VALUE;
-                Double minY = Double.MAX_VALUE;
-                Double maxX = Double.MIN_VALUE;
-                Double maxY = Double.MIN_VALUE;
                 ArrayList<Node> nodes = G.getNodes();
-                for (Node n : nodes) {
-                    minX = Double.min(n.getCx(),minX);
-                    minY = Double.min(n.getCy(),minY);
-                    maxX = Double.max(n.getCx(),maxX);
-                    maxY = Double.max(n.getCy(),maxY);
-                    x += n.getCx();
-                    y += n.getCy();
+                if (nodes.size()>0) {
+                    Double minX = Double.MAX_VALUE;
+                    Double minY = Double.MAX_VALUE;
+                    Double maxX = Double.MIN_VALUE;
+                    Double maxY = Double.MIN_VALUE;
+                    for (Node n : nodes) {
+                        minX = Double.min(n.getCx(),minX);
+                        minY = Double.min(n.getCy(),minY);
+                        maxX = Double.max(n.getCx(),maxX);
+                        maxY = Double.max(n.getCy(),maxY);
+                    }
+                    float zoomX = (float) (90*Draw.this.getBounds().getWidth()/(maxX-minX+2*Draw.this.nodeRadius));
+                    float zoomY = (float) (90*Draw.this.getBounds().getHeight()/(maxY-minY+2*Draw.this.nodeRadius));
+                    zoom = Float.min(zoomX,zoomY);
+                    zoomSlider.setValue((int)zoom);
+                    zoomLabel.setText((int)zoom+"%");
+                    camera = new Point((int)(maxX+minX)/2, (int)(maxY+minY)/2);
+                    repaint();    
                 }
-                //zoom = (float) (100f*Double.max(Draw.this.getBounds().getWidth()/(maxX-minX),Draw.this.getBounds().getHeight()/(maxY-minY)));
-                camera = new Point((int) x/nodes.size(), (int) y/nodes.size());
-                repaint();
             }
         });
         tools.add(fitToScreen);        
@@ -401,8 +406,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                                 System.out.println("Pas un entier !");
                                                 //fromPoint = null;
                                             } finally {
-                                                fromPoint.setSelect(false);
-                                                fromPoint = null;
+                                                if (fromPoint!=null) {
+                                                    fromPoint.setSelect(false);
+                                                    fromPoint = null;                                                    
+                                                }
+
                                             }
                                         } else {
                                             MyLine newLine = new MyLine(fromPoint, p, 1, currentColor);
@@ -676,7 +684,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param y = ordonnée du cercle à dessiner
      */
     public void addNode(double x, double y) {
-        inter.setSaveStatus(this, false);
+        inter.tabSaved(false);
         nextNodeId++;
         //On ajoute un cercle à la liste nodes et on actualise les attributs concernés
         Vector2D v = toGlobalCoordinates((int)x,(int)y);
@@ -710,7 +718,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param line = ligne à ajouter
      */
     public void addLine(MyLine line) {
-        inter.setSaveStatus(this, false);
+        inter.tabSaved(false);
+            //On ajoute la ligne à la liste lines
         G.addLine(line);
         //On actualise l'affichage avec la nouvelle ligne
         repaint(); 
@@ -726,20 +735,19 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param n = indice du Nœud dans la liste circ
      */
     public void removeNode(int n) {
-        inter.setSaveStatus(this, false);
+        inter.tabSaved(false);
         G.removeNode(G.getNodes().get(n));
         repaint();
     }
     
     public void removeArc(MyLine arc) {
-        inter.setSaveStatus(this, false);
+        inter.tabSaved(false);
         G.removeLine(arc);
     }
     
     
     
     public void removeArc(int n) {
-        inter.setSaveStatus(this, false);
         if (n < 0 || n >= G.getLines().size()) {
             return;
         } else {
@@ -777,7 +785,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         int y = (int) v.y;
         if ((inter.getActiveTool() == inter.NOEUD_TOOL || inter.getActiveTool() == inter.SELECT_TOOL) && inter.getMode() == inter.EDITION_MODE) {
             if (currentCircleIndex >= 0) {
-                
+                inter.tabSaved(false);
                 if (G.getNodes().get(currentCircleIndex).isSelected()) {
                     double transx = x - G.getNodes().get(currentCircleIndex).getCx();
                     double transy = y - G.getNodes().get(currentCircleIndex).getCy();
@@ -808,6 +816,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         if ((inter.getActiveTool() == inter.ARC_TOOL || inter.getActiveTool() == inter.SELECT_TOOL) && inter.getMode() == inter.EDITION_MODE) {
 
             if (currentArcIndex >= 0) {
+                inter.tabSaved(false);
                 if (G.getLines().get(currentArcIndex).isSelected()) {
                     double transx;
                     Nail transClou = G.getLines().get(currentArcIndex).getClou();
@@ -882,6 +891,12 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         }
     }
 
+    public void doRedraw(){
+         getTopLevelAncestor().revalidate();
+         getTopLevelAncestor().repaint();
+     }
+    
+    
     public void traitement() {
         reinit();
         repaint();
