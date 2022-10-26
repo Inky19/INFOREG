@@ -9,12 +9,13 @@ Date de dernière modification : 24/03/2022
 =============================================*/
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.Draw.Draw;
+import static Inforeg.Graph.GraphFunction.connected;
 import Inforeg.Graph.GraphNO;
 import java.awt.Color;
 
 import javax.swing.JOptionPane;
 
-public class PrimMST implements Connexe, Processing {
+public class PrimMST implements Processing {
 
     // Function to construct and print MST for a graph represented
     // using adjacency matrix representation
@@ -24,7 +25,7 @@ public class PrimMST implements Connexe, Processing {
 
         GraphNO G = (GraphNO) d.getG();
         arbre = new Arc[G.getNbsommets()];
-        if (connexe(G)) {
+        if (connected(G)) {
             // To represent set of vertices included in MST
             boolean vu[] = new boolean[G.getNbsommets()];
 

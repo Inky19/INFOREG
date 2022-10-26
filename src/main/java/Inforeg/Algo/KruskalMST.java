@@ -8,20 +8,21 @@ Date de dernière modification : 25/03/2022
 =============================================*/
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.Draw.Draw;
+import static Inforeg.Graph.GraphFunction.connected;
 import Inforeg.Graph.GraphNO;
 import java.awt.Color;
 import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
-public class KruskalMST implements Connexe, Processing {
+public class KruskalMST implements Processing {
 
     public void kruskalMST(Draw d) {
 
         Arc[] arbre;
         GraphNO G = (GraphNO) d.getG();
         arbre = new Arc[G.getNbsommets()];
-        if (connexe(G)) {
+        if (connected(G)) {
             // Tnis will store the resultant MST
             //Edge result[] = new Edge[V];
 
