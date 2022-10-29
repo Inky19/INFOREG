@@ -88,9 +88,9 @@ public abstract class Graph {
     }
    
     public void addNode(double x, double y, double radius) {
+        nextLabel = getMinAvailableLabel();
         nodes.add(new Node(x,y,radius, Integer.toString(nextLabel),nextId));
         nextId++;
-        nextLabel = getMinAvailableLabel();
     }
     
     public void removeNode(Node node) {
@@ -268,10 +268,20 @@ public abstract class Graph {
     
     
     
-    
+    @Deprecated
     public MyLine findLine(int from, int to) {
+        updateVariable(); // PROVISOIRE
         for (MyLine l : lines) {
             if ((hashNode.get(l.getFrom()) == from)&&(hashNode.get(l.getTo())== to)) {
+                return l;
+            }
+        }
+        return null;
+    }
+    
+    public MyLine findLine(Node from, Node to) {
+        for (MyLine l : lines) {
+            if (l.getFrom()==from && l.getTo()==to) {
                 return l;
             }
         }

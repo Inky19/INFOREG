@@ -209,7 +209,7 @@ public abstract class Interface {
      */
     public Interface(Draw d) {
         this.d = d;
-        this.tabs = new LinkedList<Draw>();
+        this.tabs = new LinkedList<>();
         tabs.add(d);
         d.setInterface(this);
         currentTab = 0;
@@ -588,12 +588,12 @@ public abstract class Interface {
         //Image imageForward = iconForward.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_AREA_AVERAGING);
         //iconBack = new ImageIcon(imageBack);
         //iconForward = new ImageIcon(imageForward);
-        History piles = d.getTransitions();
         back = new JButton(iconBack);
         back.setPreferredSize(new Dimension(50, 32));
         back.setFocusPainted(false);
         back.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
+                History piles = d.getTransitions();
                 Collection<Enregistrement> pileZ = piles.getPreviousStates();
                 if (pileZ.isEmpty()) {
                     return;
@@ -603,76 +603,34 @@ public abstract class Interface {
                 // Pour chaque action, on effectue l'action inverse
                 // Ensuite, on déplace l'action sur l'autre pile
                 switch (lastReg.action) {
-                    case "addCircle":
-                        d.remove(d.find(lastReg.noeud));
+                    case History.ADD_NODE :
+                        d.getNodes().remove(lastReg.noeud);
                         break;
-                    case "moveCircle":
-                        // On omettra les registres de mouvements intermédiaires
-                        Enregistrement previousReg = lastReg;
-                        Enregistrement temp = piles.getPreviousState();
-                        // Pour cela, comparons que l'enregistrement précédent 
-                        // a comme position de fin la position de début de 
-                        // l'enregistrement actuel.
-                        if (temp != null) {
-                            while (temp.action.equals("moveCircle")
-                                    && Double.compare(temp.x2, previousReg.x) == 0
-                                    && Double.compare(temp.y2, previousReg.y) == 0) {
-                                // Si c'est le cas, nous stockons cet enregistrement intermédiaire 
-                                // jusqu'à ce que l'enregistrement précédent soit 
-                                // une action ou un élément différent.
-                                previousReg = temp;
-                                temp = piles.getPreviousState();
-                                if (temp == null) {
-                                    break;
-                                }
-                            }
-                        }
-                        // On ajoute l'enregistrement à la liste 
-                        // comme il a été retiré dans le cycle précédent.
-                        if (temp != null) {
-                            piles.addPreviousState(temp);
-                        }
-                        Node noeud = circles.get(d.find(lastReg.noeud));
-                        noeud.x = previousReg.x;
-                        noeud.y = previousReg.y;
-                        d.repaint();
-                        // On crée l'enregistrement équivalent qui sera pris par la pile Ctrl+Y. 
-                        // Il ne sera pas nécessaire de répéter cette procédure de nettoyage.
-                        piles.reCreateLog("moveCircle", noeud, previousReg.x, previousReg.y, lastReg.x2, lastReg.y2);
-                        // On le prend pour qu'il soit finalement ajouté à la pile Ctrl+Y
-                        lastReg = piles.getPreviousState();
+                    case History.MOVE_NODE :
+                        lastReg.noeud.setCx(lastReg.x);
+                        lastReg.noeud.setCy(lastReg.y);
                         break;
-                    case "deleteCircle":
-                        d.addNode(lastReg.x, lastReg.y);
+                    case History.REMOVE_NODE :
+                        d.getG().addNode(lastReg.noeud);
                         break;
-                    case "addLine":
-                        int fromIndex = d.find(lastReg.noeud);
-                        int toIndex = d.find(lastReg.noeud2);
-                        d.removeArc(d.findLine(fromIndex, toIndex));
-                    case "moveLine":
+                    case History.ADD_ARC :
+                        d.getG().removeLine(lastReg.arc);
+                    case History.MOVE_ARC : // NOT SUPPORTED YET
                         MyLine line = lastReg.arc;
-                        // -> line.setClou(lastReg.noeud);
-                        d.repaint();
                         break;
-                    case "deleteLine":
-                        MyLine l = lastReg.arc;
-                        // Mettre à jour les nœuds source et destination
-                        Node pFrom = circles.get(d.find(lastReg.noeud));
-                        Node pTo = circles.get(d.find(lastReg.noeud2));
-                        MyLine updatedL = new MyLine(pFrom, pTo, l.getPoids(), l.getC());
-                        d.addLine(updatedL);
+                    case History.REMOVE_ARC :
+                        d.addLine(lastReg.arc);
                         break;
-                    case "updateLbl":
-                        d.getNodes().get(d.find(lastReg.noeud)).setLabel(lastReg.lastLbl);
-                        d.repaint();
+                    case History.LABEL_NODE :
+                        lastReg.noeud.setLabel(lastReg.lastLbl);
                         break;
-                    case "updatePds":
+                    case History.LABEL_ARC :
                         lastReg.arc.setPoids(Integer.parseInt(lastReg.lastLbl));
-                        d.repaint();
                         break;
                     default:
                         break;
                 }
+                d.repaint();
                 piles.addNextState(lastReg);
             }
         });
@@ -681,6 +639,7 @@ public abstract class Interface {
         forward.setFocusPainted(false);
         forward.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
+                History piles = d.getTransitions();
                 Collection<Enregistrement> pileY = piles.getNextStates();
                 if (pileY.isEmpty()) {
                     return;
@@ -690,47 +649,36 @@ public abstract class Interface {
                 // Pour chaque action, on l'exécute
                 // Ensuite, on déplace l'action sur l'autre pile
                 switch (nextReg.action) {
-                    case "addCircle":
-                        d.addNode(nextReg.x, nextReg.y);
+                    case History.ADD_NODE :
+                        d.getG().addNode(nextReg.noeud);
                         break;
-                    case "moveCircle":
-                        Ellipse2D.Double noeud = circles.get(d.find(nextReg.noeud));
-                        noeud.x = nextReg.x2;
-                        noeud.y = nextReg.y2;
-                        d.repaint();
+                    case History.MOVE_NODE :
+                        nextReg.noeud.setCx(nextReg.x2);
+                        nextReg.noeud.setCy(nextReg.y2);
                         break;
-                    case "deleteCircle":
-                        d.remove(d.find(nextReg.noeud));
+                    case History.REMOVE_NODE :
+                        d.getG().getNodes().remove(nextReg.noeud);
                         break;
-                    case "addLine":
-                        MyLine l = nextReg.arc;
-                        // Mettre à jour les nœuds source et destination
-                        Node pFrom = circles.get(d.find(nextReg.noeud));
-                        Node pTo = circles.get(d.find(nextReg.noeud2));
-                        MyLine updatedL = new MyLine(pFrom, pTo, l.getPoids(), l.getC());
-                        d.addLine(updatedL);
+                    case History.ADD_ARC :
+                        d.addLine(nextReg.arc);
                         break;
-                    case "moveLine":
+                    case History.MOVE_ARC : // NOT SUPPORTED YET
                         MyLine line = nextReg.arc;
                         //line.setClou(nextReg.noeud2);
-                        d.repaint();
                         break;
-                    case "deleteLine":
-                        int fromIndex = d.find(nextReg.noeud);
-                        int toIndex = d.find(nextReg.noeud2);
-                        d.removeArc(d.findLine(fromIndex, toIndex));
+                    case History.REMOVE_ARC :
+                        d.getG().removeLine(nextReg.arc);
                         break;
-                    case "updateLbl":
-                        d.getNodes().get(d.find(nextReg.noeud)).setLabel(nextReg.newLbl);
-                        d.repaint();
+                    case History.LABEL_NODE :
+                        nextReg.noeud.setLabel(nextReg.newLbl);
                         break;
-                    case "updatePds":
+                    case History.LABEL_ARC :
                         nextReg.arc.setPoids(Integer.parseInt(nextReg.newLbl));
-                        d.repaint();
                         break;
                     default:
                         break;
                 }
+                d.repaint();
                 piles.addPreviousState(nextReg);
             }
         });

@@ -32,6 +32,8 @@ public class Dijkstra implements Processing {
         int[] predecesseur;
 
         GraphO g = (GraphO) d.getG();
+        g.updateVariable();
+        
         dist = new int[g.getNbsommets()];
         // The output array. dist[i] will hold
         // the shortest distance from src to i
