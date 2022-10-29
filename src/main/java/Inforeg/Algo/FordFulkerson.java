@@ -67,7 +67,7 @@ public class FordFulkerson implements Processing {
     public void fordFulkerson(Draw d, int src, int dest) {
 
         GraphO g = (GraphO) d.getG();
-
+        g.updateVariable();
         int V = g.getNbsommets();
 
         int u, v;

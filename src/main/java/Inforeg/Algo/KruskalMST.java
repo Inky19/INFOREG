@@ -18,9 +18,10 @@ import javax.swing.JOptionPane;
 public class KruskalMST implements Processing {
 
     public void kruskalMST(Draw d) {
-
+        
         Arc[] arbre;
         GraphNO G = (GraphNO) d.getG();
+        G.updateVariable();
         arbre = new Arc[G.getNbsommets()];
         if (connected(G)) {
             // Tnis will store the resultant MST

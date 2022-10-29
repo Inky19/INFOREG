@@ -12,9 +12,11 @@ import Inforeg.UI.Vector2D;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import static java.lang.Math.sqrt;
 
 public class MyLine {
@@ -87,7 +89,22 @@ public class MyLine {
     public Nail getClou() {
         return this.clou;
     }
-
+    
+    private void paintLabel(Draw d, Graphics2D g, Point pos, String label, Color textColor, Color bgColor) {
+            Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(15));
+            g.setFont(font);
+            FontMetrics metrics = g.getFontMetrics(font);
+            Rectangle2D bg = metrics.getStringBounds(label, g);
+            
+            // Determine the X coordinate for the text
+            int fontX = (int) (pos.x - metrics.stringWidth(label) / 2);
+            int fontY = pos.y;
+            g.setPaint(bgColor);
+            g.fillRect(fontX, fontY-(int)bg.getHeight() + metrics.getDescent(), (int)bg.getWidth(), (int)bg.getHeight());
+            g.setPaint(textColor);
+            g.drawString(label, fontX, fontY);
+    }
+    
     public void paint(Draw d, Graphics2D g) {
         g.setPaint(color);
         g.setStroke(new BasicStroke((float) d.toDrawScale(LINE_WIDTH)));
@@ -98,11 +115,6 @@ public class MyLine {
         int x3 = (int) v3.x;
         int y3 = (int) v3.y;
 
-        if (d.pondere) {
-            Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(15));
-            g.setFont(font);
-            g.drawString("" + poids, x3, y3 - (int) d.toDrawScale(10));
-        }
         if (from == to) {
             g.setStroke(new BasicStroke((float) d.toDrawScale(LINE_WIDTH)));
             double radius = sqrt((x1-x3)*(x1-x3) + (y1-y3)*(y1-y3))/2;
@@ -128,10 +140,12 @@ public class MyLine {
         }
         clou.paint(d, g, selected);
         if (flow != null) {
-            Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(15));
-            g.setFont(font);
-            g.setPaint(Color.BLACK);
-            g.drawString("" + flow, x3, y3 + (int) d.toDrawScale(10));
+            String label = Integer.toString(flow);
+            paintLabel(d, g, new Point(x3,y3+(int) d.toDrawScale(20)), label, color, Color.CYAN);
+        }
+        if (d.pondere) {
+            String label = Integer.toString(poids);
+            paintLabel(d, g, new Point(x3,y3-(int) d.toDrawScale(12)), label, color, Color.WHITE);
         }
     }
 
@@ -224,4 +238,8 @@ public class MyLine {
         this.flow = flow;
     }
     
+    @Override
+    public String toString() {
+        return "Arc | poids: " + poids + ", " + from.toString() + " -> " + to.toString() + " |";
+    }
 }
