@@ -9,8 +9,8 @@ Date de dernière modification : 24/03/2022
 =============================================*/
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.Draw.Draw;
+import Inforeg.Graph.Graph;
 import static Inforeg.Graph.GraphFunction.connected;
-import Inforeg.Graph.GraphNO;
 import java.awt.Color;
 
 import javax.swing.JOptionPane;
@@ -23,7 +23,8 @@ public class PrimMST implements Processing {
 
         Arc[] arbre;
 
-        GraphNO G = (GraphNO) d.getG();
+        Graph G = d.getG();
+        G.updateVariable();
         arbre = new Arc[G.getNbsommets()];
         if (connected(G)) {
             // To represent set of vertices included in MST
@@ -63,7 +64,7 @@ public class PrimMST implements Processing {
             }
             int p = 0;
             for (int i = 1; i < arbre.length; i++) {
-                d.getLines().get(arbre[i].getLine()).setC(Color.RED);
+                d.getG().getLines().get(arbre[i].getLine()).setColor(Color.RED);
                 p += d.getLines().get(arbre[i].getLine()).getPoids();
             }
             JOptionPane.showMessageDialog(null, "L'arbre couvrant minimal du graphe a un poids de " + p + ".", "Prim MST", JOptionPane.INFORMATION_MESSAGE);

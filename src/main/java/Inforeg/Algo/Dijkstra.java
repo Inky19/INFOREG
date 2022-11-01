@@ -8,7 +8,7 @@ Date de création : 04/02/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
-import Inforeg.Graph.GraphO;
+import Inforeg.Graph.Graph;
 import Inforeg.ObjetGraph.MyLine;
 import java.awt.Color;
 
@@ -31,7 +31,7 @@ public class Dijkstra implements Processing {
         int[] dist;
         int[] predecesseur;
 
-        GraphO g = (GraphO) d.getG();
+        Graph g = d.getG();
         g.updateVariable();
         
         dist = new int[g.getNbsommets()];
@@ -84,7 +84,7 @@ public class Dijkstra implements Processing {
         while ((s != src) && (count < d.getNodes().size()) && (p != -1)) {
             MyLine l = d.findLine(p, s);
             if (l != null) {
-                l.setC(Color.RED);
+                l.setColor(Color.RED);
                 s = p;
                 p = predecesseur[p];
                 count++;

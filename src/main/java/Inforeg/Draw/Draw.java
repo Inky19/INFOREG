@@ -8,8 +8,6 @@ Date de dernière modification : 08/03/2022
 =============================================*/
 import Inforeg.Algo.Dijkstra;
 import Inforeg.Algo.FordFulkerson;
-import Inforeg.Graph.GraphNO;
-import Inforeg.Graph.GraphO;
 import Inforeg.Graph.Graph;
 import Inforeg.Interface;
 import Inforeg.ObjetGraph.MyLine;
@@ -258,14 +256,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     
 
     public Draw(boolean oriente, boolean pondere) {
-        this.G = new GraphO(this);
         this.oriente = oriente;
+        this.G = new Graph(this);
         this.pondere = pondere;
-        if (oriente) {
-            G = new GraphO(this);
-        } else {
-            G = new GraphNO(this);
-        }
         
         move = false;
         fileName = "";
@@ -396,6 +389,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                     }  
                                     else if ((currentCircleIndex >= 0) && (fromPoint != null)) { // inside circle
                                         Node p = G.getNodes().get(currentCircleIndex);
+                                        p.setSelect(true);
+                                        repaint();
                                         if (pondere) {
                                             String text = JOptionPane.showInputDialog("Entrer le poids de l'Arc (seuls les entiers seront acceptés):");
                                             try {
@@ -430,6 +425,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                             fromPoint.setSelect(false);
                                             fromPoint = null;
                                         }
+                                        p.setSelect(false);
                                 
                                     }
                             repaint();
@@ -476,6 +472,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             if (currentCircleIndex>=0 && prevPos!=null) {
                                 Node n = G.getNodes().get(currentCircleIndex);
                                 transitions.createLog(History.MOVE_NODE, n, prevPos.x, prevPos.y, n.getCx(), n.getCy());
+                                prevPos = null;
+                            }
+                            if (currentArcIndex>=0 && prevPos!=null) {
+                                Nail n = G.getLines().get(currentArcIndex).getClou();
+                                transitions.createLog(History.MOVE_NAIL, n, prevPos.x, prevPos.y, n.getCx(), n.getCy());
                                 prevPos = null;
                             }
                         }
@@ -877,13 +878,12 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     repaint();
                 } else {
                     MyLine line = G.getLines().get(currentArcIndex);
+                    if (prevPos == null) {
+                        prevPos = new Vector2D(line.getClou().cx,line.getClou().cy);
+                    }
                     line.getClou().cx = x;
                     line.getClou().cy = y;
-                            
-                    // On ajoute l'action à la pile
-                    //Ellipse2D.Double prevClou = new Ellipse2D.Double(line.getClou().x,line.getClou().y,MyLine.RCLOU,MyLine.RCLOU);
-                    //transitions.createLog("moveLine",line,prevClou,newClou);
-                    //
+
                     zoneR = new Rectangle(Integer.MIN_VALUE, Integer.MIN_VALUE, 0, 0); //permet d'éviter qu'un ensemble de points soient toujours sélectionner
                     //après les avoir déselectionner en cliquant a cote
                     repaint();
@@ -926,7 +926,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             n.reinit();
         }
         for (MyLine a: G.getLines()){
-            a.setC(Color.BLUE);
+            a.setColor(Color.BLUE);
             a.setFlow(null);
         }
     }
@@ -975,9 +975,13 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * noeuds
      */
     public void epaisseurLines() {
-        if (G.getNodes().size() > 0) {
-            double factor = (float) inter.getEpaisseur() / 20;
-            lineWidth = (float) factor * Draw.LINIT;
+        if (!G.getNodes().isEmpty()) {
+            double factor = (float) inter.getEpaisseur() / 5;
+            lineWidth = (float) factor * MyLine.DEFAULT_LINE_WIDTH;
+            System.out.println(lineWidth);
+            for (MyLine l: G.getLines()){
+                l.width = (int)lineWidth;
+            }
             repaint();
         }
     }

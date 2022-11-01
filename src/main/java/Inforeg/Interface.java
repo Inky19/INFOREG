@@ -567,6 +567,7 @@ public abstract class Interface {
         aboutMenu.add(credits);
 
         credits.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ae) {
                 String creditStr = "Application créée par Béryl CASSEL, Cristobal CARRASCO DE RODT, Jorge QUISPE , Isaías VENEGAS et Samy AMAL \n"
                         + "\n"
@@ -592,94 +593,20 @@ public abstract class Interface {
         back.setPreferredSize(new Dimension(50, 32));
         back.setFocusPainted(false);
         back.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ae) {
                 History piles = d.getTransitions();
-                Collection<Enregistrement> pileZ = piles.getPreviousStates();
-                if (pileZ.isEmpty()) {
-                    return;
-                }
-                ArrayList<Node> circles = d.getNodes();
-                Enregistrement lastReg = piles.getPreviousState();
-                // Pour chaque action, on effectue l'action inverse
-                // Ensuite, on déplace l'action sur l'autre pile
-                switch (lastReg.action) {
-                    case History.ADD_NODE :
-                        d.getNodes().remove(lastReg.noeud);
-                        break;
-                    case History.MOVE_NODE :
-                        lastReg.noeud.setCx(lastReg.x);
-                        lastReg.noeud.setCy(lastReg.y);
-                        break;
-                    case History.REMOVE_NODE :
-                        d.getG().addNode(lastReg.noeud);
-                        break;
-                    case History.ADD_ARC :
-                        d.getG().removeLine(lastReg.arc);
-                    case History.MOVE_ARC : // NOT SUPPORTED YET
-                        MyLine line = lastReg.arc;
-                        break;
-                    case History.REMOVE_ARC :
-                        d.addLine(lastReg.arc);
-                        break;
-                    case History.LABEL_NODE :
-                        lastReg.noeud.setLabel(lastReg.lastLbl);
-                        break;
-                    case History.LABEL_ARC :
-                        lastReg.arc.setPoids(Integer.parseInt(lastReg.lastLbl));
-                        break;
-                    default:
-                        break;
-                }
-                d.repaint();
-                piles.addNextState(lastReg);
+                piles.back(d);
             }
         });
         forward = new JButton(iconForward);
         forward.setPreferredSize(new Dimension(50, 32));
         forward.setFocusPainted(false);
         forward.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent ae) {
                 History piles = d.getTransitions();
-                Collection<Enregistrement> pileY = piles.getNextStates();
-                if (pileY.isEmpty()) {
-                    return;
-                }
-                ArrayList<Node> circles = d.getNodes();
-                Enregistrement nextReg = piles.getNextState();
-                // Pour chaque action, on l'exécute
-                // Ensuite, on déplace l'action sur l'autre pile
-                switch (nextReg.action) {
-                    case History.ADD_NODE :
-                        d.getG().addNode(nextReg.noeud);
-                        break;
-                    case History.MOVE_NODE :
-                        nextReg.noeud.setCx(nextReg.x2);
-                        nextReg.noeud.setCy(nextReg.y2);
-                        break;
-                    case History.REMOVE_NODE :
-                        d.getG().getNodes().remove(nextReg.noeud);
-                        break;
-                    case History.ADD_ARC :
-                        d.addLine(nextReg.arc);
-                        break;
-                    case History.MOVE_ARC : // NOT SUPPORTED YET
-                        MyLine line = nextReg.arc;
-                        //line.setClou(nextReg.noeud2);
-                        break;
-                    case History.REMOVE_ARC :
-                        d.getG().removeLine(nextReg.arc);
-                        break;
-                    case History.LABEL_NODE :
-                        nextReg.noeud.setLabel(nextReg.newLbl);
-                        break;
-                    case History.LABEL_ARC :
-                        nextReg.arc.setPoids(Integer.parseInt(nextReg.newLbl));
-                        break;
-                    default:
-                        break;
-                }
-                d.repaint();
-                piles.addPreviousState(nextReg);
+                piles.forward(d);
             }
         });
         //placer les back/forward à droite 

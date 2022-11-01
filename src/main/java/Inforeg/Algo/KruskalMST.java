@@ -8,8 +8,8 @@ Date de dernière modification : 25/03/2022
 =============================================*/
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.Draw.Draw;
+import Inforeg.Graph.Graph;
 import static Inforeg.Graph.GraphFunction.connected;
-import Inforeg.Graph.GraphNO;
 import java.awt.Color;
 import java.util.Arrays;
 
@@ -20,7 +20,7 @@ public class KruskalMST implements Processing {
     public void kruskalMST(Draw d) {
         
         Arc[] arbre;
-        GraphNO G = (GraphNO) d.getG();
+        Graph G = d.getG();
         G.updateVariable();
         arbre = new Arc[G.getNbsommets()];
         if (connected(G)) {
@@ -78,7 +78,7 @@ public class KruskalMST implements Processing {
             System.out.println(arbre.length);
             for (int j = 0; j < arbre.length; j++) {
                 if (arbre[j].getLine() >= 0) {
-                    d.getLines().get(arbre[j].getLine()).setC(Color.RED);
+                    d.getLines().get(arbre[j].getLine()).setColor(Color.RED);
                     p += d.getLines().get(arbre[j].getLine()).getPoids();
                 }
             }

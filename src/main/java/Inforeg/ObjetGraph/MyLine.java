@@ -22,6 +22,9 @@ import static java.lang.Math.sqrt;
 public class MyLine {
 
     private boolean selected;
+    
+    
+    public int width;
     /**
      * Cercle/Nœud de départ
      */
@@ -50,7 +53,7 @@ public class MyLine {
      * Rayon des clous
      */
     public static final int RCLOU = 3;
-    public static final int LINE_WIDTH = 3;
+    public static final int DEFAULT_LINE_WIDTH = 3;
 
     /**
      * Constructeur
@@ -66,6 +69,7 @@ public class MyLine {
         this.to = toPoint;
         this.poids = pds;
         this.color = c;
+        this.width = DEFAULT_LINE_WIDTH;
         int x, y;
         if (from!=to) {
             x = (int) (from.getCx() + to.getCx()) / 2;
@@ -84,6 +88,7 @@ public class MyLine {
         this.poids = pds;
         this.color = c;
         this.clou = nail;
+        this.width = DEFAULT_LINE_WIDTH;
     }
 
     public Nail getClou() {
@@ -107,16 +112,16 @@ public class MyLine {
     
     public void paint(Draw d, Graphics2D g) {
         g.setPaint(color);
-        g.setStroke(new BasicStroke((float) d.toDrawScale(LINE_WIDTH)));
+        g.setStroke(new BasicStroke((float) d.toDrawScale(DEFAULT_LINE_WIDTH)));
         Vector2D v1 = d.toDrawCoordinates(from.getCx(), from.getCy());
         Vector2D v3 = d.toDrawCoordinates(clou.cx, clou.cy);
         int x1 = (int) v1.x;
         int y1 = (int) v1.y;
         int x3 = (int) v3.x;
         int y3 = (int) v3.y;
-
+        // Painting of lines
         if (from == to) {
-            g.setStroke(new BasicStroke((float) d.toDrawScale(LINE_WIDTH)));
+            g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
             double radius = sqrt((x1-x3)*(x1-x3) + (y1-y3)*(y1-y3))/2;
             g.draw(new Ellipse2D.Double((x1+x3)/2-radius,(y1+y3)/2-radius, 2*radius, 2*radius));
             //d.calcArc(x1,y1,x3,y3,g);
@@ -133,12 +138,14 @@ public class MyLine {
                 int x4 = (x3 + x2) / 2;
                 int y4 = (y3 + y2) / 2;
                 d.fleche(x3, y3, x4, y4, t);
-                g.setStroke(new BasicStroke((float) d.toDrawScale(LINE_WIDTH)));
+                g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
                 g.drawLine(x4, y4, t[0], t[1]);
                 g.drawLine(x4, y4, t[2], t[3]);
             } 
         }
+        // Painting of nails
         clou.paint(d, g, selected);
+        // Painting of labels
         if (flow != null) {
             String label = Integer.toString(flow);
             paintLabel(d, g, new Point(x3,y3+(int) d.toDrawScale(20)), label, color, Color.CYAN);
@@ -161,8 +168,9 @@ public class MyLine {
         return color;
     }
 
-    public void setC(Color col) {
+    public void setColor(Color col) {
         this.color = col;
+        this.clou.color = col;
     }
 
     /**
