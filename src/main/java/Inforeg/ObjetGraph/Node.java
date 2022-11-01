@@ -12,7 +12,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import Inforeg.UI.Vector2D;
-import java.awt.Point;
 /**
  *
  * @author inky19
@@ -30,9 +29,11 @@ public class Node extends Ellipse2D.Double {
     private final static Color SELECTED_COLOR = Color.decode("#ddb9ff");
     private final static Color DEFAULT_COLOR = Color.WHITE;
     private final static Color DEFAULT_OUTLINE_COLOR = Color.BLACK;
-    //
+    // Label of the node
     private String label;
-    private int id;
+    // id of the node
+    private final int id;
+    // Whether or not the node is selected
     private boolean multiSelected;
     private boolean selected;
     

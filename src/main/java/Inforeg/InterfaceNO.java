@@ -7,7 +7,6 @@ Date de création : 08/03/2022
 Date de dernière modification : 24/03/2022
 =============================================*/
 import Inforeg.Algo.Coloration;
-import Inforeg.Graph.GraphNO;
 import Inforeg.Draw.Draw;
 import Inforeg.Algo.PrimMST;
 import Inforeg.Algo.KruskalMST;

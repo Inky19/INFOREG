@@ -67,6 +67,14 @@ public class Nail extends Ellipse2D.Double {
     public double getR() {
         return r;
     }
+
+    public void setCx(double cx) {
+        this.cx = cx;
+    }
+
+    public void setCy(double cy) {
+        this.cy = cy;
+    }
     
     
 }
