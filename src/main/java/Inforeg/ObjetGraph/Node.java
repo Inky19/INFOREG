@@ -12,7 +12,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import Inforeg.UI.Vector2D;
-import java.awt.Point;
 /**
  *
  * @author inky19
@@ -25,11 +24,16 @@ public class Node extends Ellipse2D.Double {
     private double r;
     // Color of the node
     private Color color;
+    private Color outlineColor;
     private final static Color MULTISELECTED_COLOR = Color.GREEN;
     private final static Color SELECTED_COLOR = Color.decode("#ddb9ff");
-    //
+    private final static Color DEFAULT_COLOR = Color.WHITE;
+    private final static Color DEFAULT_OUTLINE_COLOR = Color.BLACK;
+    // Label of the node
     private String label;
-    private int id;
+    // id of the node
+    private final int id;
+    // Whether or not the node is selected
     private boolean multiSelected;
     private boolean selected;
     
@@ -47,7 +51,8 @@ public class Node extends Ellipse2D.Double {
         this.cx = cx;
         this.cy = cy;
         this.r  = r;
-        this.color = Color.WHITE;
+        this.color = DEFAULT_COLOR;
+        this.outlineColor = DEFAULT_OUTLINE_COLOR;
         this.id = id;
         this.label = label;
         multiSelected = false;
@@ -59,6 +64,7 @@ public class Node extends Ellipse2D.Double {
         this.cy = cy;
         this.r = r;
         this.color = color;
+        this.outlineColor = DEFAULT_OUTLINE_COLOR;
         this.label = label;
         this.id = id;
         multiSelected = false;
@@ -93,7 +99,7 @@ public class Node extends Ellipse2D.Double {
         }else if(selected) {
             g.setPaint(SELECTED_COLOR);
         } else {
-            g.setPaint(Color.BLACK);
+            g.setPaint(outlineColor);
         }
         g.draw(this);
         g.setStroke(new BasicStroke(1));
@@ -168,10 +174,10 @@ public class Node extends Ellipse2D.Double {
     }
 
     public boolean isSelected() {
-        return multiSelected;
+        return multiSelected||selected;
     }
 
-    public void setSelected(boolean selected) {
+    public void setMultiSelected(boolean selected) {
         this.multiSelected = selected;
     }
     
@@ -179,6 +185,19 @@ public class Node extends Ellipse2D.Double {
         this.selected = selected;
     }
     
+    public void setOutlineColor(Color color) {
+        this.outlineColor= color;
+    }
     
+    public void reinit() {
+        this.color = DEFAULT_COLOR;
+        this.outlineColor = DEFAULT_OUTLINE_COLOR;
+        this.selected = false;
+        this.multiSelected = false;
+    }
     
+    @Override
+    public String toString() {
+        return "Noeud | label: " + label +", x: " + cx + ", y: " + cy + " |";
+    }
 }

@@ -7,6 +7,7 @@ Date de création : 04/02/2022
 Date de dernière modification : 28/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
+import Inforeg.Graph.Graph;
 import Inforeg.Graph.GraphO;
 import Inforeg.ObjetGraph.MyLine;
 import java.awt.Color;
@@ -66,8 +67,8 @@ public class FordFulkerson implements Processing {
     // graph
     public void fordFulkerson(Draw d, int src, int dest) {
 
-        GraphO g = (GraphO) d.getG();
-
+        Graph g = d.getG();
+        g.updateVariable();
         int V = g.getNbsommets();
 
         int u, v;
@@ -123,7 +124,7 @@ public class FordFulkerson implements Processing {
                 if (l != null) {
                     l.setFlow(l.getPoids() - rGraph[i][j]);
                     if (rGraph[i][j] == 0) {
-                        l.setC(Color.red);
+                        l.setColor(Color.red);
                     }
                 }
             }
