@@ -51,6 +51,7 @@ public class InterfaceO extends Interface {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            d.getG().updateVariable();
             d.reinit();
             d.repaint();
             mode = TRAITEMENT_MODE;
@@ -78,10 +79,12 @@ public class InterfaceO extends Interface {
 
         @Override
         public void actionPerformed(ActionEvent ea) {
-            mode = TRAITEMENT_MODE;
-            activeTraitement = Interface.FORD_FULKERSON_TRAITEMENT;
+            d.getG().updateVariable();
             d.reinit();
             d.repaint();
+            mode = TRAITEMENT_MODE;
+            activeTraitement = Interface.FORD_FULKERSON_TRAITEMENT;
+
             JOptionPane.showMessageDialog(null, "Sélectionnez un sommet source et un sommet cible pour calculer le flot maximal entre les deux.",
                     "Ford-Fulkerson - Flot maximal", JOptionPane.INFORMATION_MESSAGE);
         }
