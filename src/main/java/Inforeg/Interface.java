@@ -415,7 +415,9 @@ public abstract class Interface {
         toolBarButtons.addSeparator();
         
         JButton algoButton = new JButton("▼");
-        algoButton.setMaximumSize(new Dimension(buttonSize.width,algoButton.getMaximumSize().height));
+        Dimension algoButtonSize = new Dimension(buttonSize.width,algoButton.getMaximumSize().height);
+        algoButton.setMaximumSize(algoButtonSize);
+        algoButton.setPreferredSize(algoButtonSize);
         algoButton.setHorizontalAlignment(SwingConstants.LEFT);
         algoButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -428,9 +430,9 @@ public abstract class Interface {
             }
         });
         toolBarButtons.add(algoButton);
-        JPanel test = new JPanel();
-        test.setMaximumSize(buttonSize);
-        test.setAlignmentX(0);
+        JPanel algoPanel = new JPanel();
+        algoPanel.setMaximumSize(buttonSize);
+        algoPanel.setAlignmentX(0);
         JButton algoGo = new JButton("GO");
         algoGo.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
@@ -447,8 +449,9 @@ public abstract class Interface {
                 
             }
         });
-        test.add(algoGo);
-        toolBarButtons.add(test);
+        algoPanel.add(algoGo);
+        toolBarButtons.add(algoPanel);
+
     };
     
     public abstract void connexe();
