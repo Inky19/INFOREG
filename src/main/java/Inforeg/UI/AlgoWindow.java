@@ -7,9 +7,9 @@ package Inforeg.UI;
 import Inforeg.Algo.*;
 import Inforeg.Draw.Draw;
 import java.awt.GridLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -18,6 +18,12 @@ import javax.swing.JPanel;
  */
 public class AlgoWindow extends JDialog{
 
+    private static final ImageIcon pathIco = new ImageIcon("asset/icons/algo/path.png");
+    private static final ImageIcon scanIco = new ImageIcon("asset/icons/algo/scan.png");
+    private static final ImageIcon colorationIco = new ImageIcon("asset/icons/algo/coloration.png");
+    private static final ImageIcon flowIco = new ImageIcon("asset/icons/algo/flow.png");
+    private static final ImageIcon treeIco = new ImageIcon("asset/icons/algo/tree.png");
+    
     private Draw d;
     
     public AlgoWindow(JFrame frame, Draw d){
@@ -29,23 +35,23 @@ public class AlgoWindow extends JDialog{
         this.setLocationRelativeTo(null);
         
         
-        AlgoBox path = new AlgoBox("Plus court chemin", this);
+        AlgoBox path = new AlgoBox("Plus court chemin", this, pathIco);
         path.addAlgo(new Dijkstra());
         
-        AlgoBox flow = new AlgoBox("Flot", this);
+        AlgoBox flow = new AlgoBox("Flot", this, flowIco);
         flow.addAlgo(new FordFulkerson());
         
-        AlgoBox tree = new AlgoBox("Arbre", this);
+        AlgoBox tree = new AlgoBox("Arbre", this, treeIco);
         tree.addAlgo(new PrimMST());
         tree.addAlgo(new KruskalMST());
         
-        AlgoBox coloration = new AlgoBox("Coloration", this);
+        AlgoBox coloration = new AlgoBox("Coloration", this, colorationIco);
         coloration.addAlgo(new Coloration());
         
          
         
         JPanel dialPanel = new JPanel();
-        dialPanel.setLayout(new GridLayout(3,3));
+        dialPanel.setLayout(new GridLayout(2,2));
         dialPanel.add(path);
         dialPanel.add(flow);
         dialPanel.add(tree);
