@@ -5,6 +5,7 @@
 package Inforeg.Algo;
 
 import Inforeg.Draw.Draw;
+import Inforeg.Graph.Graph;
 import Inforeg.ObjetGraph.MyLine;
 import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
@@ -22,18 +23,27 @@ import java.util.LinkedList;
  * L'algorithme parcours l'ensemble des noeuds et assigne la plus petite couleur possible en regardant les voisins.
  * Les couleurs sont représentées par des entiers qui sont convertis en couleur en utilisant la variable static COLORS.
  */
-public class Coloration {  
+public class Coloration extends Algorithm{  
     private ArrayList<LinkedList<Integer>> listAdj;
     private HashMap<Node,Integer> hashNode;
-    private final Draw d;
+    private Draw d;
     private static final String[] COLORS = new String[]{"#e6194B","#f58231","#ffe119","#bfef45","#3cb44b","#42d4f4","#4363d8","#911eb4","#f032e6","#800000"}; 
     
-    public Coloration(Draw d) {
+    public Coloration(){
+        this.setName("Glouton");
+        hashNode = new HashMap<>();
+        listAdj = new ArrayList<>();
+        d = null;
+    }
+    
+    @Override
+    public boolean process(Draw d) {
         this.d = d;
         hashNode = new HashMap<>();
         listAdj = new ArrayList<>();
-    }
-    
+        colorationGlouton();
+        return true;
+    }    
     
     // Met à jours les variables listAdj et hashNode
     private void updateVariable() {
@@ -96,6 +106,8 @@ public class Coloration {
             m.getKey().setColor(newColor);
         }
     }
+
+
 
     
 }

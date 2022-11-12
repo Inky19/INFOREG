@@ -28,7 +28,7 @@ import javax.swing.JOptionPane;
  */
 public abstract class saveManager {
 
-    private static String sep = ", "; // Caractère(s) de séparation dans le fichier de sauvegarde
+    public static final String SEP = ", "; // Caractère(s) de séparation dans le fichier de sauvegarde
 
     /**
      * Sauvegarde un graphe en proposant une interface graphique à l'utilisateur
@@ -64,7 +64,7 @@ public abstract class saveManager {
             BufferedWriter fileBuffer = new BufferedWriter(new FileWriter(path));
 
             // Ligne contenant des informations sur le type de graphe et sur la version du logiciel avec laquelle le fichier a été généré
-            fileBuffer.write("Inforeg" + sep + Interface.VERSION + sep + d.getPondere() + sep + d.getOriente() + sep + d.getNextNodeId());
+            fileBuffer.write("Inforeg" + SEP + Interface.VERSION + SEP + d.getPondere() + SEP + d.getOriente() + SEP + d.getNextNodeId());
             fileBuffer.newLine();
 
             // Sauvegarde des nœuds
@@ -74,7 +74,7 @@ public abstract class saveManager {
             ArrayList<Node> nodes = d.getNodes();
             for (Node node : nodes) {
                 fileBuffer.newLine();
-                fileBuffer.write("Node" + sep + node.getId() + sep + node.getLabel() + sep + node.getCx() + sep + node.getCy() + sep + node.getR() + sep + color2Hex(node.getColor()));
+                fileBuffer.write("Node" + SEP + node.getId() + SEP + node.getLabel() + SEP + node.getCx() + SEP + node.getCy() + SEP + node.getR() + SEP + color2Hex(node.getColor()));
             }
 
             // Sauvegarde des arcs
@@ -85,7 +85,7 @@ public abstract class saveManager {
             ArrayList<MyLine> arcs = d.getLines();
             for (MyLine arc : arcs) {
                 fileBuffer.newLine();
-                fileBuffer.write("Arc" + sep + arc.getFrom().getId() + sep + arc.getTo().getId() + sep + arc.getClou().getCx() + sep + arc.getClou().getCy() + sep + arc.getClou().getR() + sep + arc.getPoids() + sep + color2Hex(arc.getColor()));
+                fileBuffer.write("Arc" + SEP + arc.getFrom().getId() + SEP + arc.getTo().getId() + SEP + arc.getClou().getCx() + SEP + arc.getClou().getCy() + SEP + arc.getClou().getR() + SEP + arc.getPoids() + SEP + color2Hex(arc.getColor()));
             }
             fileBuffer.flush();
             fileBuffer.close();
@@ -110,7 +110,7 @@ public abstract class saveManager {
                 BufferedReader reader = new BufferedReader(new FileReader(file));
                 // Recupération des propriétés de Draw = Première ligne
                 String line = reader.readLine();
-                String[] data = line.split(sep);
+                String[] data = line.split(SEP);
                 Boolean pondere = Boolean.parseBoolean(data[2]);
                 Boolean oriente = Boolean.parseBoolean(data[3]);
                 
@@ -121,7 +121,7 @@ public abstract class saveManager {
                 
                 line = reader.readLine();
                 while (line != null) {
-                    data = line.split(sep);
+                    data = line.split(SEP);
                     String colorHex = "";
                     Color color = Color.BLACK;
                     switch (data[0]) {

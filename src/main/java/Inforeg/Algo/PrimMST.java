@@ -15,15 +15,21 @@ import java.awt.Color;
 
 import javax.swing.JOptionPane;
 
-public class PrimMST implements Processing {
+public class PrimMST extends Algorithm implements Processing {
 
+    public PrimMST(){
+        super();
+        this.setName("Prim");
+    }
+    
     // Function to construct and print MST for a graph represented
     // using adjacency matrix representation
-    public void primMST(Draw d) {
-
-        Arc[] arbre;
-
+    @Override
+    public boolean process(Draw d) {
+        
         Graph G = d.getG();
+        
+        Arc[] arbre;
         G.updateVariable();
         arbre = new Arc[G.getNbsommets()];
         if (connected(G)) {
@@ -64,13 +70,14 @@ public class PrimMST implements Processing {
             }
             int p = 0;
             for (int i = 1; i < arbre.length; i++) {
-                d.getG().getLines().get(arbre[i].getLine()).setColor(Color.RED);
-                p += d.getLines().get(arbre[i].getLine()).getPoids();
+                G.getLines().get(arbre[i].getLine()).setColor(Color.RED);
+                p += G.getLines().get(arbre[i].getLine()).getPoids();
             }
             JOptionPane.showMessageDialog(null, "L'arbre couvrant minimal du graphe a un poids de " + p + ".", "Prim MST", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Le graphe n'est pas connexe !", "Prim MST", JOptionPane.INFORMATION_MESSAGE);
         }
+        return true;
     }
 
     /**
@@ -85,5 +92,7 @@ public class PrimMST implements Processing {
         }
         return poids;
     }
+
+
 
 }
