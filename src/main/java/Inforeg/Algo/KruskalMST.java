@@ -15,9 +15,14 @@ import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
-public class KruskalMST implements Processing {
+public class KruskalMST extends Algorithm implements Processing {
+    
+    public KruskalMST(){
+        this.setName("Kruskal");
+    }
 
-    public void kruskalMST(Draw d) {
+        @Override
+    public boolean process(Draw d) {
         
         Arc[] arbre;
         Graph G = d.getG();
@@ -86,6 +91,9 @@ public class KruskalMST implements Processing {
         } else {
             JOptionPane.showMessageDialog(null, "Le graphe n'est pas connexe !", "Kruskal MST", JOptionPane.INFORMATION_MESSAGE);
         }
+        return true;
     }
+
+
 
 }

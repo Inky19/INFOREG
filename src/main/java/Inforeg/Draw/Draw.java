@@ -6,6 +6,8 @@ Auteur : Samy AMAL
 Date de création : 03/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
+import Inforeg.Algo.Algorithm;
+import Inforeg.Algo.AlgorithmST;
 import Inforeg.Algo.Dijkstra;
 import Inforeg.Algo.FordFulkerson;
 import Inforeg.Graph.Graph;
@@ -14,6 +16,7 @@ import Inforeg.ObjetGraph.MyLine;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.ObjetGraph.Nail;
 import Inforeg.History;
+import Inforeg.Save.saveManager;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -92,6 +95,16 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public boolean move;
     // Position précédente avant un déplacement
     private Vector2D prevPos;
+    
+    /**
+     * Dernier algorithme associé à l'onglet
+     */
+    private Algorithm algo;
+    
+    /**
+     * Active la sélection d'un nœud source et d'un nœud de destination.
+     */
+    private boolean st;
 
     /**
      * Valeur du prochain id disponible pour créer un noeud
@@ -252,6 +265,18 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
+    public Algorithm getAlgo() {
+        return algo;
+    }
+
+    public void setAlgo(Algorithm algo) {
+        this.algo = algo;
+    }
+
+    public void setSt(boolean st) {
+        this.st = st;
+    }
     
     
 
@@ -259,6 +284,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         this.oriente = oriente;
         this.G = new Graph(this);
         this.pondere = pondere;
+        this.st = false;
         
         move = false;
         fileName = "";
@@ -325,7 +351,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         this.add(bottomLayout, BorderLayout.SOUTH);
         // Init camera position
         currentCameraPosition = new Point(camera);
-
+        Draw d = this;
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
@@ -354,13 +380,25 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                 // Si on souhaite ajouter un label à un Nœud :
                                 case Interface.LABEL_TOOL:
                                     if (currentCircleIndex >= 0) { // inside a circle
-                                        String lbl = JOptionPane.showInputDialog("Entrer label :");
-                                        if (lbl != null) {
+
+                                        boolean validName = false;
+                                        String lbl = "";
+                                        while (!validName){
+                                            lbl = JOptionPane.showInputDialog("Entrer label :");
+                                            if (lbl.contains(saveManager.SEP)){
+                                                JOptionPane.showMessageDialog(null, "Un label ne peut pas comporter \""+saveManager.SEP+"\"\n(Motif réservé pour la sauvegarde)", "Nom invalide" ,JOptionPane.WARNING_MESSAGE);
+                                            } else {
+                                                validName = true;
+                                            }
+                                        }
+                                        if (lbl != null){
                                             String currentLbl = G.getNodes().get(currentCircleIndex).getLabel();
                                             G.getNodes().get(currentCircleIndex).setLabel(lbl);
                                             repaint();
-                                            transitions.createLog(History.LABEL_NODE, getNodes().get(currentCircleIndex), currentLbl, lbl);    
+                                            transitions.createLog(History.LABEL_NODE, getNodes().get(currentCircleIndex), currentLbl, lbl);  
                                         }
+  
+
                                     } else if (currentArcIndex >= 0) {
                                         if (pondere) {
                                             String text = JOptionPane.showInputDialog("Entrer le nouveau poids de l'Arc (seuls les entiers seront acceptés):");
@@ -552,7 +590,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     }
                 }
                 if (inter.getMode() == inter.TRAITEMENT_MODE) {
-                    if ((inter.getActiveTraitement() == inter.DIJKSTRA_TRAITEMENT) || (inter.getActiveTraitement() == inter.FORD_FULKERSON_TRAITEMENT)) {
+                    if (st) {
                         int x = evt.getX();
                         int y = evt.getY();
                         if (src == -1) {
@@ -566,7 +604,10 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             if (dest != -1) {
                                 G.getNodes().get(dest).setColor(Color.RED);
                                 repaint();
-                                traitement();
+                                ((AlgorithmST) algo).process(d, src, dest);
+                                src = -1;
+                                dest = -1;
+                                st = false;
                             } else {
                                 G.getNodes().get(src).reinit();
                                 repaint();
@@ -936,16 +977,6 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
          getTopLevelAncestor().repaint();
      }
     
-    
-    public void traitement() {
-        if (inter.getActiveTraitement() == inter.DIJKSTRA_TRAITEMENT) {
-            (new Dijkstra()).dijkstra(this, src, dest);
-        } else if (inter.getActiveTraitement() == inter.FORD_FULKERSON_TRAITEMENT) {
-            (new FordFulkerson()).fordFulkerson(this, src, dest);
-        }
-        this.src = -1;
-        this.dest = -1;
-    }
 
     /**
      *

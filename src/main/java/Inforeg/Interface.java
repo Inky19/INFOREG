@@ -6,11 +6,15 @@ Auteur : Samy AMAL
 Date de création : 03/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
+import Inforeg.Algo.Algorithm;
+import Inforeg.Algo.AlgorithmST;
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.MyLine;
 import Inforeg.Save.ExportLatex;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.Save.saveManager;
+import Inforeg.UI.AlgoBox;
+import Inforeg.UI.AlgoWindow;
 import Inforeg.UI.ButtonTabComponent;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -41,6 +45,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -139,6 +144,7 @@ public abstract class Interface {
     private static final ImageIcon arcIco = new ImageIcon("asset/icons/arc.png");
     private static final ImageIcon nodeIco = new ImageIcon("asset/icons/node.png");
     private static final ImageIcon labelIco = new ImageIcon("asset/icons/label.png");
+    private static final ImageIcon dropIco = new ImageIcon("asset/icons/dropdown.png");
 
     /**
      * Attribut pour la taille des Noeuds.
@@ -233,7 +239,6 @@ public abstract class Interface {
 
         initTabs();
         initToolBar();
-        addToolBar();
         initPaneImage();
         initLeftMenuBar();
         addMenuBar();
@@ -261,7 +266,7 @@ public abstract class Interface {
         toolBarButtons = new JToolBar(null, JToolBar.VERTICAL);
         //Panel le long de l'axe Y
         toolBarButtons.setLayout(new BoxLayout(toolBarButtons, BoxLayout.Y_AXIS));
-
+        toolBarButtons.setFloatable(false);
         
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
@@ -368,10 +373,11 @@ public abstract class Interface {
             }  
         });  
         toolBarButtons.add(nodeButton);
+        Dimension buttonSize = nodeButton.getMaximumSize();
         
         JButton arcButton = new JButton("Arc", arcIco);
         arcButton.setHorizontalAlignment(SwingConstants.LEFT);
-        arcButton.setMaximumSize(nodeButton.getMaximumSize());
+        arcButton.setMaximumSize(buttonSize);
         arcButton.addActionListener(new ActionListener(){  
             public void actionPerformed(ActionEvent e){  
                 mode = EDITION_MODE;
@@ -381,7 +387,7 @@ public abstract class Interface {
         toolBarButtons.add(arcButton);
         
         JButton labelButton = new JButton("Label", labelIco);
-        labelButton.setMaximumSize(nodeButton.getMaximumSize());
+        labelButton.setMaximumSize(buttonSize);
         labelButton.setHorizontalAlignment(SwingConstants.LEFT);
         labelButton.addActionListener(new ActionListener(){  
             public void actionPerformed(ActionEvent e){  
@@ -397,6 +403,8 @@ public abstract class Interface {
         toolBarButtons.addSeparator();
         
         JButton connexeButton = new JButton("Connexe");
+        connexeButton.setHorizontalAlignment(SwingConstants.CENTER);
+        connexeButton.setMaximumSize(new Dimension(buttonSize.width,connexeButton.getMaximumSize().height));
         connexeButton.addActionListener(new ActionListener(){  
             public void actionPerformed(ActionEvent e){  
                 mode = TRAITEMENT_MODE;
@@ -404,11 +412,47 @@ public abstract class Interface {
             }  
         });  
         toolBarButtons.add(connexeButton);
+        toolBarButtons.addSeparator();
+        
+        JButton algoButton = new JButton("▼");
+        algoButton.setMaximumSize(new Dimension(buttonSize.width,algoButton.getMaximumSize().height));
+        algoButton.setHorizontalAlignment(SwingConstants.LEFT);
+        algoButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                AlgoWindow window = new AlgoWindow(frame, d);
+                window.setVisible(true);
+                if (d.getAlgo() !=null){
+                    algoButton.setText("▼ " + d.getAlgo().getName());
+                }
+                
+            }
+        });
+        toolBarButtons.add(algoButton);
+        JPanel test = new JPanel();
+        test.setMaximumSize(buttonSize);
+        test.setAlignmentX(0);
+        JButton algoGo = new JButton("GO");
+        algoGo.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                if (d.getAlgo() == null){
+                    JOptionPane.showMessageDialog(null, "Aucun algorithme sélectionné.","Algorithme",JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    mode = Interface.TRAITEMENT_MODE;
+                    d.exportGraphe();
+                    d.reinit();
+                    d.setSt(d.getAlgo() instanceof AlgorithmST);
+                    d.getAlgo().process(d);
+                    d.repaint();
+                }
+                
+            }
+        });
+        test.add(algoGo);
+        toolBarButtons.add(test);
     };
     
     public abstract void connexe();
-
-    public abstract void addToolBar();
+ 
 
     private void initTabs() {
         tabsPanel = new JTabbedPane();

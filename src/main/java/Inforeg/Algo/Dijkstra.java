@@ -14,8 +14,20 @@ import java.awt.Color;
 
 import javax.swing.JOptionPane;
 
-public class Dijkstra implements Processing {
+public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
 
+    public Dijkstra(){
+        super();
+        this.setName("Dijkstra");
+    }
+    
+    @Override
+    public boolean process(Draw d) {
+        d.setSt(true);
+        JOptionPane.showMessageDialog(null, "Sélectionnez un sommet de départ et un sommet d'arrivée pour calculer le plus court chemin entre les deux s'il existe.","Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
+        return true;
+    }
+    
     /**
      * Méthode appliquant l'algorithme de Dijkstra sur le graphe orienté
      * représenté par le Draw d afin de déterminer (si existence) le plus court
@@ -26,7 +38,8 @@ public class Dijkstra implements Processing {
      * @param dest : sommet de destination du parcours
      * @return true si il existe un chemin, false sinon
      */
-    public void dijkstra(Draw d, int src, int dest) {
+    @Override
+    public boolean process(Draw d, int src, int dest) {
 
         int[] dist;
         int[] predecesseur;
@@ -104,6 +117,6 @@ public class Dijkstra implements Processing {
                     + ", de distance " + dist[dest] + ".",
                     "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
         }
+        return true;
     }
-
 }
