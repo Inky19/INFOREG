@@ -18,8 +18,8 @@ import Inforeg.UI.Vector2D;
  */
 public class Node extends Ellipse2D.Double {
     // Global coordinate of the node
-    private double cx;
-    private double cy;
+    public double cx;
+    public double cy;
     // Global radius
     private double r;
     // Color of the node

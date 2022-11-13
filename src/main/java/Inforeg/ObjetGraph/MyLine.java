@@ -18,6 +18,7 @@ import java.awt.Point;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.sqrt;
+import java.util.ArrayList;
 
 public class MyLine {
 
@@ -48,7 +49,8 @@ public class MyLine {
     /**
      * Nail
      */
-    private Nail clou;
+    
+    private ArrayList<Nail> nails;
     /**
      * Rayon des clous
      */
@@ -78,7 +80,8 @@ public class MyLine {
             x = (int) (from.getCx() + from.getHeight());
             y = (int) (from.getCy() + from.getHeight());              
         }
-        this.clou = new Nail(x, y, RCLOU, c);
+        this.nails = new ArrayList<>();
+        nails.add(new Nail( x, y, RCLOU, c));
     }
     
     public MyLine(Node fromPoint, Node toPoint, int pds, Color c, Nail nail){
@@ -87,12 +90,18 @@ public class MyLine {
         this.to = toPoint;
         this.poids = pds;
         this.color = c;
-        this.clou = nail;
+        this.nails = new ArrayList<>();
+        nails.add(nail);
         this.width = DEFAULT_LINE_WIDTH;
     }
 
     public Nail getClou() {
-        return this.clou;
+        // TEMPORARY
+        if (nails.isEmpty()) {
+            return null;
+        } else {
+            return this.nails.get(0);
+        }
     }
     
     private void paintLabel(Draw d, Graphics2D g, Point pos, String label, Color textColor, Color bgColor) {
@@ -110,11 +119,17 @@ public class MyLine {
             g.drawString(label, fontX, fontY);
     }
     
+    private void paintLine(Draw d, Graphics2D g, Vector2D start, Vector2D finish) {
+        Vector2D s = d.toDrawCoordinates(start.x, start.y);
+        Vector2D f = d.toDrawCoordinates(finish.x, finish.y);
+        g.drawLine((int)s.x, (int)s.y, (int)f.x, (int)f.y);
+    }
+    
     public void paint(Draw d, Graphics2D g) {
         g.setPaint(color);
         g.setStroke(new BasicStroke((float) d.toDrawScale(DEFAULT_LINE_WIDTH)));
         Vector2D v1 = d.toDrawCoordinates(from.getCx(), from.getCy());
-        Vector2D v3 = d.toDrawCoordinates(clou.cx, clou.cy);
+        Vector2D v3 = d.toDrawCoordinates(nails.get(0).cx, nails.get(0).cy);
         int x1 = (int) v1.x;
         int y1 = (int) v1.y;
         int x3 = (int) v3.x;
@@ -129,9 +144,20 @@ public class MyLine {
             Vector2D v2 = d.toDrawCoordinates(to.getCx(), to.getCy());
             int x2 = (int) v2.x;
             int y2 = (int) v2.y;
-            g.drawLine(x1, y1, x3, y3);
-            g.drawLine(x3, y3, x2, y2);
-
+            if (nails.isEmpty()) {
+                paintLine(d,g,new Vector2D(from.cx,from.cy),new Vector2D(to.cx,to.cy));
+            } else {
+                paintLine(d,g,new Vector2D(from.cx,from.cy),new Vector2D(nails.get(0).cx,nails.get(0).cy));
+                Nail n1, n2;
+                for (int i=0; i < nails.size()-1;i++) {
+                    n1 = nails.get(i);
+                    n2 = nails.get(i+1);
+                    paintLine(d,g,new Vector2D(n1.cx,n1.cy),new Vector2D(n2.cx,n2.cy));
+                }
+                paintLine(d,g,new Vector2D(nails.get(nails.size()-1).cx,nails.get(nails.size()-1).cy),new Vector2D(to.cx,to.cy));
+                //g.drawLine(x1, y1, x3, y3);
+                //g.drawLine(x3, y3, x2, y2);               
+            }
             g.setPaint(color); //reset color pour poids
             if (d.oriente) {
                 int[] t = new int[4];
@@ -144,7 +170,10 @@ public class MyLine {
             } 
         }
         // Painting of nails
-        clou.paint(d, g, selected);
+        //clou.paint(d, g, selected);
+        for (Nail n : nails) {
+            n.paint(d, g, selected);
+        }
         // Painting of labels
         if (flow != null) {
             String label = Integer.toString(flow);
@@ -170,7 +199,9 @@ public class MyLine {
 
     public void setColor(Color col) {
         this.color = col;
-        this.clou.color = col;
+        for (Nail n : nails) {
+            n.color = col;
+        }
     }
 
     /**
@@ -216,14 +247,14 @@ public class MyLine {
     }
 
     public Point getClouPoint() {
-        double centerX = this.clou.getCenterX();
-        double centerY = this.clou.getCenterY();
+        double centerX = this.nails.get(0).getCenterX();
+        double centerY = this.nails.get(0).getCenterY();
         Point p = new Point((int) centerX, (int) centerY);
         return p;
     }
 
     public void setClou(Nail nouv) {
-        this.clou = nouv;
+        this.nails.set(0, nouv);
     }
 
     public Color getColor() {
