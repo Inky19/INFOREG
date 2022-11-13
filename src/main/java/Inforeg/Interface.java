@@ -6,34 +6,26 @@ Auteur : Samy AMAL
 Date de création : 03/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
-import Inforeg.Algo.Algorithm;
 import Inforeg.Algo.AlgorithmST;
 import Inforeg.Draw.Draw;
-import Inforeg.ObjetGraph.MyLine;
 import Inforeg.Save.ExportLatex;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.Save.saveManager;
-import Inforeg.UI.AlgoBox;
 import Inforeg.UI.AlgoWindow;
 import Inforeg.UI.ButtonTabComponent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -45,8 +37,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -54,7 +44,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
@@ -91,7 +81,6 @@ public abstract class Interface {
     /**
      * Les boutons.
      */
-    
     protected JButton save;
     protected JButton load;
     protected JButton clearSelection;
@@ -136,7 +125,7 @@ public abstract class Interface {
     public static final int KRUSKAL_TRAITEMENT = 23;
     public static final int FORD_FULKERSON_TRAITEMENT = 24;
     public static final int COLORATION_TRAITEMENT = 25;
-    
+
     private static final ImageIcon tabIco = new ImageIcon("asset/icons/tab.png");
     private static final ImageIcon unsavedTabIco = new ImageIcon("asset/icons/unsaved_tab.png");
     private static final ImageIcon moveCursor = new ImageIcon("asset/icons/move.png");
@@ -154,6 +143,8 @@ public abstract class Interface {
      * Attribut pour l'épaisseur des Arcs.
      */
     protected static int epaisseur;
+
+    private JPopupMenu menuNode;
 
     /**
      * Actions
@@ -199,14 +190,15 @@ public abstract class Interface {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-                boolean save_success = saveManager.save(d);
-                if (d != null) {
-                    tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
-                    tabsPanel.updateUI();
-                }
-                tabSaved(save_success);
+            boolean save_success = saveManager.save(d);
+            if (d != null) {
+                tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
+                tabsPanel.updateUI();
+            }
+            tabSaved(save_success);
         }
     ;
+
     };
 
     /**
@@ -243,6 +235,7 @@ public abstract class Interface {
         initLeftMenuBar();
         addMenuBar();
         initRightMenuBar();
+        initContextMenu();
 
         frame.add(toolBarButtons, BorderLayout.LINE_START);
         frame.add(paneImage, BorderLayout.CENTER);
@@ -262,15 +255,15 @@ public abstract class Interface {
      * JPanel pour les boutons
      *
      */
-    public void initToolBar(){
+    public void initToolBar() {
         toolBarButtons = new JToolBar(null, JToolBar.VERTICAL);
         //Panel le long de l'axe Y
         toolBarButtons.setLayout(new BoxLayout(toolBarButtons, BoxLayout.Y_AXIS));
         toolBarButtons.setFloatable(false);
-        
+
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
-        
+
         JButton colorButton = new JButton("Color");
         colorButton.setMnemonic('o');
         colorButton.setToolTipText("Choose a Color");
@@ -294,7 +287,7 @@ public abstract class Interface {
 
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
-        
+
         //Taille
         final SpinnerNumberModel spinnerNumTaille = new SpinnerNumberModel(20, 1, 100, 1);
         JSpinner spinnerTaille = new JSpinner(spinnerNumTaille);
@@ -339,26 +332,26 @@ public abstract class Interface {
         spinnerEpaisseur.setAlignmentX(JSpinner.LEFT_ALIGNMENT);
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
-        
+
         JToolBar moveAndSelect = new JToolBar(null, JToolBar.HORIZONTAL);
         moveAndSelect.setFloatable(false);
         moveAndSelect.setBorderPainted(true);
         moveAndSelect.setAlignmentX(FlowLayout.LEFT);
         JButton move = new JButton(moveCursor);
-        move.addActionListener(new ActionListener(){  
-            public void actionPerformed(ActionEvent e){  
+        move.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 mode = DEPLACEMENT_MODE;
-            }  
-        });  
+            }
+        });
         moveAndSelect.add(move);
-        
+
         JButton select = new JButton(selectCursor);
-        select.addActionListener(new ActionListener(){  
-            public void actionPerformed(ActionEvent e){  
+        select.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 mode = EDITION_MODE;
                 activeTool = SELECT_TOOL;
-            }  
-        });  
+            }
+        });
         moveAndSelect.add(select);
         toolBarButtons.add(moveAndSelect);
         toolBarButtons.addSeparator();
@@ -366,67 +359,67 @@ public abstract class Interface {
         toolBarButtons.add(l1);
         toolBarButtons.addSeparator();
         JButton nodeButton = new JButton("Nœud", nodeIco);
-        nodeButton.addActionListener(new ActionListener(){  
-            public void actionPerformed(ActionEvent e){  
+        nodeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 mode = EDITION_MODE;
                 activeTool = NOEUD_TOOL;
-            }  
-        });  
+            }
+        });
         toolBarButtons.add(nodeButton);
         Dimension buttonSize = nodeButton.getMaximumSize();
-        
+
         JButton arcButton = new JButton("Arc", arcIco);
         arcButton.setHorizontalAlignment(SwingConstants.LEFT);
         arcButton.setMaximumSize(buttonSize);
-        arcButton.addActionListener(new ActionListener(){  
-            public void actionPerformed(ActionEvent e){  
+        arcButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 mode = EDITION_MODE;
                 activeTool = ARC_TOOL;
-            }  
-        });  
+            }
+        });
         toolBarButtons.add(arcButton);
-        
+
         JButton labelButton = new JButton("Label", labelIco);
         labelButton.setMaximumSize(buttonSize);
         labelButton.setHorizontalAlignment(SwingConstants.LEFT);
-        labelButton.addActionListener(new ActionListener(){  
-            public void actionPerformed(ActionEvent e){  
+        labelButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 mode = EDITION_MODE;
                 activeTool = LABEL_TOOL;
-            }  
-        });  
+            }
+        });
         toolBarButtons.add(labelButton);
-        
+
         toolBarButtons.addSeparator();
         JLabel l2 = new JLabel("  Traitement :");
         toolBarButtons.add(l2);
         toolBarButtons.addSeparator();
-        
+
         JButton connexeButton = new JButton("Connexe");
         connexeButton.setHorizontalAlignment(SwingConstants.CENTER);
-        connexeButton.setMaximumSize(new Dimension(buttonSize.width,connexeButton.getMaximumSize().height));
-        connexeButton.addActionListener(new ActionListener(){  
-            public void actionPerformed(ActionEvent e){  
+        connexeButton.setMaximumSize(new Dimension(buttonSize.width, connexeButton.getMaximumSize().height));
+        connexeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 mode = TRAITEMENT_MODE;
                 connexe();
-            }  
-        });  
+            }
+        });
         toolBarButtons.add(connexeButton);
         toolBarButtons.addSeparator();
-        
+
         JButton algoButton = new JButton("▼");
-        Dimension algoButtonSize = new Dimension(buttonSize.width,algoButton.getMaximumSize().height);
+        Dimension algoButtonSize = new Dimension(buttonSize.width, algoButton.getMaximumSize().height);
         algoButton.setMaximumSize(algoButtonSize);
         algoButton.setPreferredSize(algoButtonSize);
         algoButton.setHorizontalAlignment(SwingConstants.LEFT);
-        algoButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        algoButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 AlgoWindow window = new AlgoWindow(frame, d);
                 window.setVisible(true);
-                if (d.getAlgo() !=null){
+                if (d.getAlgo() != null) {
                     algoButton.setText("▼ " + d.getAlgo().getName());
                 }
-                
+
             }
         });
         toolBarButtons.add(algoButton);
@@ -434,10 +427,10 @@ public abstract class Interface {
         algoPanel.setMaximumSize(buttonSize);
         algoPanel.setAlignmentX(0);
         JButton algoGo = new JButton("GO");
-        algoGo.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                if (d.getAlgo() == null){
-                    JOptionPane.showMessageDialog(null, "Aucun algorithme sélectionné.","Algorithme",JOptionPane.INFORMATION_MESSAGE);
+        algoGo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (d.getAlgo() == null) {
+                    JOptionPane.showMessageDialog(null, "Aucun algorithme sélectionné.", "Algorithme", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     mode = Interface.TRAITEMENT_MODE;
                     d.exportGraphe();
@@ -446,16 +439,17 @@ public abstract class Interface {
                     d.getAlgo().process(d);
                     d.repaint();
                 }
-                
+
             }
         });
         algoPanel.add(algoGo);
         toolBarButtons.add(algoPanel);
 
-    };
+    }
+
+    ;
     
     public abstract void connexe();
- 
 
     private void initTabs() {
         tabsPanel = new JTabbedPane();
@@ -495,13 +489,13 @@ public abstract class Interface {
                 }
             }
         };
-        if (d.getFileName() == null || d.getFileName().equals("")){
+        if (d.getFileName() == null || d.getFileName().equals("")) {
             tabsPanel.addTab("Graphe 1", tabIco, d);
             d.setFileName("Graphe 1");
         } else {
             tabsPanel.addTab(d.getFileName(), tabIco, d);
         }
-        
+
         tabsPanel.setTabComponentAt(1, new ButtonTabComponent(tabsPanel, tabIco));
         //tabsPanel.setMnemonicAt(0, KeyEvent.VK_1);
         addTabButton.setFocusable(false);
@@ -512,33 +506,33 @@ public abstract class Interface {
         tabsPanel.setVisible(true);
 
     }
-    
-    public void tabSaved(boolean saved){
+
+    public void tabSaved(boolean saved) {
         int ind = tabsPanel.getSelectedIndex();
-        if (saved){
+        if (saved) {
             tabsPanel.setIconAt(ind, tabIco);
             tabsPanel.setTitleAt(ind, d.getFileName());
         } else {
             tabsPanel.setIconAt(ind, unsavedTabIco);
-            tabsPanel.setTitleAt(ind, "*"+d.getFileName());
+            tabsPanel.setTitleAt(ind, "*" + d.getFileName());
         }
         tabsPanel.revalidate();
         tabsPanel.repaint();
         tabsPanel.updateUI();
     }
-    
-    private void addNewTab(){
+
+    private void addNewTab() {
         String title = "Graphe " + String.valueOf(tabsPanel.getTabCount());
-        
-        Draw newD = new Draw(d.getOriente(),d.getPondere());
+
+        Draw newD = new Draw(d.getOriente(), d.getPondere());
         newD.setFileName(title);
         newD.setInterface(Interface.this);
         tabsPanel.addTab(title, tabIco, newD);
         tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, tabIco));
         tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
     }
-    
-    private void addNewTab(Draw newD){
+
+    private void addNewTab(Draw newD) {
         ImageIcon tabIco = new ImageIcon("asset/icons/tab.png");
         newD.setInterface(Interface.this);
         tabsPanel.addTab(newD.getFileName(), tabIco, newD);
@@ -551,16 +545,16 @@ public abstract class Interface {
         menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("Fichier");
         JMenuItem ouvrir = new JMenuItem("Ouvrir");
-        ouvrir.addActionListener(new ActionListener(){
+        ouvrir.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent ae){
+            public void actionPerformed(ActionEvent ae) {
                 Draw newD = saveManager.load();
                 newD.repaint();
                 d = newD;
-                addNewTab(newD);                
+                addNewTab(newD);
             }
         });
-        
+
         exporter = new JMenu("Exporter");
 
         JMenuItem exportLatex = new JMenuItem("Exporter au format LaTeX");
@@ -705,6 +699,36 @@ public abstract class Interface {
 
     }
 
+    public void initContextMenu() {
+        menuNode = new JPopupMenu();
+
+    }
+
+    public void rightClickNode(Node n, int x, int y) {
+        menuNode = new JPopupMenu();
+        JMenuItem renameNode = new JMenuItem("Renommer");
+        renameNode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ActionMenu.renameNode(d, n);
+            }
+
+        });
+        JMenuItem colorNode = new JMenuItem("Couleur");
+        JMenuItem deleteNode = new JMenuItem("Supprimer");
+        deleteNode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ActionMenu.deleteNode(d, n);
+            }
+
+        });
+        menuNode.add(renameNode);
+        menuNode.add(colorNode);
+        menuNode.add(deleteNode);
+        menuNode.show(d, x, y);
+    }
+
     /**
      * Méthode venant de BasicPaint
      *
@@ -743,8 +767,8 @@ public abstract class Interface {
 
         g.dispose();
         imageLabel.repaint();
-    }    
-    
+    }
+
     public static int getMode() {
         return mode;
     }

@@ -9,6 +9,7 @@ Date de dernière modification : 28/03/2022
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
 import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 import java.util.LinkedList;
 
@@ -77,8 +78,10 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
     }
     
     @Override
-    public boolean process(Draw d, int src, int dest) {
+    public boolean process(Draw d, Node srcNode, Node destNode) {
 
+        int src = d.getG().getNodeId(srcNode);
+        int dest = d.getG().getNodeId(destNode);
         Graph g = d.getG();
         g.updateVariable();
         int V = g.getNbsommets();

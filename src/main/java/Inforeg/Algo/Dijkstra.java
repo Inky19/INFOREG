@@ -10,6 +10,7 @@ Date de dernière modification : 08/03/2022
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
 import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 
 import javax.swing.JOptionPane;
@@ -39,8 +40,10 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
      * @return true si il existe un chemin, false sinon
      */
     @Override
-    public boolean process(Draw d, int src, int dest) {
+    public boolean process(Draw d, Node srcNode, Node destNode) {
 
+        int src = d.getG().getNodeId(srcNode);
+        int dest = d.getG().getNodeId(destNode);
         int[] dist;
         int[] predecesseur;
 

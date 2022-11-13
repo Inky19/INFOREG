@@ -462,12 +462,12 @@ public class ExportLatex {
         ArrayList<MyLine> lines = d.getLines();
         for (int i = 0; i < d.getNodes().size(); i++) {
             MyLine l = lines.get(i);
-            int src = d.findEllipse(l.getFromPoint().x, l.getFromPoint().y);
-            int dest = d.findEllipse(l.getToPoint().x, l.getToPoint().y);
+            Node src = d.findEllipse(l.getFromPoint().x, l.getFromPoint().y);
+            Node dest = d.findEllipse(l.getToPoint().x, l.getToPoint().y);
             int poids = l.getPoids();
             Color c = l.getC();
             arcs += "\\draw[" + writeArcColor(c) + "style] (" + String.valueOf(src);
-            if (src == dest) {//boucle sur le même noeud
+            if (src.equals(dest)) {//boucle sur le même noeud
                 arcs += ") to [loop] (" + String.valueOf(dest) + ") {};\n";
             } else {
                 arcs += ")--(" + String.valueOf(dest) + ") node[midway,label=" + String.valueOf(poids) + "] {};\n";
@@ -488,11 +488,11 @@ public class ExportLatex {
         ArrayList<MyLine> lines = d.getLines();
         for (int i = 0; i < d.getNodes().size(); i++) {
             MyLine l = lines.get(i);
-            int src = d.findEllipse(l.getFromPoint().x, l.getFromPoint().y);
-            int dest = d.findEllipse(l.getToPoint().x, l.getToPoint().y);
+            Node src = d.findEllipse(l.getFromPoint().x, l.getFromPoint().y);
+            Node dest = d.findEllipse(l.getToPoint().x, l.getToPoint().y);
             Color c = l.getC();
             arcs += "\\draw[" + writeArcColor(c) + "style] (" + String.valueOf(src);
-            if (src == dest) {//boucle sur le même noeud
+            if (src.equals(dest)) {//boucle sur le même noeud
                 arcs += ") to [loop] (" + String.valueOf(dest) + ") {};\n";
             } else {
                 arcs += ")--(" + String.valueOf(dest) + ") {};\n";
