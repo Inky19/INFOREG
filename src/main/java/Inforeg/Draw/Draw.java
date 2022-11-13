@@ -466,12 +466,15 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         }
                         break;
                     case MouseEvent.BUTTON3:
-                        int x = evt.getX();
-                        int y = evt.getY();
-                        Node n = findEllipse(x, y);
-                        if (n != null){
-                            inter.rightClickNode(n, x, y);
-                        }
+                        if ((inter.getMode() == inter.EDITION_MODE)){
+                            int x = evt.getX();
+                            int y = evt.getY();
+                            Node n = findEllipse(x, y);
+                            if (n != null){
+                                inter.rightClickNode(n, x, y);
+                            }
+                        } 
+
                         break;
                 }
             }
