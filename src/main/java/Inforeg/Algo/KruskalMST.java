@@ -6,10 +6,10 @@ Auteur : Jorge QUISPE CCAMA
 Date de création : 04/02/2022
 Date de dernière modification : 25/03/2022
 =============================================*/
-import Inforeg.ObjetGraph.Arc;
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
 import static Inforeg.Graph.GraphFunction.connected;
+import Inforeg.ObjetGraph.Arc;
 import java.awt.Color;
 import java.util.Arrays;
 
@@ -37,16 +37,16 @@ public class KruskalMST extends Algorithm implements Processing {
 
             // An index variable, used for sorted edges
             for (int i = 0; i < G.getNbsommets(); i++) {
-                arbre[i] = new Arc(-1, -1, Integer.MAX_VALUE, -1);
+                arbre[i] = new Arc(null, null, Integer.MAX_VALUE, Color.BLUE);
             }
             // Step 1:  Sort all the edges in non-decreasing
             // order of their weight.  If we are not allowed to
             // change the given graph, we can create a copy of
             // array of edges
 
-            Arc[] sortedArcs = new Arc[G.getLstArcs().size()];
-            for (int j = 0; j < G.getLstArcs().size(); j++) {
-                sortedArcs[j] = G.getLstArcs().get(j);
+            Arc[] sortedArcs = new Arc[G.getLines().size()];
+            for (int j = 0; j < G.getLines().size(); j++) {
+                sortedArcs[j] = G.getLines().get(j);
             }
             Arrays.sort(sortedArcs);
             // Allocate memory for creating V subsets
@@ -67,8 +67,8 @@ public class KruskalMST extends Algorithm implements Processing {
                 // the index for next iteration
                 Arc next_edge = sortedArcs[i++];
 
-                int x = find(subsets, next_edge.getSrc());
-                int y = find(subsets, next_edge.getDest());
+                int x = find(subsets, G.getNodeId(next_edge.getFrom()));
+                int y = find(subsets, G.getNodeId(next_edge.getTo()));
 
                 // If including this edge does't cause cycle,
                 // include it in result and increment the index
@@ -81,10 +81,20 @@ public class KruskalMST extends Algorithm implements Processing {
             }
             int p = 0;
             System.out.println(arbre.length);
+            Arc a = null;
+            Arc arc = null;
             for (int j = 0; j < arbre.length; j++) {
-                if (arbre[j].getLine() >= 0) {
-                    d.getLines().get(arbre[j].getLine()).setColor(Color.RED);
-                    p += d.getLines().get(arbre[j].getLine()).getPoids();
+                a = arbre[j];
+                if (a != null) {
+                    arc = G.findLine(a.getFrom(), a.getTo());
+                    if (arc == null && !G.isOriente()){
+                        arc = G.findLine(a.getTo(), a.getFrom());
+                    }
+                    if (arc != null){
+                        arc.setColor(Color.RED);
+                        p += arc.getPoids();
+                    }
+
                 }
             }
             JOptionPane.showMessageDialog(null, "L'arbre couvrant minimal du graphe a un poids de " + p + ".", "Kruskal MST", JOptionPane.INFORMATION_MESSAGE);

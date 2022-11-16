@@ -4,10 +4,9 @@
  */
 package Inforeg.Save;
 
-import Inforeg.ObjetGraph.Arc;
 import Inforeg.Draw.Draw;
 import Inforeg.Interface;
-import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Nail;
 import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
@@ -82,8 +81,8 @@ public abstract class saveManager {
             // Arc, <id nœud1>, <id nœud2>, <clouX>, <clouY>, <ponderation>
             fileBuffer.newLine();
             fileBuffer.write("########## ARCS ##########");
-            ArrayList<MyLine> arcs = d.getLines();
-            for (MyLine arc : arcs) {
+            ArrayList<Arc> arcs = d.getLines();
+            for (Arc arc : arcs) {
                 fileBuffer.newLine();
                 fileBuffer.write("Arc" + SEP + arc.getFrom().getId() + SEP + arc.getTo().getId() + SEP + arc.getClou().getCx() + SEP + arc.getClou().getCy() + SEP + arc.getClou().getR() + SEP + arc.getPoids() + SEP + color2Hex(arc.getColor()));
             }
@@ -152,7 +151,7 @@ public abstract class saveManager {
                             Node n2 = d.getNodeFromId(id2);
                             Nail nail = new Nail(nailx, naily, radius);
                             color = hex2Color(colorHex);
-                            MyLine arc = new MyLine(n1, n2, pond, color, nail);
+                            Arc arc = new Arc(n1, n2, pond, color, nail);
                             d.getLines().add(arc);
 
                             break;

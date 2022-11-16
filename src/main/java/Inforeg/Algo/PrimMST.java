@@ -7,10 +7,11 @@ Auteur : Samy AMAL
 Date de création : 04/02/2022
 Date de dernière modification : 24/03/2022
 =============================================*/
-import Inforeg.ObjetGraph.Arc;
+
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
 import static Inforeg.Graph.GraphFunction.connected;
+import Inforeg.ObjetGraph.Arc;
 import java.awt.Color;
 
 import javax.swing.JOptionPane;
@@ -38,14 +39,14 @@ public class PrimMST extends Algorithm implements Processing {
 
             // Initialize all keys as INFINITE
             for (int i = 0; i < G.getNbsommets(); i++) {
-                arbre[i] = new Arc(-1, -1, Integer.MAX_VALUE, 0);
+                arbre[i] = new Arc(null, null, Integer.MAX_VALUE, Color.BLUE);
                 vu[i] = false;
             }
 
             // Always include first 1st vertex in MST.
             arbre[0].setPoids(0); // Make key 0 so that this vertex is
             // picked as first vertex
-            arbre[0].setSrc(-1); // First node is always root of MST
+            arbre[0].setFrom(null); // First node is always root of MST
 
             // The MST will have V vertices
             for (int count = 0; count < G.getNbsommets() - 1; count++) {
@@ -64,14 +65,22 @@ public class PrimMST extends Algorithm implements Processing {
                 // Update the key only if graph[u][v] is smaller than key[v]
                 {
                     if (G.getAdj()[u][v] != 0 && vu[v] == false && G.getAdj()[u][v] < arbre[v].getPoids()) {
-                        arbre[v] = new Arc(v, u, G.getAdj()[u][v], G.findArc(u, v));
+                        arbre[v] = new Arc(G.getNode(v), G.getNode(u), G.getAdj()[u][v], Color.BLUE); 
                     }
                 }
             }
             int p = 0;
+            Arc a = null;
             for (int i = 1; i < arbre.length; i++) {
-                G.getLines().get(arbre[i].getLine()).setColor(Color.RED);
-                p += G.getLines().get(arbre[i].getLine()).getPoids();
+                a = G.findLine(arbre[i].getFrom(), arbre[i].getTo());
+                if (a == null && !G.isOriente()){
+                    a = G.findLine(arbre[i].getTo(), arbre[i].getFrom());
+                }
+                if (a!=null){
+                    a.setColor(Color.RED);
+                    p += a.getPoids();
+                }
+
             }
             JOptionPane.showMessageDialog(null, "L'arbre couvrant minimal du graphe a un poids de " + p + ".", "Prim MST", JOptionPane.INFORMATION_MESSAGE);
         } else {
