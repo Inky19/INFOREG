@@ -19,7 +19,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.sqrt;
 
-public class MyLine {
+public class MyLine implements Comparable<MyLine> {
 
     private boolean selected;
     
@@ -28,11 +28,11 @@ public class MyLine {
     /**
      * Cercle/Nœud de départ
      */
-    private final Node from;
+    private Node from;
     /**
      * Cercle/Nœeud d'arrivée
      */
-    private final Node to;
+    private Node to;
     /**
      * Poids de l'Arc
      */
@@ -71,14 +71,20 @@ public class MyLine {
         this.color = c;
         this.width = DEFAULT_LINE_WIDTH;
         int x, y;
-        if (from!=to) {
-            x = (int) (from.getCx() + to.getCx()) / 2;
-            y = (int) (from.getCy() + to.getCy()) / 2;          
+        if (from != null && to != null){
+            if (from!=to) {
+                x = (int) (from.getCx() + to.getCx()) / 2;
+                y = (int) (from.getCy() + to.getCy()) / 2;          
+            } else {
+                x = (int) (from.getCx() + from.getHeight());
+                y = (int) (from.getCy() + from.getHeight());              
+            }
+            this.clou = new Nail(x, y, RCLOU, c);
         } else {
-            x = (int) (from.getCx() + from.getHeight());
-            y = (int) (from.getCy() + from.getHeight());              
+            this.clou = null;
         }
-        this.clou = new Nail(x, y, RCLOU, c);
+        
+
     }
     
     public MyLine(Node fromPoint, Node toPoint, int pds, Color c, Nail nail){
@@ -182,6 +188,15 @@ public class MyLine {
         return this.from;
     }
 
+    public void setFrom(Node from) {
+        this.from = from;
+    }
+
+    public void setTo(Node to) {
+        this.to = to;
+    }
+    
+
     /**
      * Getter du cercle d'arrivée
      *
@@ -249,5 +264,12 @@ public class MyLine {
     @Override
     public String toString() {
         return "Arc | poids: " + poids + ", " + from.toString() + " -> " + to.toString() + " |";
+    }
+    /**
+     * @param compareEdge = Arc à comparer
+     * @return la différence entre les deux poids des arcs
+     */
+    public int compareTo(MyLine compareEdge) {
+        return this.poids - compareEdge.poids;
     }
 }

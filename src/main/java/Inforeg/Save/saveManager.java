@@ -4,7 +4,6 @@
  */
 package Inforeg.Save;
 
-import Inforeg.ObjetGraph.Arc;
 import Inforeg.Draw.Draw;
 import Inforeg.Interface;
 import Inforeg.ObjetGraph.MyLine;

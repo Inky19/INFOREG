@@ -35,8 +35,8 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
      * chemin entre les sommets src et dest
      *
      * @param d : Draw représentant le graphe à étudié
-     * @param src : sommet de départ du parcours
-     * @param dest : sommet de destination du parcours
+     * @param srcNode : sommet de départ du parcours
+     * @param destNode : sommet de destination du parcours
      * @return true si il existe un chemin, false sinon
      */
     @Override
@@ -98,6 +98,7 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
         int count = 0;
         //index dist min and last dist
         while ((s != src) && (count < d.getNodes().size()) && (p != -1)) {
+            System.out.println(src + " " + s + " " + p);
             MyLine l = d.findLine(p, s);
             if (l != null) {
                 l.setColor(Color.RED);
