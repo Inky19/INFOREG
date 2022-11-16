@@ -1,7 +1,7 @@
 package Inforeg.ObjetGraph;
 
 /*=============================================
-Classe MyLine permettant de stocker les informations
+Classe Arc permettant de stocker les informations
 d'une ligne à tracer
 Auteur : Samy AMAL
 Date de création : 03/03/2022
@@ -19,7 +19,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.sqrt;
 
-public class MyLine implements Comparable<MyLine> {
+public class Arc implements Comparable<Arc> {
 
     private boolean selected;
     
@@ -63,7 +63,7 @@ public class MyLine implements Comparable<MyLine> {
      * @param pds
      * @param c
      */
-    public MyLine(Node fromPoint, Node toPoint, int pds, Color c) {
+    public Arc(Node fromPoint, Node toPoint, int pds, Color c) {
         selected = false;
         this.from = fromPoint;
         this.to = toPoint;
@@ -87,7 +87,7 @@ public class MyLine implements Comparable<MyLine> {
 
     }
     
-    public MyLine(Node fromPoint, Node toPoint, int pds, Color c, Nail nail){
+    public Arc(Node fromPoint, Node toPoint, int pds, Color c, Nail nail){
         selected = false;
         this.from = fromPoint;
         this.to = toPoint;
@@ -269,7 +269,7 @@ public class MyLine implements Comparable<MyLine> {
      * @param compareEdge = Arc à comparer
      * @return la différence entre les deux poids des arcs
      */
-    public int compareTo(MyLine compareEdge) {
+    public int compareTo(Arc compareEdge) {
         return this.poids - compareEdge.poids;
     }
 }

@@ -9,7 +9,7 @@ Date de dernière modification : 08/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
-import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 
@@ -99,7 +99,7 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
         //index dist min and last dist
         while ((s != src) && (count < d.getNodes().size()) && (p != -1)) {
             System.out.println(src + " " + s + " " + p);
-            MyLine l = d.findLine(p, s);
+            Arc l = d.findLine(p, s);
             if (l != null) {
                 l.setColor(Color.RED);
                 s = p;

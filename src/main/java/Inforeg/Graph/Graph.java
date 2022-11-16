@@ -8,7 +8,7 @@ Date de création : 27/01/2022
 Date de dernière modification : 29/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
-import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import static java.lang.Integer.max;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class Graph {
     boolean oriente;
     // Structures de données de dessin
     private ArrayList<Node> nodes = new ArrayList<>();
-    private ArrayList<MyLine> lines = new ArrayList<>();
+    private ArrayList<Arc> lines = new ArrayList<>();
     private int nextLabel;
     private int nextId;
     // Structure de données de traitement
@@ -55,7 +55,7 @@ public class Graph {
         this.nbsommets = nodes.size();
         this.adj = new int[nbsommets][nbsommets];
         int i = 0;
-        for (MyLine l : lines) {
+        for (Arc l : lines) {
             int p = l.getPoids();
             int src = hashNode.get(l.getFrom());
             int dest = hashNode.get(l.getTo());
@@ -87,8 +87,8 @@ public class Graph {
             int lbl = Integer.parseInt(node.getLabel());
             nextLabel = lbl;
         } catch(NumberFormatException e) {}
-        ArrayList<MyLine> linesCopy = new ArrayList<>(lines);
-        for (MyLine arc : linesCopy) {
+        ArrayList<Arc> linesCopy = new ArrayList<>(lines);
+        for (Arc arc : linesCopy) {
             if (arc.getFrom()== node || arc.getTo()== node) {
                 lines.remove(arc);
                 System.out.println(true);
@@ -97,18 +97,18 @@ public class Graph {
         nodes.remove(node);
     }
     
-    public void removeLine(MyLine arc) {
+    public void removeLine(Arc arc) {
         lines.remove(arc);
     }    
     
-    public void addLine(MyLine arc) {
+    public void addLine(Arc arc) {
         lines.add(arc);
     }     
     
-    public boolean lineExist(MyLine arc) {
+    public boolean lineExist(Arc arc) {
         Node from = arc.getFrom();
         Node to = arc.getTo();
-        for (MyLine line : lines) {
+        for (Arc line : lines) {
             if (oriente) {
                 if (line.getFrom()==from && line.getTo()==to) {
                     return true;
@@ -245,9 +245,9 @@ public class Graph {
     
     
     @Deprecated
-    public MyLine findLine(int from, int to) {
+    public Arc findLine(int from, int to) {
         updateVariable(); // PROVISOIRE
-        for (MyLine l : lines) {
+        for (Arc l : lines) {
             if (((hashNode.get(l.getFrom()) == from)&&(hashNode.get(l.getTo())== to))||(!oriente && (hashNode.get(l.getFrom()) == to)&&(hashNode.get(l.getTo())== from))) {
                 return l;
             }
@@ -255,8 +255,8 @@ public class Graph {
         return null;
     }
     
-    public MyLine findLine(Node from, Node to) {
-        for (MyLine l : lines) {
+    public Arc findLine(Node from, Node to) {
+        for (Arc l : lines) {
             if ((l.getFrom()==from && l.getTo()==to)||(!oriente && l.getFrom()==from && l.getTo()==to)) {
                 return l;
             }
@@ -277,7 +277,7 @@ public class Graph {
         return nodes;
     }
 
-    public ArrayList<MyLine> getLines() {
+    public ArrayList<Arc> getLines() {
         return lines;
     }
 

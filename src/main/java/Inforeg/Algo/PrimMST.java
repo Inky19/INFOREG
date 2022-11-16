@@ -11,7 +11,7 @@ Date de dernière modification : 24/03/2022
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
 import static Inforeg.Graph.GraphFunction.connected;
-import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Arc;
 import java.awt.Color;
 
 import javax.swing.JOptionPane;
@@ -30,16 +30,16 @@ public class PrimMST extends Algorithm implements Processing {
         
         Graph G = d.getG();
         
-        MyLine[] arbre;
+        Arc[] arbre;
         G.updateVariable();
-        arbre = new MyLine[G.getNbsommets()];
+        arbre = new Arc[G.getNbsommets()];
         if (connected(G)) {
             // To represent set of vertices included in MST
             boolean vu[] = new boolean[G.getNbsommets()];
 
             // Initialize all keys as INFINITE
             for (int i = 0; i < G.getNbsommets(); i++) {
-                arbre[i] = new MyLine(null, null, Integer.MAX_VALUE, Color.BLUE);
+                arbre[i] = new Arc(null, null, Integer.MAX_VALUE, Color.BLUE);
                 vu[i] = false;
             }
 
@@ -65,12 +65,12 @@ public class PrimMST extends Algorithm implements Processing {
                 // Update the key only if graph[u][v] is smaller than key[v]
                 {
                     if (G.getAdj()[u][v] != 0 && vu[v] == false && G.getAdj()[u][v] < arbre[v].getPoids()) {
-                        arbre[v] = new MyLine(G.getNode(v), G.getNode(u), G.getAdj()[u][v], Color.BLUE); 
+                        arbre[v] = new Arc(G.getNode(v), G.getNode(u), G.getAdj()[u][v], Color.BLUE); 
                     }
                 }
             }
             int p = 0;
-            MyLine a = null;
+            Arc a = null;
             for (int i = 1; i < arbre.length; i++) {
                 a = G.findLine(arbre[i].getFrom(), arbre[i].getTo());
                 if (a == null && !G.isOriente()){
@@ -94,7 +94,7 @@ public class PrimMST extends Algorithm implements Processing {
      *
      * @return liste des poids
      */
-    public int[] listePoids(MyLine[] arbre) {
+    public int[] listePoids(Arc[] arbre) {
         int poids[] = new int[arbre.length];
         for (int i = 0; i < arbre.length; i++) {
             poids[i] = arbre[i].getPoids();

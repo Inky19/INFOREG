@@ -9,7 +9,7 @@ Date de création : 24/03/2022
 Date de dernière modification : 30/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
-import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Nail;
 import Inforeg.ObjetGraph.Node;
 import java.awt.geom.Ellipse2D;
@@ -22,7 +22,7 @@ class Enregistrement {
     double x; // position
     double y; // position
     Nail clou;
-    MyLine arc; // arc crée/par supprimer
+    Arc arc; // arc crée/par supprimer
     String lastLbl; // lbl/poid initial(e)
     String newLbl; // lbl/poid actualisé(e)
     double x2; // position supplémentaire
@@ -37,7 +37,7 @@ class Enregistrement {
     }
 
     // Constructor pour les actions sur les arcs
-    public Enregistrement(int action, MyLine line) {
+    public Enregistrement(int action, Arc line) {
         this.action = action;
         this.arc = line;
     }
@@ -51,7 +51,7 @@ class Enregistrement {
     }
 
     // Constructor pour les actions de modification des poids
-    public Enregistrement(int action, MyLine line, String currentLbl, String newLbl) {
+    public Enregistrement(int action, Arc line, String currentLbl, String newLbl) {
         this.action = action;
         this.lastLbl = currentLbl;
         this.newLbl = newLbl;
@@ -103,7 +103,7 @@ public class History {
         this.clearNextStates();
     }
 
-    public void createLog(int action, MyLine line) {
+    public void createLog(int action, Arc line) {
         this.addPreviousState(new Enregistrement(action, line));
         this.clearNextStates();
     }
@@ -113,7 +113,7 @@ public class History {
         this.clearNextStates();
     }
 
-    public void createLog(int action, MyLine line, String currentLbl, String newLbl) {
+    public void createLog(int action, Arc line, String currentLbl, String newLbl) {
         this.addPreviousState(new Enregistrement(action, line, currentLbl, newLbl));
         this.clearNextStates();
     }

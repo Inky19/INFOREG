@@ -9,7 +9,7 @@ Date de dernière modification : 25/03/2022
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
 import static Inforeg.Graph.GraphFunction.connected;
-import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Arc;
 import java.awt.Color;
 import java.util.Arrays;
 
@@ -24,10 +24,10 @@ public class KruskalMST extends Algorithm implements Processing {
         @Override
     public boolean process(Draw d) {
         
-        MyLine[] arbre;
+        Arc[] arbre;
         Graph G = d.getG();
         G.updateVariable();
-        arbre = new MyLine[G.getNbsommets()];
+        arbre = new Arc[G.getNbsommets()];
         if (connected(G)) {
             // Tnis will store the resultant MST
             //Edge result[] = new Edge[V];
@@ -37,14 +37,14 @@ public class KruskalMST extends Algorithm implements Processing {
 
             // An index variable, used for sorted edges
             for (int i = 0; i < G.getNbsommets(); i++) {
-                arbre[i] = new MyLine(null, null, Integer.MAX_VALUE, Color.BLUE);
+                arbre[i] = new Arc(null, null, Integer.MAX_VALUE, Color.BLUE);
             }
             // Step 1:  Sort all the edges in non-decreasing
             // order of their weight.  If we are not allowed to
             // change the given graph, we can create a copy of
             // array of edges
 
-            MyLine[] sortedArcs = new MyLine[G.getLines().size()];
+            Arc[] sortedArcs = new Arc[G.getLines().size()];
             for (int j = 0; j < G.getLines().size(); j++) {
                 sortedArcs[j] = G.getLines().get(j);
             }
@@ -65,7 +65,7 @@ public class KruskalMST extends Algorithm implements Processing {
             while (e < G.getNbsommets() - 1) {
                 // Step 2: Pick the smallest edge. And increment
                 // the index for next iteration
-                MyLine next_edge = sortedArcs[i++];
+                Arc next_edge = sortedArcs[i++];
 
                 int x = find(subsets, G.getNodeId(next_edge.getFrom()));
                 int y = find(subsets, G.getNodeId(next_edge.getTo()));
@@ -81,8 +81,8 @@ public class KruskalMST extends Algorithm implements Processing {
             }
             int p = 0;
             System.out.println(arbre.length);
-            MyLine a = null;
-            MyLine arc = null;
+            Arc a = null;
+            Arc arc = null;
             for (int j = 0; j < arbre.length; j++) {
                 a = arbre[j];
                 if (a != null) {

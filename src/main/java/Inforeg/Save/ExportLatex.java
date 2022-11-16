@@ -7,7 +7,7 @@ Date de création : 18/2022
 Date de dernière modification : 30/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
-import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -459,9 +459,9 @@ public class ExportLatex {
      */
     public String writeLinesPond(Draw d) {
         String arcs = "";
-        ArrayList<MyLine> lines = d.getLines();
+        ArrayList<Arc> lines = d.getLines();
         for (int i = 0; i < d.getNodes().size(); i++) {
-            MyLine l = lines.get(i);
+            Arc l = lines.get(i);
             Node src = d.findEllipse(l.getFromPoint().x, l.getFromPoint().y);
             Node dest = d.findEllipse(l.getToPoint().x, l.getToPoint().y);
             int poids = l.getPoids();
@@ -485,9 +485,9 @@ public class ExportLatex {
      */
     public String writeLinesNonPond(Draw d) {
         String arcs = "";
-        ArrayList<MyLine> lines = d.getLines();
+        ArrayList<Arc> lines = d.getLines();
         for (int i = 0; i < d.getNodes().size(); i++) {
-            MyLine l = lines.get(i);
+            Arc l = lines.get(i);
             Node src = d.findEllipse(l.getFromPoint().x, l.getFromPoint().y);
             Node dest = d.findEllipse(l.getToPoint().x, l.getToPoint().y);
             Color c = l.getC();
