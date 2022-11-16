@@ -314,6 +314,15 @@ public class Graph {
             return -1;
         }
     }
+     
+    public int getNodeId(Node n){
+        for (int i=0;i<nodes.size();i++){
+            if (nodes.get(i) == n){
+                return i;
+            }
+        }
+        return -1;
+    }
 
     public ArrayList<Node> getNodes() {
         return nodes;

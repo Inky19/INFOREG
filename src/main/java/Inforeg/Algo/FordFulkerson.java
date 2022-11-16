@@ -8,14 +8,19 @@ Date de dernière modification : 28/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
-import Inforeg.Graph.GraphO;
 import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 import java.util.LinkedList;
 
 import javax.swing.JOptionPane;
 
-public class FordFulkerson implements Processing {
+public class FordFulkerson extends Algorithm implements AlgorithmST, Processing {
+    
+    public FordFulkerson(){
+        super();
+        this.setName("Ford-Fulkerson");
+    }
 
     /* Returns true if there is a path from source 's' to
       sink 't' in residual graph. Also fills parent[] to
@@ -65,8 +70,18 @@ public class FordFulkerson implements Processing {
 
     // Returns tne maximum flow from s to t in the given
     // graph
-    public void fordFulkerson(Draw d, int src, int dest) {
+    @Override
+    public boolean process(Draw d) {
+        d.setSt(true);
+        JOptionPane.showMessageDialog(null, "Sélectionnez un sommet source et un sommet cible pour calculer le flot maximal entre les deux.","Ford-Fulkerson - Flot maximal", JOptionPane.INFORMATION_MESSAGE);
+        return true;
+    }
+    
+    @Override
+    public boolean process(Draw d, Node srcNode, Node destNode) {
 
+        int src = d.getG().getNodeId(srcNode);
+        int dest = d.getG().getNodeId(destNode);
         Graph g = d.getG();
         g.updateVariable();
         int V = g.getNbsommets();
@@ -132,5 +147,8 @@ public class FordFulkerson implements Processing {
 
         JOptionPane.showMessageDialog(null, "Le flot maximal du graphe entre les sommets " + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + " est de " + max_flow + ".",
                 "Ford-Fulkerson - Flot maximal", JOptionPane.INFORMATION_MESSAGE);
+        return true;
     }
+
+
 }
