@@ -67,10 +67,14 @@ public abstract class Interface {
     protected JTabbedPane tabsPanel;
     protected JToolBar toolBarButtons;
     protected JPanel paneImage;
+    private JPanel resultPanel;
+    private JScrollPane resultsZone;
     protected Draw d;
 
     protected LinkedList<Draw> tabs;
     private int currentTab;
+    private int resultZoneSize;
+    private int resultTitleSize;
 
     /**
      * Le Menu.
@@ -211,6 +215,8 @@ public abstract class Interface {
         tabs.add(d);
         d.setInterface(this);
         currentTab = 0;
+        resultZoneSize = 200;
+        resultTitleSize = 30;
     }
 
     /**
@@ -236,16 +242,48 @@ public abstract class Interface {
         addMenuBar();
         initRightMenuBar();
         initContextMenu();
-
-        frame.add(toolBarButtons, BorderLayout.LINE_START);
-        frame.add(paneImage, BorderLayout.CENTER);
-        Interface.colorBg = paneImage.getBackground();
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        frame.add(toolBarButtons, BorderLayout.WEST);
         frame.setJMenuBar(menuBar);
 
         //frame.getContentPane().add(this.d);
-        frame.add(tabsPanel);
-        this.d.repaint();
+        Interface.colorBg = paneImage.getBackground();
+        contentPanel.add(paneImage, BorderLayout.CENTER);
+        
 
+        contentPanel.add(tabsPanel);
+        this.d.repaint();
+        // ZONE DES RÉSULTATS
+        resultPanel = new JPanel(new BorderLayout());
+        resultPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE,resultZoneSize));
+        // Titre de la zone :
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        JLabel titleResult = new JLabel("     Résultats :");
+        JButton showResult = new JButton(dropIco);
+        showResult.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (resultPanel.getPreferredSize().height <= resultTitleSize){
+                    resultPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultZoneSize));
+                } else {
+                    resultPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultTitleSize));
+                }
+                resultPanel.revalidate();
+                resultPanel.repaint();
+            }
+        });
+        titlePanel.add(titleResult, BorderLayout.LINE_START);
+        titlePanel.add(showResult, BorderLayout.LINE_END);
+        titlePanel.setBackground(new Color(227,239,247));
+        titlePanel.setPreferredSize(new Dimension(Integer.MAX_VALUE,resultTitleSize));
+        resultPanel.add(titlePanel,BorderLayout.NORTH);
+        // Zone en elle même :
+        resultsZone = new JScrollPane();
+        resultsZone.setPreferredSize(new Dimension(Integer.MAX_VALUE,resultZoneSize-resultTitleSize));
+        resultPanel.add(resultsZone, BorderLayout.SOUTH);
+        
+        // Ajout de la zone
+        contentPanel.add(resultPanel,BorderLayout.SOUTH);
+        frame.add(contentPanel);
         //frame.pack(); remi : Je pense pas que c'est utile ici
         frame.setVisible(true);
 
