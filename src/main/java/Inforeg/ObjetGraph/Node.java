@@ -36,11 +36,12 @@ public class Node extends Ellipse2D.Double {
     // Whether or not the node is selected
     private boolean multiSelected;
     private boolean selected;
+    // Color displayed by the node
+    private Color colorDisplayed;
     
     public Node(){
         super();
         multiSelected = false;
-        this.
         cx = 0;
         cy = 0;
         label = "";
@@ -52,6 +53,7 @@ public class Node extends Ellipse2D.Double {
         this.cy = cy;
         this.r  = r;
         this.color = DEFAULT_COLOR;
+        this.colorDisplayed = DEFAULT_COLOR;
         this.outlineColor = DEFAULT_OUTLINE_COLOR;
         this.id = id;
         this.label = label;
@@ -64,6 +66,7 @@ public class Node extends Ellipse2D.Double {
         this.cy = cy;
         this.r = r;
         this.color = color;
+        this.colorDisplayed = color;
         this.outlineColor = DEFAULT_OUTLINE_COLOR;
         this.label = label;
         this.id = id;
@@ -104,7 +107,7 @@ public class Node extends Ellipse2D.Double {
         g.draw(this);
         g.setStroke(new BasicStroke(1));
         //Inside
-        g.setPaint(color);
+        g.setPaint(colorDisplayed);
         g.fill(this);
         //Label
         if (label != null) {
@@ -153,12 +156,17 @@ public class Node extends Ellipse2D.Double {
         this.r = r;
     }
 
-    public Color getColor() {
-        return color;
+    public Color getColorDisplayed() {
+        return colorDisplayed;
+    }
+    
+    public void setColorDisplayed(Color colorDisplayed) {
+        this.colorDisplayed = colorDisplayed;
     }
     
     public void setColor(Color color) {
         this.color = color;
+        this.colorDisplayed = colorDisplayed;
     }
 
     public String getLabel() {
@@ -190,7 +198,7 @@ public class Node extends Ellipse2D.Double {
     }
     
     public void reinit() {
-        this.color = DEFAULT_COLOR;
+        this.colorDisplayed = color;
         this.outlineColor = DEFAULT_OUTLINE_COLOR;
         this.selected = false;
         this.multiSelected = false;

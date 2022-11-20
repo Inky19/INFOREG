@@ -7,9 +7,8 @@ Auteur : Béryl CASSEL
 Date de création : 27/01/2022
 Date de dernière modification : 29/03/2022
 =============================================*/
-import Inforeg.ObjetGraph.Arc;
 import Inforeg.Draw.Draw;
-import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import static java.lang.Integer.max;
 import java.util.ArrayList;
@@ -25,14 +24,14 @@ public class Graph {
     boolean oriente;
     // Structures de données de dessin
     private ArrayList<Node> nodes = new ArrayList<>();
-    private ArrayList<MyLine> lines = new ArrayList<>();
+    private ArrayList<Arc> lines = new ArrayList<>();
     private int nextLabel;
     private int nextId;
     // Structure de données de traitement
     protected int[][] adj;
-    protected ArrayList<Arc> lstArcs;
     // Passage de noeud à int
     private final HashMap<Node, Integer> hashNode;
+    //private final HashMap<MyLine, Integer> hashArc;
 
     public Graph(Draw d) {
         this.oriente = d.getOriente();
@@ -40,8 +39,6 @@ public class Graph {
         this.nodes = new ArrayList<>();
         this.nextLabel = 0;
         this.nextId = 0;
-        
-        this.lstArcs = new ArrayList<Arc>();
 
         hashNode = new HashMap<>();
     }
@@ -49,7 +46,6 @@ public class Graph {
     public void updateVariable() {
         //PROVISOIRE
         hashNode.clear();//
-        lstArcs.clear();//
         int id = 0;//
         for (Node n : nodes) {//
             hashNode.put(n, id);//
@@ -59,23 +55,16 @@ public class Graph {
         this.nbsommets = nodes.size();
         this.adj = new int[nbsommets][nbsommets];
         int i = 0;
-        for (MyLine l : lines) {
+        for (Arc l : lines) {
             int p = l.getPoids();
             int src = hashNode.get(l.getFrom());
             int dest = hashNode.get(l.getTo());
-            Arc a = new Arc(src, dest, p, i);
-            //addArc(a);
-            lstArcs.add(a);
             adj[src][dest] = p;
             if (!oriente) {
                 adj[dest][src] = p;
             }
             i++;
         }
-    }
-
-    public ArrayList<Arc> getLstArcs() {
-        return lstArcs;
     }
     
     public void addNode(Node node) {
@@ -98,8 +87,8 @@ public class Graph {
             int lbl = Integer.parseInt(node.getLabel());
             nextLabel = lbl;
         } catch(NumberFormatException e) {}
-        ArrayList<MyLine> linesCopy = new ArrayList<>(lines);
-        for (MyLine arc : linesCopy) {
+        ArrayList<Arc> linesCopy = new ArrayList<>(lines);
+        for (Arc arc : linesCopy) {
             if (arc.getFrom()== node || arc.getTo()== node) {
                 lines.remove(arc);
                 System.out.println(true);
@@ -108,18 +97,18 @@ public class Graph {
         nodes.remove(node);
     }
     
-    public void removeLine(MyLine arc) {
+    public void removeLine(Arc arc) {
         lines.remove(arc);
     }    
     
-    public void addLine(MyLine arc) {
+    public void addLine(Arc arc) {
         lines.add(arc);
     }     
     
-    public boolean lineExist(MyLine arc) {
+    public boolean lineExist(Arc arc) {
         Node from = arc.getFrom();
         Node to = arc.getTo();
-        for (MyLine line : lines) {
+        for (Arc line : lines) {
             if (oriente) {
                 if (line.getFrom()==from && line.getTo()==to) {
                     return true;
@@ -160,10 +149,6 @@ public class Graph {
         }
         return minLbl;
         
-    }
-    
-    public void setLstArcs(ArrayList<Arc> lstArcs) {
-        this.lstArcs = lstArcs;
     }
 
     /**
@@ -247,15 +232,6 @@ public class Graph {
         return aux;
     }
 
-    /**
-     * Test si un Arc est bien présent dans le graphe
-     *
-     * @param a un Arc
-     * @return un booléen (true si l'Arc est dans le graphe, false sinon)
-     */
-    public boolean estPresent(Arc a) {
-        return this.lstArcs.contains(a);
-    }
     
     public Node getNode(int value) {
         for (Entry<Node, Integer> entry : hashNode.entrySet()) {
@@ -269,52 +245,25 @@ public class Graph {
     
     
     @Deprecated
-    public MyLine findLine(int from, int to) {
+    public Arc findLine(int from, int to) {
         updateVariable(); // PROVISOIRE
-        for (MyLine l : lines) {
-            if ((hashNode.get(l.getFrom()) == from)&&(hashNode.get(l.getTo())== to)) {
+        for (Arc l : lines) {
+            if (((hashNode.get(l.getFrom()) == from)&&(hashNode.get(l.getTo())== to))||(!oriente && (hashNode.get(l.getFrom()) == to)&&(hashNode.get(l.getTo())== from))) {
                 return l;
             }
         }
         return null;
     }
     
-    public MyLine findLine(Node from, Node to) {
-        for (MyLine l : lines) {
-            if (l.getFrom()==from && l.getTo()==to) {
+    public Arc findLine(Node from, Node to) {
+        for (Arc l : lines) {
+            if ((l.getFrom()==from && l.getTo()==to)||(!oriente && l.getFrom()==from && l.getTo()==to)) {
                 return l;
             }
         }
         return null;
     }
-    /**
-     * Méthode permettant d'ajouter un Arc passé en paramètre au Graph si cela
-     * est possible
-     *
-     * @param a l'Arc à ajouter
-     */
 
-     public int findArc(int src, int dest) {
-        boolean trouve = false;
-        int n = 0;
-        while ((n < this.lstArcs.size()) && (!trouve)) {
-            int s = this.lstArcs.get(n).getSrc();
-            int d = this.lstArcs.get(n).getDest();
-            if ((src == s && dest == d)) {
-                trouve = true;
-            } else if ((oriente==false)&&(src == d && dest == s)) {
-                trouve = true;
-            } else {
-                n++;
-            }
-        }
-        if (trouve) {
-            return n;
-        } else {
-            return -1;
-        }
-    }
-     
     public int getNodeId(Node n){
         for (int i=0;i<nodes.size();i++){
             if (nodes.get(i) == n){
@@ -328,8 +277,14 @@ public class Graph {
         return nodes;
     }
 
-    public ArrayList<MyLine> getLines() {
+    public ArrayList<Arc> getLines() {
         return lines;
     }
+
+    public boolean isOriente() {
+        return oriente;
+    }
+    
+    
 
 }

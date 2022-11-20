@@ -6,7 +6,7 @@ package Inforeg.Algo;
 
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
-import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -50,12 +50,12 @@ public class Coloration extends Algorithm{
         hashNode.clear();
         listAdj.clear();
         ArrayList<Node> nodes = d.getNodes();
-        ArrayList<MyLine> arcs = d.getLines();
+        ArrayList<Arc> arcs = d.getLines();
         hashNode = d.getG().getHashNode();
         for (Node node : nodes) {
             listAdj.add(new LinkedList<>());
         }
-        for (MyLine arc : arcs) {
+        for (Arc arc : arcs) {
             int idFrom = hashNode.get(arc.getFrom());
             int idTo = hashNode.get(arc.getTo());
             listAdj.get(idFrom).add(idTo);
@@ -103,7 +103,7 @@ public class Coloration extends Algorithm{
         for (HashMap.Entry<Node,Integer> m : hashNode.entrySet()) {
             int id = m.getValue();
             Color newColor = Color.decode(COLORS[color[id]%COLORS.length]); // % pour éviter un out of bounds -> à mieux gérer
-            m.getKey().setColor(newColor);
+            m.getKey().setColorDisplayed(newColor);
         }
     }
 

@@ -8,7 +8,7 @@ Date de dernière modification : 28/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
-import Inforeg.ObjetGraph.MyLine;
+import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 import java.util.LinkedList;
@@ -132,7 +132,7 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
             // Add path flow to overall flow
             max_flow += path_flow;
         }
-        MyLine l;
+        Arc l;
         for (int i = 0 ; i<V; i++) {
             for (int j=0;j<V;j++) {
                 l = d.findLine(i,j);
