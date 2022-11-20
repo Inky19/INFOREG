@@ -762,6 +762,16 @@ public abstract class Interface {
 
         });
         JMenuItem colorNode = new JMenuItem("Couleur");
+        colorNode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Color c = JColorChooser.showDialog(frame, "Choose a color", color);
+                if (c != null) {
+                    ActionMenu.colorNode(d, n, c);
+                }
+            }
+        });
+        
         JMenuItem deleteNode = new JMenuItem("Supprimer");
         deleteNode.addActionListener(new ActionListener() {
             @Override

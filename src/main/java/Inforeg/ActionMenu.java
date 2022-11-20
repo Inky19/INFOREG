@@ -3,6 +3,7 @@ package Inforeg;
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.Save.saveManager;
+import java.awt.Color;
 import javax.swing.JOptionPane;
 
 /**
@@ -47,5 +48,10 @@ public abstract class ActionMenu {
         d.getG().removeNode(n);
         d.repaint();
         d.getTransitions().createLog(History.REMOVE_NODE, n);
+    }
+
+    static void colorNode(Draw d, Node n, Color c) {
+        n.setColor(c);
+        d.repaint();
     }
 }

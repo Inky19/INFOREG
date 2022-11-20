@@ -166,7 +166,7 @@ public class Node extends Ellipse2D.Double {
     
     public void setColor(Color color) {
         this.color = color;
-        this.colorDisplayed = colorDisplayed;
+        this.colorDisplayed = color;
     }
 
     public String getLabel() {
