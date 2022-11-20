@@ -73,7 +73,7 @@ public abstract class saveManager {
             ArrayList<Node> nodes = d.getNodes();
             for (Node node : nodes) {
                 fileBuffer.newLine();
-                fileBuffer.write("Node" + SEP + node.getId() + SEP + node.getLabel() + SEP + node.getCx() + SEP + node.getCy() + SEP + node.getR() + SEP + color2Hex(node.getColor()));
+                fileBuffer.write("Node" + SEP + node.getId() + SEP + node.getLabel() + SEP + node.getCx() + SEP + node.getCy() + SEP + node.getR() + SEP + color2Hex(node.getColorDisplayed()));
             }
 
             // Sauvegarde des arcs

@@ -3,6 +3,7 @@ package Inforeg;
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.Save.saveManager;
+import java.awt.Color;
 import javax.swing.JOptionPane;
 
 /**
@@ -22,7 +23,7 @@ public abstract class ActionMenu {
         String lbl = "";
         while (!validName) {
             lbl = JOptionPane.showInputDialog("Entrer label :");
-            if (lbl.contains(saveManager.SEP)) {
+            if (!lbl.isEmpty() && lbl.contains(saveManager.SEP)) {
                 JOptionPane.showMessageDialog(null, "Un label ne peut pas comporter \"" + saveManager.SEP + "\"\n(Motif réservé pour la sauvegarde)", "Nom invalide", JOptionPane.WARNING_MESSAGE);
             } else {
                 validName = true;
@@ -47,5 +48,10 @@ public abstract class ActionMenu {
         d.getG().removeNode(n);
         d.repaint();
         d.getTransitions().createLog(History.REMOVE_NODE, n);
+    }
+
+    static void colorNode(Draw d, Node n, Color c) {
+        n.setColor(c);
+        d.repaint();
     }
 }
