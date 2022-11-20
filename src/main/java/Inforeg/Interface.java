@@ -69,10 +69,15 @@ public abstract class Interface {
     protected JTabbedPane tabsPanel;
     protected JToolBar toolBarButtons;
     protected JPanel paneImage;
+    private JPanel resultContainer; // Contient la zone de résultats et la barre avec le bouton pour la réduire
+    private JPanel resultPanel; // Zone de résultats
+    private JScrollPane resultScrollPane; // Contient la zone de résultats (resultPanel) et permet d'utiliser des barres de défilement si cette zone est trop grande.
     protected Draw d;
 
     protected LinkedList<Draw> tabs;
     private int currentTab;
+    private int resultZoneSize; // Taille du panel (seulement) qui contient les résultats
+    private int resultTitleSize; // Taille du panel qui contient le titre "Résultats :" et le bouton pour cacher la zone de résultats
 
     /**
      * Le Menu.
@@ -213,6 +218,8 @@ public abstract class Interface {
         tabs.add(d);
         d.setInterface(this);
         currentTab = 0;
+        resultZoneSize = 200;
+        resultTitleSize = 30;
     }
 
     /**
@@ -230,7 +237,9 @@ public abstract class Interface {
         // Icone de l'application
         ImageIcon icon = new ImageIcon("asset/icon.png");
         frame.setIconImage(icon.getImage());
-
+        resultContainer = new JPanel(new BorderLayout());
+        resultPanel = new JPanel(new BorderLayout());
+        resultScrollPane = new JScrollPane(resultPanel);
         initTabs();
         initToolBar();
         initPaneImage();
@@ -238,16 +247,48 @@ public abstract class Interface {
         addMenuBar();
         initRightMenuBar();
         initContextMenu();
-
-        frame.add(toolBarButtons, BorderLayout.LINE_START);
-        frame.add(paneImage, BorderLayout.CENTER);
-        Interface.colorBg = paneImage.getBackground();
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        frame.add(toolBarButtons, BorderLayout.WEST);
         frame.setJMenuBar(menuBar);
 
         //frame.getContentPane().add(this.d);
-        frame.add(tabsPanel);
-        this.d.repaint();
+        Interface.colorBg = paneImage.getBackground();
+        contentPanel.add(paneImage, BorderLayout.CENTER);
+        
 
+        contentPanel.add(tabsPanel);
+        this.d.repaint();
+        // ZONE DES RÉSULTATS
+        
+        resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE,resultZoneSize));
+        // Titre de la zone :
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        JLabel titleResult = new JLabel("     Résultats :");
+        JButton showResult = new JButton(dropIco);
+        showResult.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (resultContainer.getPreferredSize().height <= resultTitleSize){
+                    resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultZoneSize));
+                } else {
+                    resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultTitleSize));
+                }
+                resultContainer.revalidate();
+                resultContainer.repaint();
+            }
+        });
+        titlePanel.add(titleResult, BorderLayout.LINE_START);
+        titlePanel.add(showResult, BorderLayout.LINE_END);
+        titlePanel.setBackground(new Color(227,239,247));
+        titlePanel.setPreferredSize(new Dimension(Integer.MAX_VALUE,resultTitleSize));
+        resultContainer.add(titlePanel,BorderLayout.NORTH);
+        // Zone en elle même :
+        
+        resultScrollPane.setPreferredSize(new Dimension(Integer.MAX_VALUE,resultZoneSize-resultTitleSize));
+        resultContainer.add(resultScrollPane, BorderLayout.SOUTH);
+        
+        // Ajout de la zone
+        contentPanel.add(resultContainer,BorderLayout.SOUTH);
+        frame.add(contentPanel);
         //frame.pack(); remi : Je pense pas que c'est utile ici
         frame.setVisible(true);
 
@@ -484,9 +525,17 @@ public abstract class Interface {
                 if (index > 0) {
                     d = (Draw) tabsPanel.getSelectedComponent();
                     currentTab = index;
+                    resultPanel.removeAll();
+                    resultPanel.add(new JLabel("UwU " + d.getFileName()));
+                    resultContainer.revalidate();
+                    resultContainer.repaint();
                 } else {
                     if (sourceTabbedPane.getTabCount() > 1) {
                         tabsPanel.setSelectedIndex(currentTab);
+                    } else {
+                        resultPanel.removeAll();
+                        resultContainer.revalidate();
+                        resultContainer.repaint();
                     }
                 }
             }
