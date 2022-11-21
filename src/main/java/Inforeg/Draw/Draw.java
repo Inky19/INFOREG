@@ -9,6 +9,7 @@ Date de dernière modification : 08/03/2022
 import Inforeg.ActionMenu;
 import Inforeg.Algo.Algorithm;
 import Inforeg.Algo.AlgorithmST;
+import Inforeg.AssetLoader;
 import Inforeg.Graph.Graph;
 import Inforeg.Interface;
 import Inforeg.ObjetGraph.Arc;
@@ -167,8 +168,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     private float zoom = 100f;
     private static final int MAX_ZOOM = 1000;
     private static final int MIN_ZOOM = 50;
-    // Icones et images
-    private static final ImageIcon fitIco = new ImageIcon("asset/icons/fit.png");
+
     
     public int getNextNodeId() {
         return nextNodeId;
@@ -321,7 +321,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             repaint();
         });
         
-        JButton fitToScreen = new JButton(fitIco);
+        JButton fitToScreen = new JButton(AssetLoader.fitIco);
         fitToScreen.setPreferredSize(new Dimension(24, 24));
         fitToScreen.addActionListener((ActionEvent e) -> {
             ArrayList<Node> nodes = G.getNodes();
@@ -506,6 +506,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             @Override
             public void mouseReleased(MouseEvent evt) {
                 move = false;
+                repaint();
                 switch (evt.getButton()){
                     case MouseEvent.BUTTON1: // Clic gauche
                         if (inter.getMode() == inter.EDITION_MODE) {
@@ -545,6 +546,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         break;
                       
                 }
+                
                  
             }
 
@@ -1046,7 +1048,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     }
                 }
             }
-            case Interface.DEPLACEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+            case Interface.DEPLACEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             case Interface.TRAITEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }

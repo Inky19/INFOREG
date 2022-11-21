@@ -53,10 +53,10 @@ public class StartMenu {
         mainPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
         // Icone de l'application
-        ImageIcon icon = new ImageIcon("asset/icon.png");
+        ImageIcon icon = AssetLoader.appIco;
         J.setIconImage(icon.getImage());
 
-        BufferedImage bannerImg = ImageIO.read(new File("asset/logoINFOREG.png"));
+        BufferedImage bannerImg = ImageIO.read(AssetLoader.getURL("asset/logoINFOREG.png"));
         Image bannerImgResized = bannerImg.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
         JLabel banner = new JLabel(new ImageIcon(bannerImgResized));
         
