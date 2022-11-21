@@ -134,14 +134,17 @@ public abstract class Interface {
     public static final int FORD_FULKERSON_TRAITEMENT = 24;
     public static final int COLORATION_TRAITEMENT = 25;
 
-    private static final ImageIcon tabIco = new ImageIcon("asset/icons/tab.png");
-    private static final ImageIcon unsavedTabIco = new ImageIcon("asset/icons/unsaved_tab.png");
-    private static final ImageIcon moveCursor = new ImageIcon("asset/icons/move.png");
-    private static final ImageIcon selectCursor = new ImageIcon("asset/icons/select.png");
-    private static final ImageIcon arcIco = new ImageIcon("asset/icons/arc.png");
-    private static final ImageIcon nodeIco = new ImageIcon("asset/icons/node.png");
-    private static final ImageIcon labelIco = new ImageIcon("asset/icons/label.png");
-    private static final ImageIcon dropIco = new ImageIcon("asset/icons/dropdown.png");
+    private static final ImageIcon appIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icon.png"));
+    private static final ImageIcon tabIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/tab.png"));
+    private static final ImageIcon unsavedTabIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/unsaved_tab.png"));
+    private static final ImageIcon moveCursor = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/move.png"));
+    private static final ImageIcon selectCursor = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/select.png"));
+    private static final ImageIcon arcIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/arc.png"));
+    private static final ImageIcon nodeIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/node.png"));
+    private static final ImageIcon labelIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/label.png"));
+    private static final ImageIcon dropIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/dropdown.png"));
+    private static final ImageIcon backIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/back.png"));
+    private static final ImageIcon forwardIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/forward.png"));
 
     /**
      * Attribut pour la taille des Noeuds.
@@ -236,7 +239,7 @@ public abstract class Interface {
         frame.setSize(1000, 600);
         frame.setLocationRelativeTo(null);
         // Icone de l'application
-        ImageIcon icon = new ImageIcon("asset/icon.png");
+        ImageIcon icon = appIco;
         frame.setIconImage(icon.getImage());
         resultContainer = new JPanel(new BorderLayout());
         resultPanel = new JPanel(new BorderLayout());
@@ -585,7 +588,6 @@ public abstract class Interface {
     }
 
     private void addNewTab(Draw newD) {
-        ImageIcon tabIco = new ImageIcon("asset/icons/tab.png");
         newD.setInterface(Interface.this);
         tabsPanel.addTab(newD.getFileName(), tabIco, newD);
         tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, tabIco));
@@ -601,9 +603,12 @@ public abstract class Interface {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 Draw newD = saveManager.load();
-                newD.repaint();
-                d = newD;
-                addNewTab(newD);
+                if (newD != null) {
+                    newD.repaint();
+                    d = newD;
+                    addNewTab(newD);
+                }
+
             }
         });
 
@@ -675,9 +680,7 @@ public abstract class Interface {
         menuBar.add(aboutMenu);
 
         //CTRL Z / CTRL Y
-        ImageIcon iconBack = new ImageIcon("asset/icons/back.png");
-        ImageIcon iconForward = new ImageIcon("asset/icons/forward.png");
-        back = new JButton(iconBack);
+        back = new JButton(backIco);
         back.setPreferredSize(new Dimension(50, 32));
         back.setFocusPainted(false);
         back.addActionListener(new ActionListener() {
@@ -688,7 +691,7 @@ public abstract class Interface {
                 piles.back(d);
             }
         });
-        forward = new JButton(iconForward);
+        forward = new JButton(forwardIco);
         forward.setPreferredSize(new Dimension(50, 32));
         forward.setFocusPainted(false);
         forward.addActionListener(new ActionListener() {
