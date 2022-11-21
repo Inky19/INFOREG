@@ -480,6 +480,9 @@ public abstract class Interface {
                     d.exportGraphe();
                     d.reinit();
                     d.setSt(d.getAlgo() instanceof AlgorithmST);
+                    if (d.getAlgo() instanceof AlgorithmST){
+                        d.getInfoTop().setText("Sélectionner le nœud source");
+                    }
                     d.getAlgo().process(d);
                     d.repaint();
                 }
