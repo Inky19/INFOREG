@@ -22,7 +22,7 @@ public abstract class ActionMenu {
         String lbl = "";
         while (!validName) {
             lbl = JOptionPane.showInputDialog("Entrer label :");
-            if (lbl.contains(saveManager.SEP)) {
+            if (!lbl.isEmpty() && lbl.contains(saveManager.SEP)) {
                 JOptionPane.showMessageDialog(null, "Un label ne peut pas comporter \"" + saveManager.SEP + "\"\n(Motif réservé pour la sauvegarde)", "Nom invalide", JOptionPane.WARNING_MESSAGE);
             } else {
                 validName = true;

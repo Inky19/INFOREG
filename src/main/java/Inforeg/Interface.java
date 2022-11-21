@@ -48,6 +48,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
@@ -523,10 +524,7 @@ public abstract class Interface {
                 if (index > 0) {
                     d = (Draw) tabsPanel.getSelectedComponent();
                     currentTab = index;
-                    resultPanel.removeAll();
-                    resultPanel.add(new JLabel("UwU " + d.getFileName()));
-                    resultContainer.revalidate();
-                    resultContainer.repaint();
+                    refreshResult();
                 } else {
                     if (sourceTabbedPane.getTabCount() > 1) {
                         tabsPanel.setSelectedIndex(currentTab);
@@ -816,6 +814,15 @@ public abstract class Interface {
 
         g.dispose();
         imageLabel.repaint();
+    }
+    
+    public void refreshResult(){
+        resultPanel.removeAll();
+        JTextField text = new JTextField(d.getResultat());
+        text.setEditable(false);
+        resultPanel.add(text);
+        resultContainer.revalidate();
+        resultContainer.repaint();
     }
 
     public static int getMode() {

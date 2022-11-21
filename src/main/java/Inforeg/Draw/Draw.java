@@ -104,6 +104,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
     private String pathSauvegarde = " ";
     private String fileName;
+    private String resultat;
 
     //Pour les Arcs :
     /**
@@ -264,10 +265,21 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public void setSt(boolean st) {
         this.st = st;
     }
+
+    public String getResultat() {
+        return resultat;
+    }
+
+    public void setResultat(String resultat) {
+        this.resultat = resultat;
+        inter.refreshResult();
+    }
+    
     
     
 
     public Draw(boolean oriente, boolean pondere) {
+        resultat = "";
         this.oriente = oriente;
         this.G = new Graph(this);
         this.pondere = pondere;
