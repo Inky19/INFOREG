@@ -1,0 +1,290 @@
+package Inforeg.Graph;
+
+/*=============================================
+Classe abstraite Graph définissant la structure 
+générale d'un graphe
+Auteur : Béryl CASSEL
+Date de création : 27/01/2022
+Date de dernière modification : 29/03/2022
+=============================================*/
+import Inforeg.Draw.Draw;
+import Inforeg.ObjetGraph.Arc;
+import Inforeg.ObjetGraph.Node;
+import static java.lang.Integer.max;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+public class Graph {
+
+    /**
+     * Nombre de Noeuds du Graph
+     */
+    protected int nbsommets;
+    boolean oriente;
+    // Structures de données de dessin
+    private ArrayList<Node> nodes = new ArrayList<>();
+    private ArrayList<Arc> lines = new ArrayList<>();
+    private int nextLabel;
+    private int nextId;
+    // Structure de données de traitement
+    protected int[][] adj;
+    // Passage de noeud à int
+    private final HashMap<Node, Integer> hashNode;
+    //private final HashMap<MyLine, Integer> hashArc;
+
+    public Graph(Draw d) {
+        this.oriente = d.getOriente();
+        this.lines = new ArrayList<>();
+        this.nodes = new ArrayList<>();
+        this.nextLabel = 0;
+        this.nextId = 0;
+
+        hashNode = new HashMap<>();
+    }
+
+    public void updateVariable() {
+        //PROVISOIRE
+        hashNode.clear();//
+        int id = 0;//
+        for (Node n : nodes) {//
+            hashNode.put(n, id);//
+            id++;//
+        }//
+        // FIN PROVISOIRE
+        this.nbsommets = nodes.size();
+        this.adj = new int[nbsommets][nbsommets];
+        int i = 0;
+        for (Arc l : lines) {
+            int p = l.getPoids();
+            int src = hashNode.get(l.getFrom());
+            int dest = hashNode.get(l.getTo());
+            adj[src][dest] = p;
+            if (!oriente) {
+                adj[dest][src] = p;
+            }
+            i++;
+        }
+    }
+    
+    public void addNode(Node node) {
+        nodes.add(node);
+        if (node.getId() >= nextId) {
+            nextId = node.getId() + 1;
+        }
+        
+        nextLabel = getMinAvailableLabel();
+    }
+   
+    public void addNode(double x, double y, double radius) {
+        nextLabel = getMinAvailableLabel();
+        nodes.add(new Node(x,y,radius, Integer.toString(nextLabel),nextId));
+        nextId++;
+    }
+    
+    public void removeNode(Node node) {
+        try {
+            int lbl = Integer.parseInt(node.getLabel());
+            nextLabel = lbl;
+        } catch(NumberFormatException e) {}
+        ArrayList<Arc> linesCopy = new ArrayList<>(lines);
+        for (Arc arc : linesCopy) {
+            if (arc.getFrom()== node || arc.getTo()== node) {
+                lines.remove(arc);
+                System.out.println(true);
+            }
+        }
+        nodes.remove(node);
+    }
+    
+    public void removeLine(Arc arc) {
+        lines.remove(arc);
+    }    
+    
+    public void addLine(Arc arc) {
+        lines.add(arc);
+    }     
+    
+    public boolean lineExist(Arc arc) {
+        Node from = arc.getFrom();
+        Node to = arc.getTo();
+        for (Arc line : lines) {
+            if (oriente) {
+                if (line.getFrom()==from && line.getTo()==to) {
+                    return true;
+                }
+            } else {
+                if ((line.getFrom()==from && line.getTo()==to)||line.getFrom()==to && line.getTo()==from) {
+                    return true;
+                }    
+            }
+        }
+        return false;
+    }
+    
+    
+    
+    private int getMinAvailableLabel() {
+        // max label
+        int maxLabel = 0;
+        for (Node node : nodes) {
+            try {
+                int lbl = Integer.parseInt(node.getLabel());
+                maxLabel = max(maxLabel,lbl);
+            } catch(NumberFormatException e) {}
+        }       
+        boolean[] taken = new boolean[maxLabel+1];
+        for (int i=0; i < taken.length;i++) {
+            taken[i] = false;
+        }
+        for (Node node : nodes) {
+            try {
+                int lbl = Integer.parseInt(node.getLabel());
+                taken[lbl] = true;
+            } catch(NumberFormatException e) {}
+        }
+        int minLbl = 0;
+        while (minLbl<taken.length && taken[minLbl]) {
+            minLbl++;
+        }
+        return minLbl;
+        
+    }
+
+    /**
+     * Getter de la matrice d'adjacence du graphe
+     *
+     * @return un tableau nbmax*nbmax
+     */
+    public int[][] getAdj() {
+        return adj;
+    }
+
+    public HashMap<Node, Integer> getHashNode() {
+        return hashNode;
+    }
+
+    /**
+     * Setter de la matrice d'adjacence du graphe
+     *
+     * @param adj tableau nbmax*nbmax
+     */
+    public void setAdj(int[][] adj) {
+        this.adj = adj;
+    }
+
+    /**
+     * Getter du nombre de sommets du graphe
+     *
+     * @return un entier
+     */
+    public int getNbsommets() {
+        return nodes.size();
+    }
+
+    /**
+     * Setter du nombre de sommets du graphe
+     *
+     * @param nbsommets
+     */
+    public void setNbsommets(int nbsommets) {
+        this.nbsommets = nbsommets;
+    }
+
+    /**
+     * Méthode permettant de générer un String représentant la matrice
+     * d'adjacence du graphe
+     *
+     * @return un String représentant la matrice
+     */
+    public String afficher() {
+        int d = findMaxDecimal();
+        String mat = "";
+        for (int i = 0; i < nbsommets; i++) {
+            mat += "|";
+            for (int j = 0; j < nbsommets; j++) {
+                mat += formatInt(adj[i][j], d) + "|";
+            }
+            mat += "\n";
+        }
+        return mat;
+    }
+
+    public int findMaxDecimal() {
+        int max = 0;
+        for (int i = 0; i < nbsommets; i++) {
+            for (int j = 0; j < nbsommets; j++) {
+                if (String.valueOf(adj[i][j]).length() > max) {
+                    max = String.valueOf(adj[i][j]).length();
+                }
+            }
+        }
+        return max;
+    }
+
+    public String formatInt(int n, int d) {
+        String aux = String.valueOf(n);
+        int count = d - aux.length();
+        while (count > 0) {
+            aux = "_" + aux;
+            --count;
+        }
+        return aux;
+    }
+
+    
+    public Node getNode(int value) {
+        for (Entry<Node, Integer> entry : hashNode.entrySet()) {
+            if (value ==  entry.getValue()) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+    
+    
+    
+    @Deprecated
+    public Arc findLine(int from, int to) {
+        updateVariable(); // PROVISOIRE
+        for (Arc l : lines) {
+            if (((hashNode.get(l.getFrom()) == from)&&(hashNode.get(l.getTo())== to))||(!oriente && (hashNode.get(l.getFrom()) == to)&&(hashNode.get(l.getTo())== from))) {
+                return l;
+            }
+        }
+        return null;
+    }
+    
+    public Arc findLine(Node from, Node to) {
+        for (Arc l : lines) {
+            if ((l.getFrom()==from && l.getTo()==to)||(!oriente && l.getFrom()==from && l.getTo()==to)) {
+                return l;
+            }
+        }
+        return null;
+    }
+
+    public int getNodeId(Node n){
+        for (int i=0;i<nodes.size();i++){
+            if (nodes.get(i) == n){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public ArrayList<Node> getNodes() {
+        return nodes;
+    }
+
+    public ArrayList<Arc> getLines() {
+        return lines;
+    }
+
+    public boolean isOriente() {
+        return oriente;
+    }
+    
+    
+
+}
