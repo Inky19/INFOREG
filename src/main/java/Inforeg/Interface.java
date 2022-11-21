@@ -24,6 +24,7 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -150,7 +152,6 @@ public abstract class Interface {
     protected static int epaisseur;
 
     private JPopupMenu menuNode;
-
     /**
      * Actions
      */
@@ -205,6 +206,7 @@ public abstract class Interface {
     ;
 
     };
+    
 
     /**
      * Constructeur d'une interface
@@ -648,10 +650,10 @@ public abstract class Interface {
                 JOptionPane.showMessageDialog(frame, str, "Bouton Noeud", JOptionPane.INFORMATION_MESSAGE);
             }
         });
-        JMenuItem helpSubMenuItem2 = new JMenuItem("Help Sub menu item 2");
+        //JMenuItem helpSubMenuItem2 = new JMenuItem("Help Sub menu item 2");
         helpMenu.add(helpSubMenu);
         helpSubMenu.add(helpSubMenuItem1);
-        helpSubMenu.add(helpSubMenuItem2);
+        //helpSubMenu.add(helpSubMenuItem2);
 
         JMenuItem credits = new JMenuItem("Crédits");
         aboutMenu.add(credits);
@@ -674,15 +676,11 @@ public abstract class Interface {
         //CTRL Z / CTRL Y
         ImageIcon iconBack = new ImageIcon("asset/icons/back.png");
         ImageIcon iconForward = new ImageIcon("asset/icons/forward.png");
-        //resize
-        //Image imageBack = iconBack.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
-        //Image imageForward = iconForward.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_AREA_AVERAGING);
-        //iconBack = new ImageIcon(imageBack);
-        //iconForward = new ImageIcon(imageForward);
         back = new JButton(iconBack);
         back.setPreferredSize(new Dimension(50, 32));
         back.setFocusPainted(false);
         back.addActionListener(new ActionListener() {
+            
             @Override
             public void actionPerformed(ActionEvent ae) {
                 History piles = d.getTransitions();
@@ -764,6 +762,16 @@ public abstract class Interface {
 
         });
         JMenuItem colorNode = new JMenuItem("Couleur");
+        colorNode.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Color c = JColorChooser.showDialog(frame, "Choose a color", color);
+                if (c != null) {
+                    ActionMenu.colorNode(d, n, c);
+                }
+            }
+        });
+        
         JMenuItem deleteNode = new JMenuItem("Supprimer");
         deleteNode.addActionListener(new ActionListener() {
             @Override

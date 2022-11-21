@@ -39,6 +39,7 @@ import javax.swing.JSlider;
 import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
 import Inforeg.UI.Vector2D;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -578,13 +579,13 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         if (src == null) {
                             src = findEllipse(x, y);
                             if (src != null) {
-                               src.setColor(Color.GREEN); 
+                               src.setColorDisplayed(Color.GREEN); 
                             }
                             repaint();
                         } else if (dest == null) {
                             dest = findEllipse(x, y);
                             if (dest != null) {
-                                dest.setColor(Color.RED);
+                                dest.setColorDisplayed(Color.RED);
                                 repaint();
                                 ((AlgorithmST) algo).process(d, src, dest);
                                 src = null;
@@ -609,7 +610,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        //Toolkit.getDefaultToolkit().sync();
+        Toolkit.getDefaultToolkit().sync();
         if (!move){
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
@@ -818,12 +819,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         } else {
             info.setText(null);
         }
-        
-        if (n != null || a >= 0) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-        } else {
-            setCursor(Cursor.getDefaultCursor());
-        }
+        // Cursor Handling
+        updateCursor((n!=null),(a>=0));
     }
 
     /**
@@ -838,7 +835,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         // Global coordinates of the mouse
         int x = (int) v.x;
         int y = (int) v.y;
-        if ((inter.getActiveTool() == inter.NOEUD_TOOL || inter.getActiveTool() == inter.SELECT_TOOL) && inter.getMode() == inter.EDITION_MODE) {
+        if ((Interface.getActiveTool() == Interface.NOEUD_TOOL || Interface.getActiveTool() == Interface.SELECT_TOOL) && Interface.getMode() == Interface.EDITION_MODE) {
             if (currentNode != null) {
                 inter.tabSaved(false);
                 if (currentNode.isSelected()) {
@@ -910,7 +907,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                 }
             }
         }
-        if (inter.getActiveTool() == inter.SELECT_TOOL) {
+        if (Interface.getActiveTool() == Interface.SELECT_TOOL) {
             selectXend = event.getX();
             selectYend = event.getY();
 
@@ -1002,6 +999,29 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public void exportGraphe() {
         G.updateVariable();
     }
-
+    
+    private void updateCursor(boolean onNode, boolean onNail) {
+        switch (Interface.getMode()) {
+            case Interface.EDITION_MODE -> {
+                if (onNode || onNail) {
+                    switch (Interface.getActiveTool()) {
+                        case Interface.LABEL_TOOL -> setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+                        case Interface.NOEUD_TOOL -> setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        case Interface.SELECT_TOOL -> setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        case Interface.ARC_TOOL -> setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                    }
+                } else {
+                    switch (Interface.getActiveTool()) {
+                        case Interface.LABEL_TOOL -> setCursor(Cursor.getDefaultCursor());
+                        case Interface.NOEUD_TOOL -> setCursor(Cursor.getDefaultCursor());
+                        case Interface.SELECT_TOOL -> setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+                        case Interface.ARC_TOOL -> setCursor(Cursor.getDefaultCursor());
+                    }
+                }
+            }
+            case Interface.DEPLACEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+            case Interface.TRAITEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+    }
     
 }

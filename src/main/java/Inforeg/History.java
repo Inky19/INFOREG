@@ -12,7 +12,6 @@ import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Nail;
 import Inforeg.ObjetGraph.Node;
-import java.awt.geom.Ellipse2D;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
