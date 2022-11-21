@@ -103,7 +103,7 @@ public class Coloration extends Algorithm{
         for (HashMap.Entry<Node,Integer> m : hashNode.entrySet()) {
             int id = m.getValue();
             Color newColor = Color.decode(COLORS[color[id]%COLORS.length]); // % pour éviter un out of bounds -> à mieux gérer
-            m.getKey().setColor(newColor);
+            m.getKey().setColorDisplayed(newColor);
         }
     }
 
