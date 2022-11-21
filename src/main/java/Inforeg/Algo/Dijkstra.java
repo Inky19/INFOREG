@@ -25,7 +25,6 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
     @Override
     public boolean process(Draw d) {
         d.setSt(true);
-        JOptionPane.showMessageDialog(null, "Sélectionnez un sommet de départ et un sommet d'arrivée pour calculer le plus court chemin entre les deux s'il existe.","Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
         return true;
     }
     
@@ -111,15 +110,13 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
         }
         if (s != src) {
             d.reinit();
-            JOptionPane.showMessageDialog(null, "Il n'existe pas de chemin entre les sommets "
-                    + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + ".",
-                    "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
+            d.setResultat("Il n'existe pas de chemin entre les sommets "
+                    + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + ".");
         } else {
             d.repaint();
-            JOptionPane.showMessageDialog(null, "Il existe un plus court chemin entre les sommets "
+            d.setResultat("Il existe un plus court chemin entre les sommets "
                     + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel()
-                    + ", de distance " + dist[dest] + ".",
-                    "Dijkstra - PCC", JOptionPane.INFORMATION_MESSAGE);
+                    + ", de distance " + dist[dest] + ".");
         }
         return true;
     }
