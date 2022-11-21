@@ -40,10 +40,12 @@ import javax.swing.JSlider;
 import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
 import Inforeg.UI.Vector2D;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.SwingConstants;
 
 public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
@@ -80,6 +82,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      */
     private Color currentColor = Color.BLUE;
     private JLabel info;
+    private JLabel infoTop;
     
     public boolean move;
     // Position précédente avant un déplacement
@@ -106,6 +109,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
     private String pathSauvegarde = " ";
     private String fileName;
+    private String resultat;
 
     //Pour les Arcs :
     /**
@@ -265,10 +269,25 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public void setSt(boolean st) {
         this.st = st;
     }
+
+    public String getResultat() {
+        return resultat;
+    }
+
+    public void setResultat(String resultat) {
+        this.resultat = resultat;
+        inter.refreshResult();
+    }
+
+    public JLabel getInfoTop() {
+        return infoTop;
+    }
+    
     
     
 
     public Draw(boolean oriente, boolean pondere) {
+        resultat = "";
         this.oriente = oriente;
         this.G = new Graph(this);
         this.pondere = pondere;
@@ -277,6 +296,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         move = false;
         fileName = "";
         nextNodeId = 0;
+        infoTop = new JLabel();
+        infoTop.setHorizontalAlignment(SwingConstants.CENTER);
+        infoTop.setFont(new Font("Dialog", Font.BOLD, 15));
         // Zoom Toolbar
         this.setLayout(new BorderLayout());
         JToolBar bottomLayout = new JToolBar(JToolBar.HORIZONTAL);
@@ -337,6 +359,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         bottomLayout.setFocusable(false);
         bottomLayout.setBorderPainted(false);
         this.add(bottomLayout, BorderLayout.SOUTH);
+        this.add(infoTop, BorderLayout.NORTH);
         // Init camera position
         currentCameraPosition = new Point(camera);
         Draw d = this;
@@ -579,9 +602,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         int x = evt.getX();
                         int y = evt.getY();
                         if (src == null) {
+                            
                             src = findEllipse(x, y);
                             if (src != null) {
                                src.setColorDisplayed(Color.GREEN); 
+                               infoTop.setText("Sélectionner le nœud de destination");
                             }
                             repaint();
                         } else if (dest == null) {
@@ -593,7 +618,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                 src = null;
                                 dest = null;
                                 st = false;
+                                infoTop.setText("");
                             } else {
+                                infoTop.setText("Sélectionner le nœud source");
                                 src.reinit();
                                 repaint();
                                 src = null;

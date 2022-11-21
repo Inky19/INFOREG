@@ -97,7 +97,7 @@ public class KruskalMST extends Algorithm implements Processing {
 
                 }
             }
-            JOptionPane.showMessageDialog(null, "L'arbre couvrant minimal du graphe a un poids de " + p + ".", "Kruskal MST", JOptionPane.INFORMATION_MESSAGE);
+            d.setResultat("L'arbre couvrant minimal du graphe a un poids de " + p + ".");
         } else {
             JOptionPane.showMessageDialog(null, "Le graphe n'est pas connexe !", "Kruskal MST", JOptionPane.INFORMATION_MESSAGE);
         }

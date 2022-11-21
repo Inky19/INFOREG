@@ -73,7 +73,6 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
     @Override
     public boolean process(Draw d) {
         d.setSt(true);
-        JOptionPane.showMessageDialog(null, "Sélectionnez un sommet source et un sommet cible pour calculer le flot maximal entre les deux.","Ford-Fulkerson - Flot maximal", JOptionPane.INFORMATION_MESSAGE);
         return true;
     }
     
@@ -145,8 +144,7 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
             }
         }
 
-        JOptionPane.showMessageDialog(null, "Le flot maximal du graphe entre les sommets " + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + " est de " + max_flow + ".",
-                "Ford-Fulkerson - Flot maximal", JOptionPane.INFORMATION_MESSAGE);
+        d.setResultat("Le flot maximal du graphe entre les sommets " + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + " est de " + max_flow + ".");
         return true;
     }
 
