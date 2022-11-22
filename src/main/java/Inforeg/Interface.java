@@ -129,6 +129,7 @@ public abstract class Interface {
     public static final int NOEUD_TOOL = 11;
     public static final int ARC_TOOL = 12;
     public static final int LABEL_TOOL = 13;
+    public static final int COLOR_TOOL = 14;
     protected static int mode;
     public static final int EDITION_MODE = 1;
     public static final int TRAITEMENT_MODE = 2;
@@ -423,7 +424,8 @@ public abstract class Interface {
         JButton color = new JButton(colorIco);
         color.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                mode = DEPLACEMENT_MODE;
+                mode = EDITION_MODE;
+                activeTool = COLOR_TOOL;
             }
         });
         pinAndColor.add(color);
@@ -897,5 +899,11 @@ public abstract class Interface {
     public static int getEpaisseur() {
         return epaisseur;
     }
+
+    public Color getColor() {
+        return color;
+    }
+    
+    
 
 }

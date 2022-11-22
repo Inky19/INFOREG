@@ -412,6 +412,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                         }
                                     }
                                     break;
+                                case Interface.COLOR_TOOL:
+                                    if (!currentNode.isEmpty()){
+                                        ActionMenu.colorNode(d, currentNode, inter.getColor());
+                                    }
+                                    break;
                                 
                                 case Interface.ARC_TOOL:
                                     if ((currentNode != null) && (fromPoint == null)) {
