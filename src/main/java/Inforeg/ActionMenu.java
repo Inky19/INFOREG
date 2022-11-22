@@ -50,7 +50,7 @@ public abstract class ActionMenu {
         d.getTransitions().createLog(History.REMOVE_NODE, n);
     }
 
-    static void colorNode(Draw d, Node n, Color c) {
+    public static void colorNode(Draw d, Node n, Color c) {
         n.setColor(c);
         d.repaint();
     }
