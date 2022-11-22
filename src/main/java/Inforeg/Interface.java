@@ -7,6 +7,7 @@ Date de création : 03/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
 import Inforeg.Algo.AlgorithmST;
+import static Inforeg.AssetLoader.*;
 import Inforeg.Draw.Draw;
 import Inforeg.Save.ExportLatex;
 import Inforeg.ObjetGraph.Node;
@@ -30,6 +31,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -55,6 +58,9 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -134,18 +140,6 @@ public abstract class Interface {
     public static final int FORD_FULKERSON_TRAITEMENT = 24;
     public static final int COLORATION_TRAITEMENT = 25;
 
-    private static final ImageIcon appIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icon.png"));
-    private static final ImageIcon tabIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/tab.png"));
-    private static final ImageIcon unsavedTabIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/unsaved_tab.png"));
-    private static final ImageIcon moveCursor = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/move.png"));
-    private static final ImageIcon selectCursor = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/select.png"));
-    private static final ImageIcon arcIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/arc.png"));
-    private static final ImageIcon nodeIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/node.png"));
-    private static final ImageIcon labelIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/label.png"));
-    private static final ImageIcon dropIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/dropdown.png"));
-    private static final ImageIcon backIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/back.png"));
-    private static final ImageIcon forwardIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/forward.png"));
-
     /**
      * Attribut pour la taille des Noeuds.
      */
@@ -155,6 +149,8 @@ public abstract class Interface {
      */
     protected static int epaisseur;
 
+    private static Dimension buttonSize = new Dimension(86,44);
+    
     private JPopupMenu menuNode;
     /**
      * Actions
@@ -231,7 +227,20 @@ public abstract class Interface {
      */
     public void createAndShowGui() {
 
+
         frame = new JFrame("INFOREG " + d.getPathSauvegarde());
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        SwingUtilities.updateComponentTreeUI(frame);
         //fermer la fenêtre quand on quitte
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Position de la fenètre
@@ -258,9 +267,10 @@ public abstract class Interface {
         //frame.getContentPane().add(this.d);
         Interface.colorBg = paneImage.getBackground();
         contentPanel.add(paneImage, BorderLayout.CENTER);
-        
+        tabsPanel.setPreferredSize(new Dimension(500, 500));
 
         contentPanel.add(tabsPanel);
+        
         this.d.repaint();
         // ZONE DES RÉSULTATS
         
@@ -268,13 +278,16 @@ public abstract class Interface {
         // Titre de la zone :
         JPanel titlePanel = new JPanel(new BorderLayout());
         JLabel titleResult = new JLabel("     Résultats :");
-        JButton showResult = new JButton(dropIco);
+        JButton showResult = new JButton(downArrow);
+        showResult.setFocusPainted(false);
         showResult.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (resultContainer.getPreferredSize().height <= resultTitleSize){
                     resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultZoneSize));
+                    showResult.setIcon(downArrow);
                 } else {
                     resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultTitleSize));
+                    showResult.setIcon(upArrow);
                 }
                 resultContainer.revalidate();
                 resultContainer.repaint();
@@ -293,7 +306,7 @@ public abstract class Interface {
         // Ajout de la zone
         contentPanel.add(resultContainer,BorderLayout.SOUTH);
         frame.add(contentPanel);
-        //frame.pack(); remi : Je pense pas que c'est utile ici
+        frame.pack();// remi : Je pense pas que c'est utile ici
         frame.setVisible(true);
 
     }
@@ -312,6 +325,7 @@ public abstract class Interface {
         toolBarButtons.addSeparator();
 
         JButton colorButton = new JButton("Color");
+        colorButton.setMaximumSize(new Dimension(buttonSize.width, colorButton.getMaximumSize().height));
         colorButton.setMnemonic('o');
         colorButton.setToolTipText("Choose a Color");
         ActionListener colorListener;
@@ -329,7 +343,7 @@ public abstract class Interface {
         };
         colorButton.addActionListener(colorListener);
         colorButton.setIcon(new ImageIcon(colorSample));
-        toolBarButtons.add(colorButton);
+        
         setColor(this.color);
 
         //ajoute un séparateur de taille par défaut
@@ -401,6 +415,29 @@ public abstract class Interface {
         });
         moveAndSelect.add(select);
         toolBarButtons.add(moveAndSelect);
+        JToolBar pinAndColor = new JToolBar(null, JToolBar.HORIZONTAL);
+        pinAndColor.setFloatable(false);
+        pinAndColor.setBorderPainted(true);
+        pinAndColor.setAlignmentX(FlowLayout.LEFT);
+        
+        JButton color = new JButton(colorIco);
+        color.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                mode = DEPLACEMENT_MODE;
+            }
+        });
+        pinAndColor.add(color);
+        
+        JButton pin = new JButton(pinIco);
+        pin.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                mode = DEPLACEMENT_MODE;
+            }
+        });
+        pinAndColor.add(pin);
+        
+        toolBarButtons.add(pinAndColor);
+        toolBarButtons.add(colorButton);
         toolBarButtons.addSeparator();
         JLabel l1 = new JLabel("  Ajouter :");
         toolBarButtons.add(l1);
@@ -413,7 +450,7 @@ public abstract class Interface {
             }
         });
         toolBarButtons.add(nodeButton);
-        Dimension buttonSize = nodeButton.getMaximumSize();
+        nodeButton.setMaximumSize(buttonSize);
 
         JButton arcButton = new JButton("Arc", arcIco);
         arcButton.setHorizontalAlignment(SwingConstants.LEFT);
@@ -425,6 +462,7 @@ public abstract class Interface {
             }
         });
         toolBarButtons.add(arcButton);
+        System.out.println(buttonSize);
 
         JButton labelButton = new JButton("Label", labelIco);
         labelButton.setMaximumSize(buttonSize);
@@ -502,6 +540,7 @@ public abstract class Interface {
     public abstract void connexe();
 
     private void initTabs() {
+        
         tabsPanel = new JTabbedPane();
         FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
         JPanel pnlTab = new JPanel(f);

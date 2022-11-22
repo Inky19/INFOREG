@@ -4,10 +4,7 @@
  */
 package Inforeg;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.net.URL;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 /**
@@ -27,10 +24,13 @@ public abstract class AssetLoader {
     public static final ImageIcon arcIco = new ImageIcon(getURL("asset/icons/arc.png"));
     public static final ImageIcon nodeIco = new ImageIcon(getURL("asset/icons/node.png"));
     public static final ImageIcon labelIco = new ImageIcon(getURL("asset/icons/label.png"));
-    public static final ImageIcon dropIco = new ImageIcon(getURL("asset/icons/dropdown.png"));
     public static final ImageIcon backIco = new ImageIcon(getURL("asset/icons/back.png"));
     public static final ImageIcon forwardIco = new ImageIcon(getURL("asset/icons/forward.png"));
     public static final ImageIcon fitIco = new ImageIcon(getURL("asset/icons/fit.png"));
+    public static final ImageIcon downArrow = new ImageIcon(getURL("asset/icons/arrow-down.png"));
+    public static final ImageIcon upArrow = new ImageIcon(getURL("asset/icons/arrow-up.png"));
+    public static final ImageIcon colorIco = new ImageIcon(getURL("asset/icons/color.png"));
+    public static final ImageIcon pinIco = new ImageIcon(getURL("asset/icons/pin.png"));
     
     
     
