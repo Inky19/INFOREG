@@ -542,10 +542,10 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                 }
                             }
                             for (Arc a: G.getLines()){
-                                int x = a.getClouPoint().x;
-                                int y = a.getClouPoint().y;
-                                if (zoneR.contains(x, y)) {
-                                    a.setSelected(true);
+                                for (Nail n : a.getNails()) {
+                                    if (zoneR.contains(n.x, n.y)) {
+                                        n.selected = true;
+                                    }
                                 }
                             }
                             repaint();
@@ -592,7 +592,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             transitions.createLog(History.REMOVE_ARC, toDelete);
                             //
                             //removeArc(currentArcIndex);
-                            G.removeLine(toDelete);
+                            //G.removeLine(toDelete);
+                            currentNail.delete();
                         }
                     }
                     if (inter.getActiveTool() == inter.SELECT_TOOL) {
@@ -751,16 +752,6 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         return null;
     }
     
-    // OLD
-    public int oldFindArc (int x, int y) {
-        for (int i = 0; i < G.getLines().size(); i++) {
-            if (G.getLines().get(i).getClou().contains(x, y)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-    
     /**
      * 
      * @param x
@@ -882,7 +873,6 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         int x = event.getX();
         int y = event.getY();
         Node n = findNode(x, y);
-        int a = oldFindArc(x, y);
         Nail nail = findNail(x, y);
         Arc arc = findArc(x, y);
         if (nail!=null) {
@@ -895,7 +885,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             info.setText(null);
         }
         // Cursor Handling
-        updateCursor((n!=null),(a>=0),(arc!=null));
+        updateCursor((n!=null),(nail!=null),(arc!=null));
     }
 
     /**
@@ -924,10 +914,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         }
                     }
                     for (Arc a: G.getLines()){
-                        if (a.isSelected()) {
-                            Nail clou = a.getClou();
-                            clou.cx += transx;
-                            clou.cy += transy;
+                        for (Nail nail : a.getNails()) {
+                           if (nail.selected) {
+                                nail.cx += transx;
+                                nail.cy += transy;
+                            }
                         }
                     }
                     repaint();
@@ -960,10 +951,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         }
                     }
                     for (Arc a: G.getLines()){
-                        if (a.isSelected()){
-                            Nail clou = a.getClou();
-                            clou.cx += transx;
-                            clou.cy += transy;
+                        for (Nail nail : a.getNails()) {
+                            if (nail.selected){
+                                nail.cx += transx;
+                                nail.cy += transy;
+                            }
                         }
                     }
                     repaint();

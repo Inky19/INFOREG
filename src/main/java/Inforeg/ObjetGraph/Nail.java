@@ -24,6 +24,7 @@ public class Nail extends Ellipse2D.Double {
     public double cy;
     public double r;
     public Color color;
+    public boolean selected = false;
 
     public Nail(double cx, double cy, double r) {
         this.cx = cx;
@@ -55,7 +56,7 @@ public class Nail extends Ellipse2D.Double {
         this.arc = arc;
     }
 
-    public void paint(Draw d, Graphics2D g, boolean selected) {
+    public void paint(Draw d, Graphics2D g) {
         Vector2D v = d.toDrawCoordinates(cx - r, cy - r);
         this.x = v.x;
         this.y = v.y;
@@ -92,6 +93,12 @@ public class Nail extends Ellipse2D.Double {
 
     public void setCy(double cy) {
         this.cy = cy;
+    }
+    
+    public void delete() {
+        if (arc != null) {
+            arc.getNails().remove(this);
+        }
     }
     
 }

@@ -114,11 +114,6 @@ public class Arc implements Comparable<Arc> {
         this.nails.add(nail);
         this.width = DEFAULT_LINE_WIDTH;
     }
-
-    public Nail getClou() {
-        // TEMPORARY
-        return this.nails.get(0);
-    }
     
     private void paintLabel(Draw d, Graphics2D g, Point pos, String label, Color textColor, Color bgColor) {
         Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(15));
@@ -145,23 +140,22 @@ public class Arc implements Comparable<Arc> {
         g.setPaint(color);
         g.setStroke(new BasicStroke((float) d.toDrawScale(DEFAULT_LINE_WIDTH)));
         Vector2D v1 = d.toDrawCoordinates(from.getCx(), from.getCy());
-        Vector2D v3 = d.toDrawCoordinates(nails.get(0).cx, nails.get(0).cy);
+        
         int x1 = (int) v1.x;
         int y1 = (int) v1.y;
-        int x3 = (int) v3.x;
-        int y3 = (int) v3.y;
+
         // Painting of lines
         if (from == to) {
+            Vector2D v3 = d.toDrawCoordinates(nails.get(0).cx, nails.get(0).cy);
+            int x3 = (int) v3.x;
+            int y3 = (int) v3.y;
             g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
             double radius = sqrt((x1-x3)*(x1-x3) + (y1-y3)*(y1-y3))/2;
             g.draw(new Ellipse2D.Double((x1+x3)/2-radius,(y1+y3)/2-radius, 2*radius, 2*radius));
-            //d.calcArc(x1,y1,x3,y3,g);
         } else {
             Vector2D v2 = d.toDrawCoordinates(to.getCx(), to.getCy());
             int x2 = (int) v2.x;
             int y2 = (int) v2.y;
-            //g.drawLine(x1, y1, x3, y3);
-            //g.drawLine(x3, y3, x2, y2);
             Vector2D start = new Vector2D(from.cx,from.cy); 
             Vector2D finish = new Vector2D(to.cx,to.cy);
             if (nails.isEmpty()) {
@@ -181,6 +175,9 @@ public class Arc implements Comparable<Arc> {
 
             g.setPaint(color); //reset color pour poids
             if (d.oriente) {
+                Vector2D v3 = d.toDrawCoordinates(nails.get(0).cx, nails.get(0).cy);
+                int x3 = (int) v3.x;
+                int y3 = (int) v3.y;
                 int[] t = new int[4];
                 int x4 = (x3 + x2) / 2;
                 int y4 = (y3 + y2) / 2;
@@ -192,17 +189,30 @@ public class Arc implements Comparable<Arc> {
         }
         // Painting of nails
         for (Nail n : nails) {
-            n.paint(d,g,selected);
+            n.paint(d,g);
         }
 
         // Painting of labels
         if (flow != null) {
             String label = Integer.toString(flow);
-            paintLabel(d, g, new Point(x3,y3+(int) d.toDrawScale(20)), label, color, Color.CYAN);
+            if (nails.isEmpty()) {
+                Point middle = new Point((int)(from.cx+to.cx)/2,(int)(from.cy+to.cy)/2);
+                paintLabel(d, g, new Point(middle.x,middle.y+(int) d.toDrawScale(20)), label, color, Color.CYAN);
+            } else {
+                Nail midNail = nails.get(nails.size()/2);
+                paintLabel(d, g, new Point((int)midNail.cx,(int)midNail.cy+(int) d.toDrawScale(20)), label, color, Color.CYAN);
+            }
         }
         if (d.pondere) {
             String label = Integer.toString(poids);
-            paintLabel(d, g, new Point(x3,y3-(int) d.toDrawScale(12)), label, color, Color.WHITE);
+            Vector2D pos;
+            if (nails.isEmpty()) {
+                pos = d.toDrawCoordinates((from.cx+to.cx)/2,(from.cy+to.cy)/2);
+            } else {
+                Nail midNail = nails.get(nails.size()/2);
+                pos = d.toDrawCoordinates(midNail.cx, midNail.cy);
+            }
+            paintLabel(d, g, new Point((int)pos.x,(int)pos.y-(int) d.toDrawScale(12)), label, color, Color.WHITE);
         }
     }
 
@@ -276,7 +286,8 @@ public class Arc implements Comparable<Arc> {
         Point p = new Point((int) centerX, (int) centerY);
         return p;
     }
-
+    
+    @Deprecated
     public Point getClouPoint() {
         // TEMPORARY
         double centerX = this.nails.get(0).getCenterX();
@@ -284,7 +295,8 @@ public class Arc implements Comparable<Arc> {
         Point p = new Point((int) centerX, (int) centerY);
         return p;
     }
-
+    
+    @Deprecated
     public void setClou(Nail nouv) {
         // TEMPORARY
         this.nails.set(0, nouv);
