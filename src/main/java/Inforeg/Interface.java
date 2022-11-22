@@ -307,7 +307,7 @@ public abstract class Interface {
         // Ajout de la zone
         contentPanel.add(resultContainer,BorderLayout.SOUTH);
         frame.add(contentPanel);
-        frame.pack();// remi : Je pense pas que c'est utile ici
+        //frame.pack();// remi : Je pense pas que c'est utile ici
         frame.setVisible(true);
 
     }
