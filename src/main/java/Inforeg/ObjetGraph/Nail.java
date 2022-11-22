@@ -17,7 +17,9 @@ import java.awt.Point;
  * @author Rémi
  */
 public class Nail extends Ellipse2D.Double {
-
+    
+    public Arc arc;
+    
     public double cx;
     public double cy;
     public double r;
@@ -35,6 +37,22 @@ public class Nail extends Ellipse2D.Double {
         this.cy = cy;
         this.r = r;
         this.color = color;
+    }
+    
+    public Nail(double cx, double cy, double r, Arc arc) {
+        this.cx = cx;
+        this.cy = cy;
+        this.r = r;
+        this.color = null;
+        this.arc = arc;
+    }
+
+    public Nail(double cx, double cy, double r, Color color, Arc arc) {
+        this.cx = cx;
+        this.cy = cy;
+        this.r = r;
+        this.color = color;
+        this.arc = arc;
     }
 
     public void paint(Draw d, Graphics2D g, boolean selected) {
@@ -75,6 +93,5 @@ public class Nail extends Ellipse2D.Double {
     public void setCy(double cy) {
         this.cy = cy;
     }
-    
     
 }

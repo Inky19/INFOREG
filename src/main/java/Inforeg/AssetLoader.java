@@ -14,7 +14,7 @@ import javax.swing.ImageIcon;
  *
  * @author Rémi
  */
-public class AssetLoader {
+public abstract class AssetLoader {
     
     // Images
     

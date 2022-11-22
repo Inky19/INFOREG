@@ -149,9 +149,9 @@ public abstract class saveManager {
                             // Il est donc nécessaire que le fichier de sauvegarde ne comporte pas des lignes "Arc" avant des "Node" pour être sûr que cela marche.
                             Node n1 = d.getNodeFromId(id1);
                             Node n2 = d.getNodeFromId(id2);
-                            Nail nail = new Nail(nailx, naily, radius);
                             color = hex2Color(colorHex);
-                            Arc arc = new Arc(n1, n2, pond, color, nail);
+                            Arc arc = new Arc(n1, n2, pond, color);
+                            arc.addNail(new Nail(nailx, naily, radius));
                             d.getLines().add(arc);
 
                             break;

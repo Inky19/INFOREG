@@ -16,9 +16,12 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.sqrt;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Arc implements Comparable<Arc> {
 
@@ -77,14 +80,19 @@ public class Arc implements Comparable<Arc> {
         int x, y;
         if (from != null && to != null){
             if (from!=to) {
-                x = (int) (from.getCx() + to.getCx()) / 2;
-                y = (int) (from.getCy() + to.getCy()) / 2;          
+                x = (int) (1/3f*from.getCx() + 2/3f*to.getCx());
+                y = (int) (1/3f*from.getCy() + 2/3f*to.getCy());
+                System.out.println(x+" "+y);
+                nails.add(new Nail(x, y, RCLOU, c, this));
+                x = (int) (2/3f*from.getCx() + 1/3f*to.getCx());
+                y = (int) (2/3f*from.getCy() + 1/3f*to.getCy());
+                System.out.println(x+" "+y);
+                nails.add(new Nail(x, y, RCLOU, c, this));
             } else {
                 x = (int) (from.getCx() + from.getHeight());
-                y = (int) (from.getCy() + from.getHeight());              
+                y = (int) (from.getCy() + from.getHeight());  
+                nails.add(new Nail(x, y, RCLOU, c, this));
             }
-            //this.clou = new Nail(x, y, RCLOU, c);
-            nails.add(new Nail(x, y, RCLOU, c));
             
         } else {
             //this.clou = null;
@@ -186,8 +194,7 @@ public class Arc implements Comparable<Arc> {
         for (Nail n : nails) {
             n.paint(d,g,selected);
         }
-        
-        //clou.paint(d, g, selected);
+
         // Painting of labels
         if (flow != null) {
             String label = Integer.toString(flow);
@@ -313,5 +320,18 @@ public class Arc implements Comparable<Arc> {
      */
     public int compareTo(Arc compareEdge) {
         return this.poids - compareEdge.poids;
+    }
+    
+    public ArrayList<Nail> getNails() {
+        return nails;
+    }
+    
+    public void addNail(Nail nail) {
+        nails.add(nail);
+        nail.arc = this;
+    }
+    
+    public boolean contains(int x, int y) {
+        return false;
     }
 }
