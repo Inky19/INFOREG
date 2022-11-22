@@ -165,7 +165,7 @@ public class Node extends Ellipse2D.Double {
     }
     
     public void setColor(Color color) {
-        this.color = color;
+        this.color = new Color(color.getRGB());
         this.colorDisplayed = color;
     }
 

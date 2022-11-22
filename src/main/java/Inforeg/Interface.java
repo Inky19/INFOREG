@@ -40,6 +40,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -100,6 +101,8 @@ public abstract class Interface {
     protected JButton clearSelection;
     protected JButton back;
     protected JButton forward;
+    
+    private JCheckBox autoStart;
 
     /**
      * Reference to the original image.
@@ -150,7 +153,7 @@ public abstract class Interface {
      */
     protected static int epaisseur;
 
-    private static Dimension buttonSize = new Dimension(86,44);
+    private static Dimension buttonSize = new Dimension(92,44);
     
     private JPopupMenu menuNode;
     /**
@@ -307,7 +310,7 @@ public abstract class Interface {
         // Ajout de la zone
         contentPanel.add(resultContainer,BorderLayout.SOUTH);
         frame.add(contentPanel);
-        frame.pack();// remi : Je pense pas que c'est utile ici
+        //frame.pack();// remi : Je pense pas que c'est utile ici
         frame.setVisible(true);
 
     }
@@ -464,7 +467,7 @@ public abstract class Interface {
             }
         });
         toolBarButtons.add(arcButton);
-        System.out.println(buttonSize);
+        System.out.println(moveAndSelect.getMaximumSize());
 
         JButton labelButton = new JButton("Label", labelIco);
         labelButton.setMaximumSize(buttonSize);
@@ -511,7 +514,8 @@ public abstract class Interface {
         });
         toolBarButtons.add(algoButton);
         JPanel algoPanel = new JPanel();
-        algoPanel.setMaximumSize(buttonSize);
+        algoPanel.setMaximumSize(new Dimension(buttonSize.width, Integer.MAX_VALUE));
+        algoPanel.setPreferredSize(algoPanel.getMaximumSize());
         algoPanel.setAlignmentX(0);
         JButton algoGo = new JButton("GO");
         algoGo.addActionListener(new ActionListener() {
@@ -533,8 +537,13 @@ public abstract class Interface {
             }
         });
         algoPanel.add(algoGo);
+        autoStart = new JCheckBox("<html><body>Départ<br>auto</body></html>");
+       
+        algoPanel.add(autoStart);
         toolBarButtons.add(algoPanel);
+        
 
+        
     }
 
     ;
