@@ -27,7 +27,7 @@ public class PrimMST extends Algorithm implements AlgorithmS, Processing {
     // Function to construct and print MST for a graph represented
     // using adjacency matrix representation
     @Override
-    public boolean process(Draw d, Node src) {
+    public void process(Draw d, Node src) {
         
         Graph G = d.getG();
         
@@ -90,7 +90,7 @@ public class PrimMST extends Algorithm implements AlgorithmS, Processing {
         } else {
             JOptionPane.showMessageDialog(null, "Le graphe n'est pas connexe !", "Prim MST", JOptionPane.INFORMATION_MESSAGE);
         }
-        return true;
+
     }
 
     /**
@@ -107,13 +107,12 @@ public class PrimMST extends Algorithm implements AlgorithmS, Processing {
     }
 
     @Override
-    public boolean process(Draw d) {
+    public void process(Draw d) {
         if (d.isAuto()){
             process(d, d.getNodes().get(0));
         } else {
             d.setSt(true);
         }
-        return true;
     }
 
 

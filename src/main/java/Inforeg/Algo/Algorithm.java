@@ -20,7 +20,7 @@ public abstract class Algorithm {
     
     private String name;
     
-    public abstract boolean process(Draw d);
+    public abstract void process(Draw d);
 
     public String getName() {
         return name;

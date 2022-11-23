@@ -21,8 +21,8 @@ public class KruskalMST extends Algorithm implements Processing {
         this.setName("Kruskal");
     }
 
-        @Override
-    public boolean process(Draw d) {
+    @Override
+    public void process(Draw d) {
         
         Arc[] arbre;
         Graph G = d.getG();
@@ -101,8 +101,9 @@ public class KruskalMST extends Algorithm implements Processing {
         } else {
             JOptionPane.showMessageDialog(null, "Le graphe n'est pas connexe !", "Kruskal MST", JOptionPane.INFORMATION_MESSAGE);
         }
-        return true;
     }
+
+
 
 
 
