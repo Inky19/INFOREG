@@ -15,6 +15,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -22,6 +23,7 @@ import java.awt.geom.Rectangle2D;
 import static java.lang.Math.sqrt;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Arc implements Comparable<Arc> {
 
@@ -77,30 +79,6 @@ public class Arc implements Comparable<Arc> {
         this.color = c;
         this.width = DEFAULT_LINE_WIDTH;
         this.nails = new ArrayList<>();
-        int x, y;
-        if (from != null && to != null){
-            if (from!=to) {
-                x = (int) (1/3f*from.getCx() + 2/3f*to.getCx());
-                y = (int) (1/3f*from.getCy() + 2/3f*to.getCy());
-                System.out.println(x+" "+y);
-                nails.add(new Nail(x, y, RCLOU, c, this));
-                x = (int) (2/3f*from.getCx() + 1/3f*to.getCx());
-                y = (int) (2/3f*from.getCy() + 1/3f*to.getCy());
-                System.out.println(x+" "+y);
-                nails.add(new Nail(x, y, RCLOU, c, this));
-            } else {
-                x = (int) (from.getCx() + from.getHeight());
-                y = (int) (from.getCy() + from.getHeight());  
-                nails.add(new Nail(x, y, RCLOU, c, this));
-            }
-            
-        } else {
-            //this.clou = null;
-        }
-        
-        
-        
-
     }
     
     public Arc(Node fromPoint, Node toPoint, int pds, Color c, Nail nail){
@@ -233,7 +211,6 @@ public class Arc implements Comparable<Arc> {
         for (Nail n : nails) {
           n.color = col;
         }
-        //this.clou.color = col;
     }
 
     /**
@@ -347,7 +324,44 @@ public class Arc implements Comparable<Arc> {
         return nails.get(0);
     }
     
-    public boolean contains(int x, int y) {
+    private List<Line> getHitBox() {
+        List<Line> lines = new LinkedList<>();
+        if (from == to) {
+
+        } else {
+            if (nails.isEmpty()) {
+                lines.add(new Line(from,to)); 
+            } else {
+                lines.add(new Line(from,nails.get(0)));
+                lines.add(new Line(nails.get(nails.size()-1),to));
+            }
+  
+            for (int i=0; i < nails.size() - 1; i++) {
+                lines.add(new Line(nails.get(i),nails.get(i+1)));
+            }
+        }
+        return lines;
+    }
+    
+    
+    
+    public boolean contains(int x, int y, Draw d) {
+        List<Line> hitbox = getHitBox();
+        Vector2D v = d.toGlobalCoordinates(x, y);
+        for (Line line : hitbox) {
+            if (line.contains(v.x,v.y)) {
+                return true;
+            }
+        }
+        
+//        if (nails.isEmpty()) {
+//            Ellipse2D circle = new Ellipse2D.Double();
+//            Vector2D v = d.toDrawCoordinates((from.cx+to.cx)/2, (from.cy+to.cy)/2);
+//            circle.setFrameFromCenter(v.x,v.y ,v.x+5,v.y+5);
+//            return circle.contains(x,y);
+//        } else {
+//            
+//        }
         return false;
     }
 }

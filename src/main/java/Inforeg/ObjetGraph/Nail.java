@@ -16,7 +16,8 @@ import java.awt.Point;
  *
  * @author Rémi
  */
-public class Nail extends Ellipse2D.Double {
+public class Nail extends Ellipse2D.Double implements Attachable {
+    public final static int DEFAULT_RADIUS = 5;
     
     public Arc arc;
     
@@ -26,6 +27,14 @@ public class Nail extends Ellipse2D.Double {
     public Color color;
     public boolean selected = false;
 
+    public Nail(double cx, double cy) {
+        this.cx = cx;
+        this.cy = cy;
+        this.r = DEFAULT_RADIUS;
+        this.color = null;
+    }
+    
+    
     public Nail(double cx, double cy, double r) {
         this.cx = cx;
         this.cy = cy;
@@ -40,11 +49,18 @@ public class Nail extends Ellipse2D.Double {
         this.color = color;
     }
     
-    public Nail(double cx, double cy, double r, Arc arc) {
+    public Nail(double cx, double cy, Color color) {
         this.cx = cx;
         this.cy = cy;
-        this.r = r;
-        this.color = null;
+        this.r = DEFAULT_RADIUS;
+        this.color = color;
+    }
+    
+    public Nail(double cx, double cy, Arc arc) {
+        this.cx = cx;
+        this.cy = cy;
+        this.r = DEFAULT_RADIUS;
+        this.color = arc.getColor();
         this.arc = arc;
     }
 
@@ -99,6 +115,11 @@ public class Nail extends Ellipse2D.Double {
         if (arc != null) {
             arc.getNails().remove(this);
         }
+    }
+
+    @Override
+    public Vector2D getCenterPos() {
+        return new Vector2D(cx, cy);
     }
     
 }

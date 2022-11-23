@@ -134,6 +134,7 @@ public abstract class Interface {
     public static final int ARC_TOOL = 12;
     public static final int LABEL_TOOL = 13;
     public static final int COLOR_TOOL = 14;
+    public static final int PIN_TOOL = 15;
     protected static int mode;
     public static final int EDITION_MODE = 1;
     public static final int TRAITEMENT_MODE = 2;
@@ -437,7 +438,8 @@ public abstract class Interface {
         JButton pin = new JButton(pinIco);
         pin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                mode = DEPLACEMENT_MODE;
+                mode = EDITION_MODE;
+                activeTool = PIN_TOOL;
             }
         });
         pinAndColor.add(pin);

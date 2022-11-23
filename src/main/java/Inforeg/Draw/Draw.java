@@ -78,6 +78,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      */
     private Node currentNode = null;
     private Nail currentNail = null;
+    private Arc currentArc = null;
     //private static int countArcClicks = 0;
     /**
      * Couleur courante de la classe, initilisée à bleue
@@ -381,8 +382,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             int x = evt.getX();
                             int y = evt.getY();
                             // Vérifie si on clique où non sur un cercle existant
-                            currentNode = findEllipse(x, y);
-                            //currentArcIndex = oldFindArc(x, y);
+                            currentNode = findNode(x, y);
+                            currentArc = findArc(x, y);
                             currentNail = findNail(x, y);
                             // Si on souhaite ajouter un Nœud :
                             switch (inter.getActiveTool()){
@@ -422,7 +423,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                         ActionMenu.colorNode(d, currentNode, inter.getColor());
                                     }
                                     break;
-                                
+                                case Interface.PIN_TOOL:
+                                    if (currentNail == null) {
+                                        addNail(x, y);
+                                    }
+                                    break;   
                                 case Interface.ARC_TOOL:
                                     if ((currentNode != null) && (fromPoint == null)) {
                                         fromPoint = currentNode;
@@ -503,7 +508,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         if ((inter.getMode() == inter.EDITION_MODE)){
                             int x = evt.getX();
                             int y = evt.getY();
-                            Node n = findEllipse(x, y);
+                            Node n = findNode(x, y);
                             if (n != null){
                                 inter.rightClickNode(n, x, y);
                             }
@@ -523,7 +528,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             int x = evt.getX();
                             int y = evt.getY();
                             // Vérifie si on clique où non sur un cercle existant
-                            currentNode = findEllipse(x, y);
+                            currentNode = findNode(x, y);
                             if (currentNode != null && prevPos!=null) {
                                 Node n = currentNode;
                                 transitions.createLog(History.MOVE_NODE, n, prevPos.x, prevPos.y, n.getCx(), n.getCy());
@@ -568,7 +573,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     int y = evt.getY();
                     //currentArcIndex = oldFindArc(x, y);
                     currentNail = findNail(x ,y);
-                    currentNode = findEllipse(x, y);
+                    currentArc = findArc(x, y);
+                    currentNode = findNode(x, y);
                     // Si on clique deux fois sur un Nœud, on le supprime
                     if (inter.getActiveTool() == Interface.NOEUD_TOOL && currentNode != null) {
                         if (evt.getClickCount() >= 2) {
@@ -589,16 +595,20 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         }
                     }
                     if (inter.getActiveTool() == inter.ARC_TOOL) {
+                        if (evt.getClickCount() >= 2 && currentArc != null) {
+                            transitions.createLog(History.REMOVE_ARC, currentArc);
+                            G.removeLine(currentArc);
+                        }
+                    }
+                    
+                    if (inter.getActiveTool() == Interface.PIN_TOOL) {
                         if (evt.getClickCount() >= 2 && currentNail != null) {
-                            // On ajoute l'action à la pile
-                            Arc toDelete = currentNail.arc;
-                            transitions.createLog(History.REMOVE_ARC, toDelete);
-                            //
-                            //removeArc(currentArcIndex);
-                            //G.removeLine(toDelete);
+                            //transitions.createLog(History.REMOVE_ARC, currentArc);
                             currentNail.delete();
                         }
                     }
+                    
+                    
                     if (inter.getActiveTool() == inter.SELECT_TOOL) {
                         if (currentNode == null && currentNail == null) {//not on circle or arc
                             for (Node n: G.getNodes()){
@@ -618,14 +628,14 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         if ((algo) instanceof AlgorithmST){
                             if (src == null) {
                             
-                                src = findEllipse(x, y);
+                                src = findNode(x, y);
                                 if (src != null) {
                                    src.setColorDisplayed(Color.GREEN); 
                                    infoTop.setText("Sélectionner le nœud de destination");
                                 }
                                 repaint();
                             } else if (dest == null) {
-                                dest = findEllipse(x, y);
+                                dest = findNode(x, y);
                                 if (dest != null) {
                                     dest.setColorDisplayed(Color.RED);
                                     repaint();
@@ -642,7 +652,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                 }
                             }
                         } else if (algo instanceof AlgorithmS) {
-                            src = findEllipse(x, y);
+                            src = findNode(x, y);
                             if (!src.isEmpty()){
                                 repaint();
                                 ((AlgorithmS) algo).process(d, src);
@@ -758,7 +768,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param y = coordonnée y du pointeur de la souris
      * @return Un noeud à la position (x,y) si il existe, null sinon.
      */
-    public Node findEllipse(int x, int y) {
+    public Node findNode(int x, int y) {
         for (int i = 0; i < G.getNodes().size(); i++) {
             if (G.getNodes().get(i).contains(x, y)) { // inside a circle
                 return G.getNodes().get(i);
@@ -792,7 +802,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      */
     public Arc findArc(int x, int y) {
         for (Arc arc : this.getLines()) {
-            if (arc.contains(x, y)) {
+            if (arc.contains(x, y, this)) {
                 return arc;
             }
         }
@@ -817,6 +827,17 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         //On actualise l'affichage avec le nouveau cercle
         repaint();
     }
+    
+    public void addNail(double x, double y) {
+        if (currentArc != null) {
+            Vector2D pos = toGlobalCoordinates(x, y);
+            currentArc.addNail(new Nail(pos.x,pos.y));
+            repaint();
+        }
+    }
+    
+    
+    
     @Deprecated
     public int find(Ellipse2D.Double circ) {
         boolean trouve = false;
@@ -887,7 +908,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public void mouseMoved(MouseEvent event) {
         int x = event.getX();
         int y = event.getY();
-        Node n = findEllipse(x, y);
+        Node n = findNode(x, y);
         Nail nail = findNail(x, y);
         Arc arc = findArc(x, y);
         if (nail!=null) {
@@ -949,7 +970,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                 }
             }
         }
-        if ((inter.getActiveTool() == inter.ARC_TOOL || inter.getActiveTool() == inter.SELECT_TOOL) && inter.getMode() == inter.EDITION_MODE) {
+        if ((inter.getActiveTool() == inter.PIN_TOOL || inter.getActiveTool() == inter.SELECT_TOOL) && inter.getMode() == inter.EDITION_MODE) {
 
             if (currentNail != null) {
                 inter.tabSaved(false);
