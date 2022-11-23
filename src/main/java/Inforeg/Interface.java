@@ -6,6 +6,7 @@ Auteur : Samy AMAL
 Date de création : 03/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
+import Inforeg.Algo.AlgorithmS;
 import Inforeg.Algo.AlgorithmST;
 import static Inforeg.AssetLoader.*;
 import Inforeg.Draw.Draw;
@@ -508,6 +509,10 @@ public abstract class Interface {
                 window.setVisible(true);
                 if (d.getAlgo() != null) {
                     algoButton.setText("▼ " + d.getAlgo().getName());
+                    autoStart.setVisible(!d.getAlgo().isAutoStart());
+                    toolBarButtons.revalidate();
+                    toolBarButtons.repaint();
+
                 }
 
             }
@@ -527,7 +532,7 @@ public abstract class Interface {
                     d.exportGraphe();
                     d.reinit();
                     d.setSt(d.getAlgo() instanceof AlgorithmST);
-                    if (d.getAlgo() instanceof AlgorithmST){
+                    if (d.getAlgo() instanceof AlgorithmST || (d.getAlgo() instanceof AlgorithmS && !isAuto())){
                         d.getInfoTop().setText("Sélectionner le nœud source");
                     }
                     d.getAlgo().process(d);
@@ -538,7 +543,7 @@ public abstract class Interface {
         });
         algoPanel.add(algoGo);
         autoStart = new JCheckBox("<html><body>Départ<br>auto</body></html>");
-       
+        autoStart.setVisible(false);
         algoPanel.add(autoStart);
         toolBarButtons.add(algoPanel);
         
@@ -913,6 +918,8 @@ public abstract class Interface {
         return color;
     }
     
-    
+    public boolean isAuto(){
+        return autoStart.isSelected();
+    }
 
 }

@@ -7,7 +7,17 @@ import Inforeg.Draw.Draw;
  * @author inky19
  */
 public abstract class Algorithm {
+    
+    public final boolean autoStart;
 
+    public Algorithm() {
+        this.autoStart = true;
+    }
+    
+    public Algorithm(boolean autoStart) {
+        this.autoStart = autoStart;
+    }
+    
     private String name;
     
     public abstract boolean process(Draw d);
@@ -19,6 +29,11 @@ public abstract class Algorithm {
     public void setName(String name) {
         this.name = name;
     }
+
+    public boolean isAutoStart() {
+        return autoStart;
+    }
+    
     
     
     
