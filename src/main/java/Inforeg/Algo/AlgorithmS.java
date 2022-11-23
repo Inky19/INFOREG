@@ -13,5 +13,5 @@ import Inforeg.ObjetGraph.Node;
  */
 public interface AlgorithmS {
     
-    public boolean process(Draw d, Node src);
+    public void process(Draw d, Node src);
 }
