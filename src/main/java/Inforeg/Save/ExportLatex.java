@@ -462,8 +462,8 @@ public class ExportLatex {
         ArrayList<Arc> lines = d.getLines();
         for (int i = 0; i < d.getNodes().size(); i++) {
             Arc l = lines.get(i);
-            Node src = d.findNode(l.getFromPoint().x, l.getFromPoint().y);
-            Node dest = d.findNode(l.getToPoint().x, l.getToPoint().y);
+            Node src = d.findEllipse(l.getFromPoint().x, l.getFromPoint().y);
+            Node dest = d.findEllipse(l.getToPoint().x, l.getToPoint().y);
             int poids = l.getPoids();
             Color c = l.getC();
             arcs += "\\draw[" + writeArcColor(c) + "style] (" + String.valueOf(src);
@@ -488,8 +488,8 @@ public class ExportLatex {
         ArrayList<Arc> lines = d.getLines();
         for (int i = 0; i < d.getNodes().size(); i++) {
             Arc l = lines.get(i);
-            Node src = d.findNode(l.getFromPoint().x, l.getFromPoint().y);
-            Node dest = d.findNode(l.getToPoint().x, l.getToPoint().y);
+            Node src = d.findEllipse(l.getFromPoint().x, l.getFromPoint().y);
+            Node dest = d.findEllipse(l.getToPoint().x, l.getToPoint().y);
             Color c = l.getC();
             arcs += "\\draw[" + writeArcColor(c) + "style] (" + String.valueOf(src);
             if (src.equals(dest)) {//boucle sur le même noeud

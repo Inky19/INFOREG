@@ -342,6 +342,10 @@ public class Arc implements Comparable<Arc> {
         nails.add(nail);
         nail.arc = this;
     }
+    @Deprecated
+    public Nail getClou() {
+        return nails.get(0);
+    }
     
     public boolean contains(int x, int y) {
         return false;

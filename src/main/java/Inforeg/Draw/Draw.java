@@ -378,7 +378,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             int x = evt.getX();
                             int y = evt.getY();
                             // Vérifie si on clique où non sur un cercle existant
-                            currentNode = findNode(x, y);
+                            currentNode = findEllipse(x, y);
                             //currentArcIndex = oldFindArc(x, y);
                             currentNail = findNail(x, y);
                             // Si on souhaite ajouter un Nœud :
@@ -500,7 +500,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         if ((inter.getMode() == inter.EDITION_MODE)){
                             int x = evt.getX();
                             int y = evt.getY();
-                            Node n = findNode(x, y);
+                            Node n = findEllipse(x, y);
                             if (n != null){
                                 inter.rightClickNode(n, x, y);
                             }
@@ -520,7 +520,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             int x = evt.getX();
                             int y = evt.getY();
                             // Vérifie si on clique où non sur un cercle existant
-                            currentNode = findNode(x, y);
+                            currentNode = findEllipse(x, y);
                             if (currentNode != null && prevPos!=null) {
                                 Node n = currentNode;
                                 transitions.createLog(History.MOVE_NODE, n, prevPos.x, prevPos.y, n.getCx(), n.getCy());
@@ -565,7 +565,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     int y = evt.getY();
                     //currentArcIndex = oldFindArc(x, y);
                     currentNail = findNail(x ,y);
-                    currentNode = findNode(x, y);
+                    currentNode = findEllipse(x, y);
                     // Si on clique deux fois sur un Nœud, on le supprime
                     if (inter.getActiveTool() == Interface.NOEUD_TOOL && currentNode != null) {
                         if (evt.getClickCount() >= 2) {
@@ -613,14 +613,14 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         int y = evt.getY();
                         if (src == null) {
                             
-                            src = findNode(x, y);
+                            src = findEllipse(x, y);
                             if (src != null) {
                                src.setColorDisplayed(Color.GREEN); 
                                infoTop.setText("Sélectionner le nœud de destination");
                             }
                             repaint();
                         } else if (dest == null) {
-                            dest = findNode(x, y);
+                            dest = findEllipse(x, y);
                             if (dest != null) {
                                 dest.setColorDisplayed(Color.RED);
                                 repaint();
@@ -743,7 +743,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @param y = coordonnée y du pointeur de la souris
      * @return Un noeud à la position (x,y) si il existe, null sinon.
      */
-    public Node findNode(int x, int y) {
+    public Node findEllipse(int x, int y) {
         for (int i = 0; i < G.getNodes().size(); i++) {
             if (G.getNodes().get(i).contains(x, y)) { // inside a circle
                 return G.getNodes().get(i);
@@ -872,7 +872,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public void mouseMoved(MouseEvent event) {
         int x = event.getX();
         int y = event.getY();
-        Node n = findNode(x, y);
+        Node n = findEllipse(x, y);
         Nail nail = findNail(x, y);
         Arc arc = findArc(x, y);
         if (nail!=null) {
