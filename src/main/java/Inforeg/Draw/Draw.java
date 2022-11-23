@@ -8,6 +8,7 @@ Date de dernière modification : 08/03/2022
 =============================================*/
 import Inforeg.ActionMenu;
 import Inforeg.Algo.Algorithm;
+import Inforeg.Algo.AlgorithmS;
 import Inforeg.Algo.AlgorithmST;
 import Inforeg.AssetLoader;
 import Inforeg.Graph.Graph;
@@ -283,7 +284,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         return infoTop;
     }
     
-    
+    public boolean isAuto(){
+        return inter.isAuto();
+    }
     
 
     public Draw(boolean oriente, boolean pondere) {
@@ -606,29 +609,40 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     if (st) {
                         int x = evt.getX();
                         int y = evt.getY();
-                        if (src == null) {
+                        src = findEllipse(x, y);
+                        if ((algo) instanceof AlgorithmST){
+                            if (src == null) {
                             
-                            src = findEllipse(x, y);
-                            if (src != null) {
-                               src.setColorDisplayed(Color.GREEN); 
-                               infoTop.setText("Sélectionner le nœud de destination");
+                                
+                                if (src != null) {
+                                   src.setColorDisplayed(Color.GREEN); 
+                                   infoTop.setText("Sélectionner le nœud de destination");
+                                }
+                                repaint();
+                            } else if (dest == null) {
+                                dest = findEllipse(x, y);
+                                if (dest != null) {
+                                    dest.setColorDisplayed(Color.RED);
+                                    repaint();
+                                    ((AlgorithmST) algo).process(d, src, dest);
+                                    src = null;
+                                    dest = null;
+                                    st = false;
+                                    infoTop.setText("");
+                                } else {
+                                    infoTop.setText("Sélectionner le nœud source");
+                                    src.reinit();
+                                    repaint();
+                                    src = null;
+                                }
                             }
-                            repaint();
-                        } else if (dest == null) {
-                            dest = findEllipse(x, y);
-                            if (dest != null) {
-                                dest.setColorDisplayed(Color.RED);
+                        } else if (algo instanceof AlgorithmS) {
+                            if (!src.isEmpty()){
                                 repaint();
-                                ((AlgorithmST) algo).process(d, src, dest);
-                                src = null;
-                                dest = null;
+                                ((AlgorithmS) algo).process(d, src);
                                 st = false;
-                                infoTop.setText("");
-                            } else {
-                                infoTop.setText("Sélectionner le nœud source");
-                                src.reinit();
-                                repaint();
                                 src = null;
+                                infoTop.setText("");
                             }
                         }
                     }
