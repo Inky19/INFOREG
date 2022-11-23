@@ -13,7 +13,6 @@ import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 
-import javax.swing.JOptionPane;
 
 public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
 
@@ -23,9 +22,8 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
     }
     
     @Override
-    public boolean process(Draw d) {
+    public void process(Draw d) {
         d.setSt(true);
-        return true;
     }
     
     /**
@@ -39,7 +37,7 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
      * @return true si il existe un chemin, false sinon
      */
     @Override
-    public boolean process(Draw d, Node srcNode, Node destNode) {
+    public void process(Draw d, Node srcNode, Node destNode) {
 
         int src = d.getG().getNodeId(srcNode);
         int dest = d.getG().getNodeId(destNode);
@@ -118,6 +116,5 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
                     + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel()
                     + ", de distance " + dist[dest] + ".");
         }
-        return true;
     }
 }

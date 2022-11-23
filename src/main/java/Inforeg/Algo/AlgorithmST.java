@@ -9,5 +9,5 @@ import Inforeg.ObjetGraph.Node;
  */
 public interface AlgorithmST {
 
-    public boolean process(Draw d, Node src, Node dest);
+    public void process(Draw d, Node src, Node dest);
 }

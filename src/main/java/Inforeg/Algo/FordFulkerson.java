@@ -71,13 +71,12 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
     // Returns tne maximum flow from s to t in the given
     // graph
     @Override
-    public boolean process(Draw d) {
+    public void process(Draw d) {
         d.setSt(true);
-        return true;
     }
     
     @Override
-    public boolean process(Draw d, Node srcNode, Node destNode) {
+    public void process(Draw d, Node srcNode, Node destNode) {
 
         int src = d.getG().getNodeId(srcNode);
         int dest = d.getG().getNodeId(destNode);
@@ -145,7 +144,6 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
         }
 
         d.setResultat("Le flot maximal du graphe entre les sommets " + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + " est de " + max_flow + ".");
-        return true;
     }
 
 

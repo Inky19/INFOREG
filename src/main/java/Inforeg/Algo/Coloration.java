@@ -37,12 +37,11 @@ public class Coloration extends Algorithm{
     }
     
     @Override
-    public boolean process(Draw d) {
+    public void process(Draw d) {
         this.d = d;
         hashNode = new HashMap<>();
         listAdj = new ArrayList<>();
         colorationGlouton();
-        return true;
     }    
     
     // Met à jours les variables listAdj et hashNode
