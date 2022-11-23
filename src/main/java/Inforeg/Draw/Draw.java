@@ -609,11 +609,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     if (st) {
                         int x = evt.getX();
                         int y = evt.getY();
-                        src = findEllipse(x, y);
+                        
                         if ((algo) instanceof AlgorithmST){
                             if (src == null) {
                             
-                                
+                                src = findEllipse(x, y);
                                 if (src != null) {
                                    src.setColorDisplayed(Color.GREEN); 
                                    infoTop.setText("Sélectionner le nœud de destination");
@@ -637,6 +637,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                 }
                             }
                         } else if (algo instanceof AlgorithmS) {
+                            src = findEllipse(x, y);
                             if (!src.isEmpty()){
                                 repaint();
                                 ((AlgorithmS) algo).process(d, src);
