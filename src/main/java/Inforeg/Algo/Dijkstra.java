@@ -84,8 +84,8 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
             // edge from u to v, and total weight of path from src to
             // v through u is smaller than current value of dist[v]
             {
-                if (!vu[v] && g.getAdj()[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + g.getAdj()[u][v] < dist[v]) {
-                    dist[v] = dist[u] + g.getAdj()[u][v];
+                if (!vu[v] && g.getAdjMatrix()[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + g.getAdjMatrix()[u][v] < dist[v]) {
+                    dist[v] = dist[u] + g.getAdjMatrix()[u][v];
                     predecesseur[v] = u;
                 }
             }
