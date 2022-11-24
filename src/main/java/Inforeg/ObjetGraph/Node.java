@@ -16,7 +16,7 @@ import Inforeg.UI.Vector2D;
  *
  * @author inky19
  */
-public class Node extends Ellipse2D.Double {
+public class Node extends Ellipse2D.Double implements Attachable {
     // Global coordinate of the node
     public double cx;
     public double cy;
@@ -207,5 +207,10 @@ public class Node extends Ellipse2D.Double {
     @Override
     public String toString() {
         return "Noeud | label: " + label +", x: " + cx + ", y: " + cy + " |";
+    }
+    
+    @Override
+    public Vector2D getCenterPos() {
+        return new Vector2D(cx, cy);
     }
 }

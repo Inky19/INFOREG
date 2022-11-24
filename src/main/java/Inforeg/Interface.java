@@ -10,6 +10,7 @@ import Inforeg.Algo.AlgorithmS;
 import Inforeg.Algo.AlgorithmST;
 import static Inforeg.AssetLoader.*;
 import Inforeg.Draw.Draw;
+import Inforeg.ObjetGraph.Arc;
 import Inforeg.Save.ExportLatex;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.Save.saveManager;
@@ -134,6 +135,7 @@ public abstract class Interface {
     public static final int ARC_TOOL = 12;
     public static final int LABEL_TOOL = 13;
     public static final int COLOR_TOOL = 14;
+    public static final int PIN_TOOL = 15;
     protected static int mode;
     public static final int EDITION_MODE = 1;
     public static final int TRAITEMENT_MODE = 2;
@@ -437,7 +439,8 @@ public abstract class Interface {
         JButton pin = new JButton(pinIco);
         pin.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                mode = DEPLACEMENT_MODE;
+                mode = EDITION_MODE;
+                activeTool = PIN_TOOL;
             }
         });
         pinAndColor.add(pin);
@@ -842,6 +845,43 @@ public abstract class Interface {
         menuNode.add(renameNode);
         menuNode.add(colorNode);
         menuNode.add(deleteNode);
+        menuNode.show(d, x, y);
+    }
+    
+    public void rightClickArc(Arc a, int x, int y) {
+        menuNode = new JPopupMenu();
+        JMenuItem renameArc = new JMenuItem("Changer poids");
+        renameArc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ActionMenu.setPoids(d , a);
+            }
+
+        });
+        JMenuItem colorArc = new JMenuItem("Couleur");
+        colorArc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Color c = JColorChooser.showDialog(frame, "Choose a color", color);
+                if (c != null) {
+                    ActionMenu.colorArc(d, a, c);
+                }
+            }
+        });
+        
+        JMenuItem deleteArc = new JMenuItem("Supprimer");
+        deleteArc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ActionMenu.deleteArc(d, a);
+            }
+
+        });
+        if (d.pondere) {
+            menuNode.add(renameArc);
+        }
+        menuNode.add(colorArc);
+        menuNode.add(deleteArc);
         menuNode.show(d, x, y);
     }
 
