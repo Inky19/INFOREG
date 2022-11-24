@@ -329,26 +329,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         JButton fitToScreen = new JButton(AssetLoader.fitIco);
         fitToScreen.setPreferredSize(new Dimension(24, 24));
         fitToScreen.addActionListener((ActionEvent e) -> {
-            ArrayList<Node> nodes = G.getNodes();
-            if (!nodes.isEmpty()) {
-                Double minX = Double.MAX_VALUE;
-                Double minY = Double.MAX_VALUE;
-                Double maxX = -10000d;
-                Double maxY = -10000d;
-                for (Node n : nodes) {
-                    minX = Double.min(n.getCx(),minX);
-                    minY = Double.min(n.getCy(),minY);
-                    maxX = Double.max(n.getCx(),maxX);
-                    maxY = Double.max(n.getCy(),maxY);    
-                }
-                float zoomX = (float) (90*Draw.this.getBounds().getWidth()/(maxX-minX+2*Draw.nodeRadius));
-                float zoomY = (float) (90*Draw.this.getBounds().getHeight()/(maxY-minY+2*Draw.nodeRadius));
-                zoom = (int)Float.min(zoomX,zoomY);
-                zoomSlider.setValue((int)zoom);
-                zoomLabel.setText((int)zoom+"%");
-                camera = new Point((int)(maxX+minX)/2, (int)(maxY+minY)/2);
-                repaint();
-            }
+            fitScreen();
         });
         info = new JLabel();
         bottomLayout.add(info,BorderLayout.WEST);
@@ -378,7 +359,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                 switch (evt.getButton()){
                     case MouseEvent.BUTTON1:
                         
-                        if (inter.getMode() == inter.EDITION_MODE) {
+                        if (inter.getMode() == Interface.EDITION_MODE) {
                             int x = evt.getX();
                             int y = evt.getY();
                             // Vérifie si on clique où non sur un cercle existant
@@ -387,48 +368,38 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             currentNail = findNail(x, y);
                             // Si on souhaite ajouter un Nœud :
                             switch (inter.getActiveTool()){
-                                case Interface.NOEUD_TOOL:
+                                case Interface.NOEUD_TOOL -> {
                                     if (currentNode == null && currentNail == null) { // not inside a circle
                                         addNode(x, y);
                                         // On ajoute l'action à la pile
                                         transitions.createLog(History.ADD_NODE, G.getNodes().get(G.getNodes().size() - 1));
                                     }
-                                    
-                                    break;
-                                // Si on souhaite ajouter un label à un Nœud :
-                                case Interface.LABEL_TOOL:
+                        }
+                                case Interface.LABEL_TOOL -> {
                                     if (currentNode != null) { // inside a circle
 
                                         ActionMenu.renameNode(d, currentNode);
 
-                                    } else if (currentNail != null) {
+                                    } else if (currentArc != null) {
                                         if (pondere) {
-                                            String text = JOptionPane.showInputDialog("Entrer le nouveau poids de l'Arc (seuls les entiers seront acceptés):");
-                                            try {
-                                                int pds = Integer.parseInt(text);
-                                                Arc line = currentNail.arc;
-                                                int currentPds = line.getPoids();
-                                                line.setPoids(pds);
-                                                repaint();
-                                                // On ajoute l'action à la pile
-                                                transitions.createLog(History.LABEL_ARC, line, Integer.toString(currentPds), text);
-                                            } catch (Exception e) {
-                                                System.out.println("Pas un entier !");
-                                            }
+                                            ActionMenu.setPoids(d, currentArc);
                                         }
                                     }
-                                    break;
-                                case Interface.COLOR_TOOL:
-                                    if (!currentNode.isEmpty()){
+                        }
+                                case Interface.COLOR_TOOL -> {
+                                    if (currentNode != null){
                                         ActionMenu.colorNode(d, currentNode, inter.getColor());
+                                    } else if (currentArc != null) {
+                                        ActionMenu.colorArc(d, currentArc, inter.getColor());
                                     }
-                                    break;
-                                case Interface.PIN_TOOL:
+                        }
+                                case Interface.PIN_TOOL -> {
                                     if (currentNail == null) {
-                                        addNail(x, y);
+                                        currentNail = addNail(x, y);
+                                        updateCursor(false,true, false);
                                     }
-                                    break;   
-                                case Interface.ARC_TOOL:
+                        }
+                                case Interface.ARC_TOOL -> {
                                     if ((currentNode != null) && (fromPoint == null)) {
                                         fromPoint = currentNode;
                                         fromPoint.setSelect(true);
@@ -452,8 +423,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                                 }
                                                 fromPoint.setSelect(false);
                                                 fromPoint = null;
-
-
+                                                
+                                                
                                             } catch (Exception e) {
                                                 System.out.println("Pas un entier !");
                                                 //fromPoint = null;
@@ -477,40 +448,33 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                         p.setSelect(false);
                                 
                                     }
-                            repaint();
-                                    break;
+                                    repaint();
+                        }
                                 
-                                case Interface.SELECT_TOOL:
+                                case Interface.SELECT_TOOL -> {
                                     if (currentNode == null && currentNail == null) {//not on circle or arc
-                                        for (Node n: G.getNodes()){
-                                            n.setMultiSelected(false);
-                                        }
-                                        for (Arc a: G.getLines()){
-                                            a.setSelected(false);
-                                        }
+                                        deselectAll();
                                         selectXstart = x;
                                         selectYstart = y;
                                     }
-                                    break;
+                        }
                             }
+                    // Si on souhaite ajouter un label à un Nœud :
                             if (inter.getActiveTool() != Interface.SELECT_TOOL){
-                                                               
-                                    for (Node n: G.getNodes()){
-                                        n.setMultiSelected(false);
-                                    }
-                                    for (Arc a: G.getLines()){
-                                        a.setSelected(false);
-                                    }
+                                    deselectAll();
                             }
                         }
                         break;
                     case MouseEvent.BUTTON3:
-                        if ((inter.getMode() == inter.EDITION_MODE)){
+                        if ((inter.getMode() == Interface.EDITION_MODE)){
                             int x = evt.getX();
                             int y = evt.getY();
                             Node n = findNode(x, y);
+                            Arc a = findArc(x, y);
                             if (n != null){
                                 inter.rightClickNode(n, x, y);
+                            } else if(a != null) {
+                                inter.rightClickArc(a, x, y);
                             }
                         } 
 
@@ -524,7 +488,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                 repaint();
                 switch (evt.getButton()){
                     case MouseEvent.BUTTON1: // Clic gauche
-                        if (inter.getMode() == inter.EDITION_MODE) {
+                        if (inter.getMode() == Interface.EDITION_MODE) {
                             int x = evt.getX();
                             int y = evt.getY();
                             // Vérifie si on clique où non sur un cercle existant
@@ -665,7 +629,6 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                 }
             }
         });
-
         addMouseMotionListener(this);
 
     }
@@ -784,9 +747,10 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @return Un clou à la position (x,y) si il existe, null sinon.
      */
     public Nail findNail(int x, int y) {
+        Vector2D v = toGlobalCoordinates(x, y);
         for (Arc arc : this.getLines()) {
             for (Nail nail : arc.getNails()) {
-                if (nail.contains(x, y)) {
+                if (nail.contains(v.x, v.y)) {
                     return nail;
                 }
             }
@@ -801,8 +765,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * @return Un arc à la position (x,y) si il existe, null sinon.
      */
     public Arc findArc(int x, int y) {
+        Vector2D v = toGlobalCoordinates(x, y);
         for (Arc arc : this.getLines()) {
-            if (arc.contains(x, y, this)) {
+            if (arc.contains((int)v.x, (int)v.y)) {
                 return arc;
             }
         }
@@ -828,12 +793,15 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         repaint();
     }
     
-    public void addNail(double x, double y) {
+    public Nail addNail(double x, double y) {
         if (currentArc != null) {
             Vector2D pos = toGlobalCoordinates(x, y);
-            currentArc.addNail(new Nail(pos.x,pos.y));
+            Nail nail = new Nail(pos.x,pos.y);
+            currentArc.addNail(nail);
             repaint();
+            return nail; 
         }
+        return null;
     }
     
     
@@ -1102,27 +1070,101 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         G.updateVariable();
     }
     
+    private void deselectAll() {
+        for (Node n: G.getNodes()){
+            n.setMultiSelected(false);
+        }
+        for (Arc a: G.getLines()){
+            a.setSelected(false);
+        }
+    }
+    
+    
+    
     private void updateCursor(boolean onNode, boolean onNail, boolean onArc) {
         switch (Interface.getMode()) {
             case Interface.EDITION_MODE -> {
-                if (onNode || (onNail || onArc)) {
-                    switch (Interface.getActiveTool()) {
-                        case Interface.LABEL_TOOL -> setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
-                        case Interface.NOEUD_TOOL -> setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                        case Interface.SELECT_TOOL -> setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                        case Interface.ARC_TOOL -> setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                    }
-                } else {
-                    switch (Interface.getActiveTool()) {
-                        case Interface.LABEL_TOOL -> setCursor(Cursor.getDefaultCursor());
-                        case Interface.NOEUD_TOOL -> setCursor(Cursor.getDefaultCursor());
-                        case Interface.SELECT_TOOL -> setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-                        case Interface.ARC_TOOL -> setCursor(Cursor.getDefaultCursor());
-                    }
+                switch (Interface.getActiveTool()) {
+                    case Interface.LABEL_TOOL :
+                        if (onNode || onArc) {
+                            setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+                        } else {
+                            setCursor(Cursor.getDefaultCursor());
+                        }
+                        break;
+                    case Interface.NOEUD_TOOL :
+                        if (onNode) {
+                            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        } else {
+                            setCursor(Cursor.getDefaultCursor());
+                        }
+                        break;
+                    case Interface.SELECT_TOOL :
+                        if (onNode || (onNail || onArc)) { 
+                            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        } else {
+                            setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+                        }
+                        break;
+                    case Interface.ARC_TOOL :
+                        if (onArc) {
+                            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        } else {
+                            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                        }
+                        break;
+                    case Interface.PIN_TOOL :
+                        if (onNail) {
+                            setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                        } else if (onArc) {
+                            setCursor(AssetLoader.pinCursor);
+                        } else {
+                            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                        }
+                        break;
+                    case Interface.COLOR_TOOL :
+                        if (onArc||onNode) {
+                            setCursor(AssetLoader.paintCursor);
+                        } else {
+                            setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                        }
+                        break;
                 }
             }
             case Interface.DEPLACEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
             case Interface.TRAITEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        }
+    }
+
+    private void fitScreen() {
+        ArrayList<Node> nodes = G.getNodes();
+        if (!nodes.isEmpty()) {
+            Double minX = Double.MAX_VALUE;
+            Double minY = Double.MAX_VALUE;
+            Double maxX = -10000d;
+            Double maxY = -10000d;
+            for (Node n : nodes) {
+                minX = Double.min(n.getCx(),minX);
+                minY = Double.min(n.getCy(),minY);
+                maxX = Double.max(n.getCx(),maxX);
+                maxY = Double.max(n.getCy(),maxY);    
+            }
+            for (Arc a : G.getLines()) {
+                for (Nail n : a.getNails()) {
+                    minX = Double.min(n.getCx(),minX);
+                    minY = Double.min(n.getCy(),minY);
+                    maxX = Double.max(n.getCx(),maxX);
+                    maxY = Double.max(n.getCy(),maxY);  
+                }  
+            }
+            float zoomX = (float) (90*Draw.this.getBounds().getWidth()/(maxX-minX+2*Draw.nodeRadius));
+            float zoomY = (float) (90*Draw.this.getBounds().getHeight()/(maxY-minY+2*Draw.nodeRadius));
+            zoom = (int)Float.min(zoomX,zoomY);
+            zoomSlider.setValue((int)zoom);
+            zoomLabel.setText((int)zoom+"%");
+            camera = new Point((int)(maxX+minX)/2, (int)(maxY+minY)/2);
+            move = false;
+            repaint();
         }
     }
     

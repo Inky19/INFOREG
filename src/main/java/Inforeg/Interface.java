@@ -10,6 +10,7 @@ import Inforeg.Algo.AlgorithmS;
 import Inforeg.Algo.AlgorithmST;
 import static Inforeg.AssetLoader.*;
 import Inforeg.Draw.Draw;
+import Inforeg.ObjetGraph.Arc;
 import Inforeg.Save.ExportLatex;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.Save.saveManager;
@@ -844,6 +845,43 @@ public abstract class Interface {
         menuNode.add(renameNode);
         menuNode.add(colorNode);
         menuNode.add(deleteNode);
+        menuNode.show(d, x, y);
+    }
+    
+    public void rightClickArc(Arc a, int x, int y) {
+        menuNode = new JPopupMenu();
+        JMenuItem renameArc = new JMenuItem("Changer poids");
+        renameArc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ActionMenu.setPoids(d , a);
+            }
+
+        });
+        JMenuItem colorArc = new JMenuItem("Couleur");
+        colorArc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Color c = JColorChooser.showDialog(frame, "Choose a color", color);
+                if (c != null) {
+                    ActionMenu.colorArc(d, a, c);
+                }
+            }
+        });
+        
+        JMenuItem deleteArc = new JMenuItem("Supprimer");
+        deleteArc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ActionMenu.deleteArc(d, a);
+            }
+
+        });
+        if (d.pondere) {
+            menuNode.add(renameArc);
+        }
+        menuNode.add(colorArc);
+        menuNode.add(deleteArc);
         menuNode.show(d, x, y);
     }
 

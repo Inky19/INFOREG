@@ -15,10 +15,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.sqrt;
 import java.util.ArrayList;
@@ -79,6 +76,9 @@ public class Arc implements Comparable<Arc> {
         this.color = c;
         this.width = DEFAULT_LINE_WIDTH;
         this.nails = new ArrayList<>();
+        if (from == to) {
+            addNail(new Nail(from.cx + 20, from.cy+20, RCLOU, color));
+        }
     }
     
     public Arc(Node fromPoint, Node toPoint, int pds, Color c, Nail nail){
@@ -87,9 +87,8 @@ public class Arc implements Comparable<Arc> {
         this.to = toPoint;
         this.poids = pds;
         this.color = c;
-        //this.clou = nail;
         this.nails = new ArrayList<>();
-        this.nails.add(nail);
+        this.addNail(nail);
         this.width = DEFAULT_LINE_WIDTH;
     }
     
@@ -131,9 +130,6 @@ public class Arc implements Comparable<Arc> {
             double radius = sqrt((x1-x3)*(x1-x3) + (y1-y3)*(y1-y3))/2;
             g.draw(new Ellipse2D.Double((x1+x3)/2-radius,(y1+y3)/2-radius, 2*radius, 2*radius));
         } else {
-            Vector2D v2 = d.toDrawCoordinates(to.getCx(), to.getCy());
-            int x2 = (int) v2.x;
-            int y2 = (int) v2.y;
             Vector2D start = new Vector2D(from.cx,from.cy); 
             Vector2D finish = new Vector2D(to.cx,to.cy);
             if (nails.isEmpty()) {
@@ -146,23 +142,33 @@ public class Arc implements Comparable<Arc> {
             }
   
             for (int i=0; i < nails.size() - 1; i++) {
-                Vector2D pos1 = new Vector2D(nails.get(i).cx,nails.get(i).cy);
-                Vector2D pos2 = new Vector2D(nails.get(i+1).cx,nails.get(i+1).cy);
-                paintLine(d, g, pos1 , pos2);
+                Line l = new Line(nails.get(i),nails.get(i+1),RCLOU);
+                l.paint(d, g);
             }
 
-            g.setPaint(color); //reset color pour poids
+            g.setPaint(color);
+            // NOT IMPLEMENTED
             if (d.oriente) {
-                Vector2D v3 = d.toDrawCoordinates(nails.get(0).cx, nails.get(0).cy);
-                int x3 = (int) v3.x;
-                int y3 = (int) v3.y;
+                Vector2D startLine, endLine;
+                int n = nails.size();
+                if (nails.isEmpty()) {
+                    startLine = d.toDrawCoordinates(from.cx, from.cy);
+                    endLine = d.toDrawCoordinates(to.cx, to.cy);
+                } else {
+                    startLine = d.toDrawCoordinates(nails.get(n/2).cx, nails.get(n/2).cy);
+                    if (n > 1) {
+                        endLine = d.toDrawCoordinates(nails.get(n/2+1).cx, nails.get(n/2+1).cy);
+                    } else {
+                        endLine = d.toDrawCoordinates(to.cx, to.cy);
+                    }
+                }
                 int[] t = new int[4];
-                int x4 = (x3 + x2) / 2;
-                int y4 = (y3 + y2) / 2;
-                d.fleche(x3, y3, x4, y4, t);
+                int midX = (int)(startLine.x + endLine.x) / 2;
+                int midY = (int)(startLine.y + endLine.y) / 2;
+                d.fleche((int)startLine.x, (int)startLine.y, (int)endLine.x, (int)endLine.y, t);
                 g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
-                g.drawLine(x4, y4, t[0], t[1]);
-                g.drawLine(x4, y4, t[2], t[3]);
+                g.drawLine(midX, midY, t[0], t[1]);
+                g.drawLine(midX, midY, t[2], t[3]);
             } 
         }
         // Painting of nails
@@ -263,21 +269,6 @@ public class Arc implements Comparable<Arc> {
         Point p = new Point((int) centerX, (int) centerY);
         return p;
     }
-    
-    @Deprecated
-    public Point getClouPoint() {
-        // TEMPORARY
-        double centerX = this.nails.get(0).getCenterX();
-        double centerY = this.nails.get(0).getCenterY();
-        Point p = new Point((int) centerX, (int) centerY);
-        return p;
-    }
-    
-    @Deprecated
-    public void setClou(Nail nouv) {
-        // TEMPORARY
-        this.nails.set(0, nouv);
-    }
 
     public Color getColor() {
         return color;
@@ -288,7 +279,9 @@ public class Arc implements Comparable<Arc> {
     }
 
     public void setSelected(boolean selected) {
-        this.selected = selected;
+        for (Nail nail : nails) {
+            nail.selected = false;
+        }
     }
 
     public Integer getFlow() {
@@ -316,52 +309,59 @@ public class Arc implements Comparable<Arc> {
     }
     
     public void addNail(Nail nail) {
-        nails.add(nail);
+        List<Line> hitbox = getHitBox();
+        int i = 0;
+        while (i < hitbox.size() && !hitbox.get(i).contains(nail.cx, nail.cy)) {
+            i++;
+        }
+        nails.add(i,nail);
         nail.arc = this;
     }
-    @Deprecated
-    public Nail getClou() {
-        return nails.get(0);
-    }
-    
-    private List<Line> getHitBox() {
-        List<Line> lines = new LinkedList<>();
-        if (from == to) {
 
+    private List<Line> getHitBox() {
+        List<Line> lines = new ArrayList<>();
+        if (from == to) {
+            
         } else {
             if (nails.isEmpty()) {
                 lines.add(new Line(from,to)); 
             } else {
                 lines.add(new Line(from,nails.get(0)));
-                lines.add(new Line(nails.get(nails.size()-1),to));
             }
   
             for (int i=0; i < nails.size() - 1; i++) {
                 lines.add(new Line(nails.get(i),nails.get(i+1)));
             }
+            
+            if (!nails.isEmpty()) {
+                lines.add(new Line(nails.get(nails.size()-1),to));
+            }
         }
         return lines;
     }
     
-    
-    
-    public boolean contains(int x, int y, Draw d) {
+    /**
+     * 
+     * @param x global coordinate x of a point
+     * @param y global coordinate y of a point
+     * @param d
+     * @return true if this point is inside this arc
+     */
+    public boolean contains(int x, int y) {
         List<Line> hitbox = getHitBox();
-        Vector2D v = d.toGlobalCoordinates(x, y);
         for (Line line : hitbox) {
-            if (line.contains(v.x,v.y)) {
+            if (line.contains(x,y)) {
                 return true;
             }
         }
-        
-//        if (nails.isEmpty()) {
-//            Ellipse2D circle = new Ellipse2D.Double();
-//            Vector2D v = d.toDrawCoordinates((from.cx+to.cx)/2, (from.cy+to.cy)/2);
-//            circle.setFrameFromCenter(v.x,v.y ,v.x+5,v.y+5);
-//            return circle.contains(x,y);
-//        } else {
-//            
-//        }
         return false;
+    }
+    
+    public Nail getClou() {
+        if (nails.isEmpty()) {
+            return null;
+        } else {
+            return nails.get(0);
+        }
     }
 }
