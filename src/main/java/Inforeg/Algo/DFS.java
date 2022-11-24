@@ -33,7 +33,7 @@ public class DFS extends Algorithm implements AlgorithmS {
     private void dfsRecursive(int current, boolean[] visited, LinkedList<String> order, Draw d){
         visited[current] = true;
 
-        int[][] adj = d.getG().getAdj();
+        int[][] adj = d.getG().getAdjMatrix();
         for (int i=0;i<adj.length;i++) {
             if (adj[current][i]>0){
                 if (!visited[i]){

@@ -97,7 +97,7 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
 
         for (u = 0; u < V; u++) {
             for (v = 0; v < V; v++) {
-                rGraph[u][v] = g.getAdj()[u][v];
+                rGraph[u][v] = g.getAdjMatrix()[u][v];
             }
         }
 

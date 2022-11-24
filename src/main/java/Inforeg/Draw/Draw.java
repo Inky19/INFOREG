@@ -559,7 +559,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         }
                     }
                     if (inter.getActiveTool() == inter.ARC_TOOL) {
-                        if (evt.getClickCount() >= 2 && currentArc != null) {
+                        if (evt.getClickCount() >= 2 && currentArc != null && currentNode == null) {
                             transitions.createLog(History.REMOVE_ARC, currentArc);
                             G.removeLine(currentArc);
                         }
@@ -942,7 +942,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
             if (currentNail != null) {
                 inter.tabSaved(false);
-                if (currentNail.arc.isSelected()) {
+                if (currentNail.selected) {
                     double transx;
                     transx = x - currentNail.cx;
                     double transy;

@@ -24,7 +24,6 @@ import java.util.List;
 
 public class Arc implements Comparable<Arc> {
 
-    private boolean selected;
     
     
     public int width;
@@ -69,20 +68,18 @@ public class Arc implements Comparable<Arc> {
      * @param c
      */
     public Arc(Node fromPoint, Node toPoint, int pds, Color c) {
-        selected = false;
         this.from = fromPoint;
         this.to = toPoint;
         this.poids = pds;
         this.color = c;
         this.width = DEFAULT_LINE_WIDTH;
         this.nails = new ArrayList<>();
-        if (from == to) {
+        if (from != null && from == to) {
             addNail(new Nail(from.cx + 20, from.cy+20, RCLOU, color));
         }
     }
     
     public Arc(Node fromPoint, Node toPoint, int pds, Color c, Nail nail){
-        selected = false;
         this.from = fromPoint;
         this.to = toPoint;
         this.poids = pds;
@@ -272,10 +269,6 @@ public class Arc implements Comparable<Arc> {
 
     public Color getColor() {
         return color;
-    }
-
-    public boolean isSelected() {
-        return selected;
     }
 
     public void setSelected(boolean selected) {

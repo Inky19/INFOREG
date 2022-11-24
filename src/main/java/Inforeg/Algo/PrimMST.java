@@ -66,8 +66,8 @@ public class PrimMST extends Algorithm implements AlgorithmS, Processing {
                 // mstSet[v] is false for vertices not yet included in MST
                 // Update the key only if graph[u][v] is smaller than key[v]
                 {
-                    if (G.getAdj()[u][v] != 0 && vu[v] == false && G.getAdj()[u][v] < arbre[v].getPoids()) {
-                        arbre[v] = new Arc(G.getNode(v), G.getNode(u), G.getAdj()[u][v], Color.BLUE); 
+                    if (G.getAdjMatrix()[u][v] != 0 && vu[v] == false && G.getAdjMatrix()[u][v] < arbre[v].getPoids()) {
+                        arbre[v] = new Arc(G.getNode(v), G.getNode(u), G.getAdjMatrix()[u][v], Color.BLUE); 
                     }
                 }
             }
