@@ -41,6 +41,7 @@ import javax.swing.JSlider;
 import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
 import Inforeg.UI.Vector2D;
+import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -567,7 +568,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     
                     if (inter.getActiveTool() == Interface.PIN_TOOL) {
                         if (evt.getClickCount() >= 2 && currentNail != null) {
-                            //transitions.createLog(History.REMOVE_ARC, currentArc);
+                            transitions.createLog(History.REMOVE_NAIL, currentNail);
                             currentNail.delete();
                         }
                     }
@@ -633,11 +634,14 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
     }
 
-    //Méthode permettant de draw les éléments. */
+    //Méthode permettant de draw les éléments.
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Toolkit.getDefaultToolkit().sync();
+        /* Anti aliasing
+        To reduce lag on linux and mac, anti-aliasing is used only when move is true 
+        */ 
         if (!move){
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
@@ -674,6 +678,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         return new Vector2D(newX,newY);
     }
     
+    public Vector2D toDrawCoordinates(Vector2D p) {
+        return toDrawCoordinates(p.x, p.y);
+    }
+    
+    
     /**
      * Renvoie le nœud correspondant à l'id en paramètre dans la liste nodes.
      * @param id Id du nœud recherché
@@ -705,6 +714,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         return new Vector2D(newX,newY);
     }
 
+    public Vector2D toGlobalCoordinates(Vector2D p) {
+        return toGlobalCoordinates(p.x, p.y);
+    }
+    
+    
     /**
      * Redimensionne une dimension à l'échelle de la zone de dessin
      * @param h
@@ -879,6 +893,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         Node n = findNode(x, y);
         Nail nail = findNail(x, y);
         Arc arc = findArc(x, y);
+        // Show info
         if (nail!=null) {
             info.setText(nail.arc.toString());
         } else if (n != null) {
@@ -1167,5 +1182,4 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             repaint();
         }
     }
-    
 }

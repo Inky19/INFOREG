@@ -58,7 +58,7 @@ public class Arc implements Comparable<Arc> {
      */
     public static final int RCLOU = 3;
     public static final int DEFAULT_LINE_WIDTH = 3;
-
+    public static final int SELF_ARC_RADIUS = 25;
     /**
      * Constructeur
      *
@@ -74,9 +74,6 @@ public class Arc implements Comparable<Arc> {
         this.color = c;
         this.width = DEFAULT_LINE_WIDTH;
         this.nails = new ArrayList<>();
-        if (from != null && from == to) {
-            addNail(new Nail(from.cx + 20, from.cy+20, RCLOU, color));
-        }
     }
     
     public Arc(Node fromPoint, Node toPoint, int pds, Color c, Nail nail){
@@ -120,53 +117,18 @@ public class Arc implements Comparable<Arc> {
 
         // Painting of lines
         if (from == to) {
-            Vector2D v3 = d.toDrawCoordinates(nails.get(0).cx, nails.get(0).cy);
+            Vector2D v3 = d.toDrawCoordinates(from.cx+SELF_ARC_RADIUS,from.cy+SELF_ARC_RADIUS);
             int x3 = (int) v3.x;
             int y3 = (int) v3.y;
             g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
             double radius = sqrt((x1-x3)*(x1-x3) + (y1-y3)*(y1-y3))/2;
-            g.draw(new Ellipse2D.Double((x1+x3)/2-radius,(y1+y3)/2-radius, 2*radius, 2*radius));
+            g.draw(new Ellipse2D.Double((x1+x3)/2-radius,(y1+y3)/2-radius, 2*radius,  2*radius));
         } else {
-            Vector2D start = new Vector2D(from.cx,from.cy); 
-            Vector2D finish = new Vector2D(to.cx,to.cy);
-            if (nails.isEmpty()) {
-                paintLine(d, g, start, finish);
-            } else {
-                Vector2D first = new Vector2D(nails.get(0).cx,nails.get(0).cy);
-                Vector2D last = new Vector2D(nails.get(nails.size()-1).cx,nails.get(nails.size()-1).cy);
-                paintLine(d, g, start, first);
-                paintLine(d, g, last, finish);
+            List<Line> lines = getNailLines(this.width,this.color);
+            for (Line line : lines) {
+                line.arrow = d.oriente;
+                line.paint(d, g); 
             }
-  
-            for (int i=0; i < nails.size() - 1; i++) {
-                Line l = new Line(nails.get(i),nails.get(i+1),RCLOU);
-                l.paint(d, g);
-            }
-
-            g.setPaint(color);
-            // NOT IMPLEMENTED
-            if (d.oriente) {
-                Vector2D startLine, endLine;
-                int n = nails.size();
-                if (nails.isEmpty()) {
-                    startLine = d.toDrawCoordinates(from.cx, from.cy);
-                    endLine = d.toDrawCoordinates(to.cx, to.cy);
-                } else {
-                    startLine = d.toDrawCoordinates(nails.get(n/2).cx, nails.get(n/2).cy);
-                    if (n > 1) {
-                        endLine = d.toDrawCoordinates(nails.get(n/2+1).cx, nails.get(n/2+1).cy);
-                    } else {
-                        endLine = d.toDrawCoordinates(to.cx, to.cy);
-                    }
-                }
-                int[] t = new int[4];
-                int midX = (int)(startLine.x + endLine.x) / 2;
-                int midY = (int)(startLine.y + endLine.y) / 2;
-                d.fleche((int)startLine.x, (int)startLine.y, (int)endLine.x, (int)endLine.y, t);
-                g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
-                g.drawLine(midX, midY, t[0], t[1]);
-                g.drawLine(midX, midY, t[2], t[3]);
-            } 
         }
         // Painting of nails
         for (Nail n : nails) {
@@ -302,7 +264,7 @@ public class Arc implements Comparable<Arc> {
     }
     
     public void addNail(Nail nail) {
-        List<Line> hitbox = getHitBox();
+        List<Line> hitbox = getNailLines(width+5,Color.RED);
         int i = 0;
         while (i < hitbox.size() && !hitbox.get(i).contains(nail.cx, nail.cy)) {
             i++;
@@ -311,23 +273,23 @@ public class Arc implements Comparable<Arc> {
         nail.arc = this;
     }
 
-    private List<Line> getHitBox() {
+    private List<Line> getNailLines(int width, Color color) {
         List<Line> lines = new ArrayList<>();
         if (from == to) {
             
         } else {
             if (nails.isEmpty()) {
-                lines.add(new Line(from,to)); 
+                lines.add(new Line(from,to,width,color)); 
             } else {
-                lines.add(new Line(from,nails.get(0)));
+                lines.add(new Line(from,nails.get(0),width,color));
             }
   
             for (int i=0; i < nails.size() - 1; i++) {
-                lines.add(new Line(nails.get(i),nails.get(i+1)));
+                lines.add(new Line(nails.get(i),nails.get(i+1),width,color));
             }
             
             if (!nails.isEmpty()) {
-                lines.add(new Line(nails.get(nails.size()-1),to));
+                lines.add(new Line(nails.get(nails.size()-1),to,width,color));
             }
         }
         return lines;
@@ -341,7 +303,7 @@ public class Arc implements Comparable<Arc> {
      * @return true if this point is inside this arc
      */
     public boolean contains(int x, int y) {
-        List<Line> hitbox = getHitBox();
+        List<Line> hitbox = getNailLines(width+5,Color.RED);
         for (Line line : hitbox) {
             if (line.contains(x,y)) {
                 return true;
