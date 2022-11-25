@@ -40,6 +40,13 @@ class Enregistrement {
         this.action = action;
         this.arc = line;
     }
+    
+    // Constructeur pour les actions sur les clous
+    public Enregistrement(int action, Nail clou) {
+        this.action = action;
+        this.clou = clou;
+    }
+
 
     // Constructor pour les actions de modification des étiquettes
     public Enregistrement(int action, Node circ, String currentLbl, String newLbl) {
@@ -88,6 +95,9 @@ public class History {
     public static final int REMOVE_NODE = 5;
     public static final int LABEL_ARC = 6;
     public static final int LABEL_NODE = 7;
+    public static final int REMOVE_NAIL = 8;
+    public static final int ADD_NAIL = 9;
+    
     // piles Ctrl+Z et Ctrl+Y
     protected ConcurrentHashMap<Integer, Enregistrement> previousStates;
     protected ConcurrentHashMap<Integer, Enregistrement> nextStates;
@@ -102,11 +112,16 @@ public class History {
         this.clearNextStates();
     }
 
+    public void createLog(int action, Nail clou) {
+        this.addPreviousState(new Enregistrement(action, clou));
+        this.clearNextStates();
+    }
+    
     public void createLog(int action, Arc line) {
         this.addPreviousState(new Enregistrement(action, line));
         this.clearNextStates();
     }
-
+    
     public void createLog(int action, Node circ, String currentLbl, String newLbl) {
         this.addPreviousState(new Enregistrement(action, circ, currentLbl, newLbl));
         this.clearNextStates();
@@ -191,6 +206,12 @@ public class History {
                 lastReg.clou.setCx(lastReg.x);
                 lastReg.clou.setCy(lastReg.y);
                 break;
+            case History.REMOVE_NAIL :
+                // TO DO
+                break;
+            case History.ADD_NAIL :
+                lastReg.clou.delete();
+                break;
             case History.REMOVE_ARC :
                 d.addLine(lastReg.arc);
                 break;
@@ -233,6 +254,12 @@ public class History {
                 case History.MOVE_NAIL :
                     nextReg.clou.setCx(nextReg.x2);
                     nextReg.clou.setCy(nextReg.y2);
+                    break;
+                case History.REMOVE_NAIL :
+                    nextReg.clou.delete();
+                    break;
+                case History.ADD_NAIL :
+                    // TO DO
                     break;
                 case History.REMOVE_ARC :
                     d.getG().removeLine(nextReg.arc);

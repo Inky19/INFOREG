@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
 public abstract class ActionMenu {
 
     /**
-     * Renomme un nœud.
+     * Ouvrir une fenêtre de dialogue pour renommer un nœud.
      *
      * @param d Zone de dessin concernée
      * @param n Nœud à renommer
@@ -24,7 +24,7 @@ public abstract class ActionMenu {
         String lbl = "";
         while (!validName) {
             lbl = JOptionPane.showInputDialog("Entrer label :");
-            if (!lbl.isEmpty() && lbl.contains(saveManager.SEP)) {
+            if (lbl != null && lbl.contains(saveManager.SEP)) {
                 JOptionPane.showMessageDialog(null, "Un label ne peut pas comporter \"" + saveManager.SEP + "\"\n(Motif réservé pour la sauvegarde)", "Nom invalide", JOptionPane.WARNING_MESSAGE);
             } else {
                 validName = true;
@@ -50,23 +50,50 @@ public abstract class ActionMenu {
         d.repaint();
         d.getTransitions().createLog(History.REMOVE_NODE, n);
     }
-
-    public static void colorNode(Draw d, Node n, Color c) {
-        n.setColor(c);
-        d.repaint();
-    }
-
-    public static void colorArc(Draw d, Arc a, Color c) {
-        a.setColor(c);
-        d.repaint();
-    }
-
+    
+    /**
+     * Supprime un arc.
+     *
+     * @param d Zone de dessin concernée
+     * @param a Arc à supprimer
+     */
     public static void deleteArc(Draw d, Arc a) {
         d.getG().removeLine(a);
         d.repaint();
         d.getTransitions().createLog(History.REMOVE_ARC, a);
     }
 
+    
+    /**
+     * Change la couleur d'un nœud.
+     *
+     * @param d Zone de dessin concernée
+     * @param n Nœud à colorer
+     * @param c Couleur à affecter
+     */
+    public static void colorNode(Draw d, Node n, Color c) {
+        n.setColor(c);
+        d.repaint();
+    }
+    
+    /**
+     * Change la couleur d'un arc.
+     *
+     * @param d Zone de dessin concernée
+     * @param a Arc à colorer
+     * @param c Couleur à affecter
+     */
+    public static void colorArc(Draw d, Arc a, Color c) {
+        a.setColor(c);
+        d.repaint();
+    }
+    
+    /**
+     * Ouvrir une fenêtre de dialogue pour changer le poids d'un arc.
+     *
+     * @param d Zone de dessin concernée
+     * @param a Arc à modifier.
+     */
     public static void setPoids(Draw d, Arc a) {
         String text = JOptionPane.showInputDialog("Entrer le nouveau poids de l'Arc (seuls les entiers seront acceptés):");
         try {
