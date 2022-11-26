@@ -618,7 +618,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             }
                         } else if (algo instanceof AlgorithmS) {
                             src = findNode(x, y);
-                            if (!src.isEmpty()){
+                            if (src != null){
                                 repaint();
                                 ((AlgorithmS) algo).process(d, src);
                                 st = false;
@@ -1028,8 +1028,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             n.reinit();
         }
         for (Arc a: G.getLines()){
-            a.setColor(Color.BLUE);
-            a.setFlow(null);
+            a.reinit();
         }
     }
 

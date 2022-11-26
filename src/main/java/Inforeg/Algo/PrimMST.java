@@ -80,7 +80,7 @@ public class PrimMST extends Algorithm implements AlgorithmS, Processing {
                         a = G.findLine(arbre[i].getTo(), arbre[i].getFrom());
                     }
                     if (a!=null){
-                        a.setColor(Color.RED);
+                        a.setColorDisplayed(Color.RED);
                         p += a.getPoids();
                     }
                 }

@@ -91,7 +91,7 @@ public class KruskalMST extends Algorithm implements Processing {
                         arc = G.findLine(a.getTo(), a.getFrom());
                     }
                     if (arc != null){
-                        arc.setColor(Color.RED);
+                        arc.setColorDisplayed(Color.RED);
                         p += arc.getPoids();
                     }
 
