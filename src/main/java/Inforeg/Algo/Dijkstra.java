@@ -98,7 +98,7 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
             System.out.println(src + " " + s + " " + p);
             Arc l = d.findLine(p, s);
             if (l != null) {
-                l.setColor(Color.RED);
+                l.setColorDisplayed(Color.RED);
                 s = p;
                 p = predecesseur[p];
                 count++;

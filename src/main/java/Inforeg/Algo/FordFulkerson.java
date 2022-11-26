@@ -137,7 +137,7 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
                 if (l != null) {
                     l.setFlow(l.getPoids() - rGraph[i][j]);
                     if (rGraph[i][j] == 0) {
-                        l.setColor(Color.red);
+                        l.setColorDisplayed(Color.red);
                     }
                 }
             }
