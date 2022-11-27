@@ -17,6 +17,7 @@ import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.ObjetGraph.Nail;
 import Inforeg.History;
+import Inforeg.StepByStep.StepByStep;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -56,16 +57,16 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * Piles Ctrl+Z et Ctrl+Y *
      */
     private History transitions = new History();
-
+    public StepByStep stepBysStep;
     //Pour les Nœuds :
     /**
      * Rayon intial des cercles représentants les Nœuds
      */
-    private static final double RINIT = 17;
+    public static final int RINIT = 17;
     /**
      * Rayon des cercles représentant les Nœuds, initialisé au rayon initial
      */
-    private static double nodeRadius = Draw.RINIT;
+    private static double nodeRadius = RINIT;
     /**
      * Nombre maximum de nœuds d'un graphe, défini dans la classe Graph
      */
@@ -298,6 +299,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         this.G = new Graph(this);
         this.pondere = pondere;
         this.st = false;
+        this.stepBysStep = new StepByStep();
         
         move = false;
         fileName = "";
@@ -311,9 +313,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         bottomLayout.setLayout(new BorderLayout());
         JToolBar tools = new JToolBar(null, JToolBar.HORIZONTAL);
         tools.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        tools.setOpaque(false);
+        tools.setBorderPainted(false);
         bottomLayout.add(tools, BorderLayout.EAST);
         zoomLabel = new JLabel("100%");
-        zoomLabel.setPreferredSize(new Dimension(30, 20));
+        zoomLabel.setPreferredSize(new Dimension(40, 20));
         zoomLabel.setAlignmentX(FlowLayout.RIGHT);
         zoomSlider = new JSlider(MIN_ZOOM, MAX_ZOOM, 100);
         zoomSlider.setMajorTickSpacing(10);
@@ -856,7 +860,10 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public Arc findLine(Node from, Node to) {
         return G.findLine(from, to);
     }
-
+    
+    public Node getNode(int ind) {
+        return G.getNode(ind);
+    }
    
     /**
      * Permet de changer l'état de l'indicateur de sauvegarde de l'onglet.
@@ -1148,6 +1155,14 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             case Interface.DEPLACEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
             case Interface.TRAITEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
+    }
+    
+    public void setInfoText(String text) {
+        infoTop.setText(text);
+    }
+    
+    public String getInfoText() {
+        return infoTop.getText();
     }
 
     private void fitScreen() {

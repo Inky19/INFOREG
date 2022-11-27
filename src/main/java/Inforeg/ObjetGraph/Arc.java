@@ -320,6 +320,10 @@ public class Arc implements Comparable<Arc> {
         return false;
     }
 
+    public Color getColorDisplayed() {
+        return colorDisplayed;
+    }
+    
     @Deprecated
     /**
      * Will be deleted once saved is supported

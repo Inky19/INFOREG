@@ -84,7 +84,7 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
         g.updateVariable();
         int V = g.getNbsommets();
 
-        int u, v;
+        int u, v, pred=0;
 
         // Create a residual graph and fill the residual
         // graph with given capacities in the original graph
@@ -114,19 +114,27 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
             // find the maximum flow through the path found.
             int path_flow = Integer.MAX_VALUE;
             for (v = dest; v != src; v = parent[v]) {
+                if (v != dest) {
+                    d.stepBysStep.colorNode(d.getNode(u), Color.ORANGE, false);
+                }
+                pred = u;
                 u = parent[v];
                 path_flow
                         = Math.min(path_flow, rGraph[u][v]);
             }
-
+            d.stepBysStep.nextStep();
             // update residual capacities of the edges and
             // reverse edges along the path
             for (v = dest; v != src; v = parent[v]) {
+                if (v != dest) {
+                    d.stepBysStep.colorNode(d.getNode(u), Color.BLUE, false);
+                }
+                pred = u;
                 u = parent[v];
                 rGraph[u][v] -= path_flow;
                 rGraph[v][u] += path_flow;
             }
-
+            d.stepBysStep.nextStep();
             // Add path flow to overall flow
             max_flow += path_flow;
         }

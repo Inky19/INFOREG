@@ -59,6 +59,7 @@ public class Coloration extends Algorithm{
      * Attention, rien ne garantie que cette coloration est optimale. 
      */
     public void colorationGlouton() {
+        hashNode = d.getG().getHashNode();
         listAdj = d.getG().getListAdj();
         int max = listAdj.size();
         // Tableau des couleurs à l'issue de la coloration
@@ -78,7 +79,7 @@ public class Coloration extends Algorithm{
             color[node] = availableColor(neighboursColors);           
         }
         // Coloration effective du graphe
-        hashNode = d.getG().getHashNode();
+        
         for (HashMap.Entry<Node,Integer> m : hashNode.entrySet()) {
             int id = m.getValue();
             Color newColor = Color.decode(COLORS[color[id]%COLORS.length]); // % pour éviter un out of bounds -> à mieux gérer
