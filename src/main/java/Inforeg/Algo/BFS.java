@@ -43,6 +43,7 @@ public class BFS extends Algorithm implements AlgorithmS {
             res += s + " | ";
         }
         d.setResultat(res);
+        d.algoFinished();
     }
     
     
@@ -52,7 +53,7 @@ public class BFS extends Algorithm implements AlgorithmS {
         if (d.isAuto()){
             process(d, d.getNodes().get(0));
         } else {
-            d.setSt(true);
+            d.setStatus(Draw.ALGO_INPUT);
         }
     }
 

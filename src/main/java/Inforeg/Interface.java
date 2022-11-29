@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -111,6 +112,7 @@ public abstract class Interface {
     private ToolButton selectedButton;
     
     private JCheckBox autoStart;
+    private JCheckBox stepByStep;
 
     /**
      * Reference to the original image.
@@ -407,11 +409,12 @@ public abstract class Interface {
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
 
-        JToolBar moveAndSelect = new JToolBar(null, JToolBar.HORIZONTAL);
-        moveAndSelect.setFloatable(false);
-        moveAndSelect.setBorderPainted(false);
-        moveAndSelect.setOpaque(false);
-        moveAndSelect.setAlignmentX(FlowLayout.LEFT);
+        JToolBar tools = new JToolBar(null, JToolBar.HORIZONTAL);
+        tools.setFloatable(false);
+        tools.setBorderPainted(false);
+        tools.setOpaque(false);
+        tools.setAlignmentX(FlowLayout.LEFT);
+        tools.setLayout(new GridLayout(2,2));
         // Move Button
         ToolButton moveButton = new ToolButton(moveCursor,null,TOOL_BUTTON_FOCUS_COLOR,TOOL_BUTTON_SELECTED_COLOR);
         moveButton.setToolTipText("Déplacement");
@@ -419,7 +422,7 @@ public abstract class Interface {
             mode = DEPLACEMENT_MODE;
             selectButton(moveButton);
         });
-        moveAndSelect.add(moveButton);
+        tools.add(moveButton);
         // Select Button
         ToolButton selectButton = new ToolButton(selectCursor,null,TOOL_BUTTON_FOCUS_COLOR,TOOL_BUTTON_SELECTED_COLOR);
         selectButton.setToolTipText("Sélection");
@@ -429,13 +432,8 @@ public abstract class Interface {
             activeTool = SELECT_TOOL;
             selectButton(selectButton);
         });
-        moveAndSelect.add(selectButton);
-        toolBarButtons.add(moveAndSelect);
-        JToolBar pinAndColor = new JToolBar(null, JToolBar.HORIZONTAL);
-        pinAndColor.setFloatable(false);
-        pinAndColor.setBorderPainted(false);
-        pinAndColor.setOpaque(false);
-        pinAndColor.setAlignmentX(FlowLayout.LEFT);
+        tools.add(selectButton);
+        toolBarButtons.add(tools);
         // Brush Button
         ToolButton brushButton = new ToolButton(colorIco,null,TOOL_BUTTON_FOCUS_COLOR,TOOL_BUTTON_SELECTED_COLOR);
         brushButton.setToolTipText("Pinceau");
@@ -444,7 +442,7 @@ public abstract class Interface {
             activeTool = COLOR_TOOL;
             selectButton(brushButton);
         });
-        pinAndColor.add(brushButton);
+        tools.add(brushButton);
         // Pin Button
         ToolButton pinButton = new ToolButton(pinIco,null,TOOL_BUTTON_FOCUS_COLOR,TOOL_BUTTON_SELECTED_COLOR);
         pinButton.setToolTipText("Clou");
@@ -453,9 +451,8 @@ public abstract class Interface {
             activeTool = PIN_TOOL;
             selectButton(pinButton);
         });
-        pinAndColor.add(pinButton);
+        tools.add(pinButton);
         
-        toolBarButtons.add(pinAndColor);
         toolBarButtons.add(colorButton);
         toolBarButtons.addSeparator();
         JLabel l1 = new JLabel("  Ajouter :");
@@ -514,7 +511,7 @@ public abstract class Interface {
         toolBarButtons.add(connexeButton);
         toolBarButtons.addSeparator();
 
-        ToolButton algoButton = new ToolButton("▼",AlgoBox.BUTTON_COLOR,AlgoBox.BUTTON_SELECTED_COLOR,null);
+        ToolButton algoButton = new ToolButton("▼",null,TOOL_BUTTON_FOCUS_COLOR,null);
         Dimension algoButtonSize = new Dimension(buttonSize.width, algoButton.getMaximumSize().height);
         algoButton.setMaximumSize(algoButtonSize);
         algoButton.setPreferredSize(algoButtonSize);
@@ -538,8 +535,7 @@ public abstract class Interface {
         algoPanel.setMaximumSize(new Dimension(buttonSize.width, Integer.MAX_VALUE));
         algoPanel.setPreferredSize(algoPanel.getMaximumSize());
         algoPanel.setAlignmentX(0);
-        JButton algoGo = new JButton("GO");
-        algoGo.setBackground(Color.decode("#85fc3f"));
+        ToolButton algoGo = new ToolButton("GO",Color.decode("#85fc3f"),Color.decode("#95db72"),null);
         algoGo.addActionListener((ActionEvent e) -> {
             if (d.getAlgo() == null) {
                 JOptionPane.showMessageDialog(null, "Aucun algorithme sélectionné.", "Algorithme", JOptionPane.INFORMATION_MESSAGE);
@@ -547,12 +543,11 @@ public abstract class Interface {
                 mode = Interface.TRAITEMENT_MODE;
                 d.exportGraphe();
                 d.reinit();
+                stepBystepBar.setVisible(false);
                 d.stepBysStep.init();
-                stepBystepBar.setVisible(true);
-                nextStep.setEnabled(true);
-                previousStep.setEnabled(false);
-                
-                d.setSt(d.getAlgo() instanceof AlgorithmST);
+                if (d.getAlgo() instanceof AlgorithmST) {
+                    d.setStatus(Draw.ALGO_INPUT);
+                }
                 if (d.getAlgo() instanceof AlgorithmST || (d.getAlgo() instanceof AlgorithmS && !isAuto())){
                     d.getInfoTop().setText("Sélectionner le nœud source");
                 }
@@ -560,19 +555,19 @@ public abstract class Interface {
                 d.repaint();
             }
         });
-        algoPanel.add(algoGo);
-        autoStart = new JCheckBox("<html><body>Départ<br>auto</body></html>");
+        stepByStep = new JCheckBox("Step by step");
+        algoPanel.add(stepByStep);
+        autoStart = new JCheckBox("<html><body>Départ auto</body></html>");
         autoStart.setVisible(false);
         algoPanel.add(autoStart);
-        
+        algoPanel.add(algoGo);
         stepBystepBar = new JToolBar();
         stepBystepBar.setFloatable(false);
         stepBystepBar.setBorderPainted(false);
         
-        previousStep = new JButton(previousIco);
+        previousStep = new ToolButton(previousIco,null,TOOL_BUTTON_FOCUS_COLOR,null);
         previousStep.setFocusPainted(false);
-        nextStep = new JButton(nextIco);
-        nextStep.setFocusPainted(false);
+        nextStep = new ToolButton(nextIco,null,TOOL_BUTTON_FOCUS_COLOR,null);
         previousStep.addActionListener((ActionEvent e) -> {
             if (d.stepBysStep.lastStep()) {
                 nextStep.setEnabled(true);
@@ -1007,6 +1002,16 @@ public abstract class Interface {
         selectedButton = button;
         if (button != null) {
             button.select();
+        }
+    }
+
+    public void showResult() {
+        if (stepByStep.isSelected()) {
+            stepBystepBar.setVisible(true);
+            previousStep.setEnabled(false);
+            nextStep.setEnabled(d.stepBysStep.getNbStep() > 0);
+        } else {
+            stepBystepBar.setVisible(false);
         }
     }
 

@@ -78,6 +78,7 @@ public class Coloration extends Algorithm{
             // Recherche de la plus petite couleur disponible
             color[node] = availableColor(neighboursColors);           
         }
+        d.algoFinished();
         // Coloration effective du graphe
         
         for (HashMap.Entry<Node,Integer> m : hashNode.entrySet()) {

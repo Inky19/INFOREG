@@ -101,7 +101,10 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     /**
      * Active la sélection d'un nœud source et d'un nœud de destination.
      */
-    private boolean st;
+    private int status;
+    public static final int ALGO_NEUTRAL = 0;
+    public static final int ALGO_INPUT = 1;
+    public static final int ALGO_FINISH = 2;
 
     /**
      * Valeur du prochain id disponible pour créer un noeud
@@ -271,8 +274,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         this.algo = algo;
     }
 
-    public void setSt(boolean st) {
-        this.st = st;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getResultat() {
@@ -298,7 +301,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         this.oriente = oriente;
         this.G = new Graph(this);
         this.pondere = pondere;
-        this.st = false;
+        this.status = 0;
         this.stepBysStep = new StepByStep();
         
         move = false;
@@ -590,7 +593,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     }
                 }
                 if (inter.getMode() == inter.TRAITEMENT_MODE) {
-                    if (st) {
+                    if (status==ALGO_INPUT) {
                         int x = evt.getX();
                         int y = evt.getY();
                         
@@ -611,7 +614,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                     ((AlgorithmST) algo).process(d, src, dest);
                                     src = null;
                                     dest = null;
-                                    st = false;
+                                    status = ALGO_NEUTRAL;;
                                     infoTop.setText("");
                                 } else {
                                     infoTop.setText("Sélectionner le nœud source");
@@ -625,7 +628,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             if (src != null){
                                 repaint();
                                 ((AlgorithmS) algo).process(d, src);
-                                st = false;
+                                status = ALGO_NEUTRAL;
                                 src = null;
                                 infoTop.setText("");
                             }
@@ -960,7 +963,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                 }
             }
         }
-        if ((inter.getActiveTool() == inter.PIN_TOOL || inter.getActiveTool() == inter.SELECT_TOOL) && inter.getMode() == inter.EDITION_MODE) {
+        if ((Interface.getActiveTool() == Interface.PIN_TOOL || Interface.getActiveTool() == Interface.SELECT_TOOL) && Interface.getMode() == inter.EDITION_MODE) {
 
             if (currentNail != null) {
                 inter.tabSaved(false);
@@ -1057,7 +1060,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * Méthode permettant de modifier la taille des noeuds
      */
     public void tailleCirc() {
-        if (G.getNodes().size() > 0) {
+        if (!G.getNodes().isEmpty()) {
             double factor = getTailleCirc();
             nodeRadius = factor * Draw.RINIT;
             //lineWidth = (float) factor*Draw.LINIT;
@@ -1106,35 +1109,35 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         switch (Interface.getMode()) {
             case Interface.EDITION_MODE -> {
                 switch (Interface.getActiveTool()) {
-                    case Interface.LABEL_TOOL :
+                    case Interface.LABEL_TOOL -> {
                         if (onNode || onArc) {
                             setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
                         } else {
                             setCursor(Cursor.getDefaultCursor());
                         }
-                        break;
-                    case Interface.NOEUD_TOOL :
+                }
+                    case Interface.NOEUD_TOOL -> {
                         if (onNode) {
                             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         } else {
                             setCursor(Cursor.getDefaultCursor());
                         }
-                        break;
-                    case Interface.SELECT_TOOL :
+                }
+                    case Interface.SELECT_TOOL -> {
                         if (onNode || (onNail || onArc)) { 
                             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         } else {
                             setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                         }
-                        break;
-                    case Interface.ARC_TOOL :
+                }
+                    case Interface.ARC_TOOL -> {
                         if (onArc) {
                             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         } else {
                             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                         }
-                        break;
-                    case Interface.PIN_TOOL :
+                }
+                    case Interface.PIN_TOOL -> {
                         if (onNail) {
                             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         } else if (onArc) {
@@ -1142,14 +1145,14 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         } else {
                             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                         }
-                        break;
-                    case Interface.COLOR_TOOL :
+                }
+                    case Interface.COLOR_TOOL -> {
                         if (onArc||onNode) {
                             setCursor(AssetLoader.paintCursor);
                         } else {
                             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                         }
-                        break;
+                }
                 }
             }
             case Interface.DEPLACEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
@@ -1165,6 +1168,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         return infoTop.getText();
     }
 
+    public void algoFinished() {
+        inter.showResult();
+    }
+    
+    
     private void fitScreen() {
         ArrayList<Node> nodes = G.getNodes();
         if (!nodes.isEmpty()) {
