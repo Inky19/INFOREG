@@ -41,9 +41,11 @@ import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -280,10 +282,11 @@ public abstract class Interface {
         addMenuBar();
         initRightMenuBar();
         initContextMenu();
+        
         JPanel contentPanel = new JPanel(new BorderLayout());
         frame.add(toolBarButtons, BorderLayout.WEST);
         frame.setJMenuBar(menuBar);
-
+        initShortcuts(contentPanel);
         //frame.getContentPane().add(this.d);
         Interface.colorBg = paneImage.getBackground();
         contentPanel.add(paneImage, BorderLayout.CENTER);
@@ -840,6 +843,23 @@ public abstract class Interface {
         clear(canvasImage);
 
     }
+    
+    
+    private void initShortcuts(JPanel contentPanel){
+    
+    Action actionListener = new AbstractAction() {
+      public void actionPerformed(ActionEvent actionEvent) {
+        d.deleteSelected();
+      }
+    };
+    KeyStroke del = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true);
+    InputMap inputMap = contentPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+    String DEL_KEY = "delAction";
+    inputMap.put(del, DEL_KEY);
+    ActionMap actionMap = contentPanel.getActionMap();
+    actionMap.put(DEL_KEY, actionListener);
+    contentPanel.setActionMap(actionMap);
+}
 
     public void initContextMenu() {
         menuNode = new JPopupMenu();

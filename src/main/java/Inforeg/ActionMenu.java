@@ -46,6 +46,14 @@ public abstract class ActionMenu {
      */
     public static void deleteNode(Draw d, Node n) {
         d.saveState(false);
+        // On ajoute l'action à la pile
+        // On ajoute les arcs qui seront supprimés
+        // La reconstruction du noeud sera placée au haut de la pile
+        for (Arc a : d.getG().getLines()) {
+            if (a.getFrom().equals(n) || a.getTo().equals(n)) {
+                d.getTransitions().createLog(History.REMOVE_ARC, a);
+            }
+        }
         d.getG().removeNode(n);
         d.repaint();
         d.getTransitions().createLog(History.REMOVE_NODE, n);
