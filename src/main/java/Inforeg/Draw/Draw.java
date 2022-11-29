@@ -1068,7 +1068,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     }
                 }
             }
-            case Interface.DEPLACEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            case Interface.DEPLACEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
             case Interface.TRAITEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
