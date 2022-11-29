@@ -37,14 +37,14 @@ public abstract class GraphFunction {
 
                 /*Si il existe un arc entre les sommets ind et j
                 et que le sommet j n'a pas encore été étudié*/
-                if ((g.getAdj()[ind][j] > 0) && (!vu[j])) {
+                if ((g.getAdjMatrix()[ind][j] > 0) && (!vu[j])) {
                     q.add(j);
                     vu[j] = true;
                 }
 
                 /*Si il existe un arc entre les sommets ind et j 
                 et que le sommet j est le sommet de destination v*/
-                if ((g.getAdj()[ind][j] > 0) && (j == v)) {
+                if ((g.getAdjMatrix()[ind][j] > 0) && (j == v)) {
                     //On a trouvé un chemin entre u et v
                     return true;
                 }

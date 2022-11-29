@@ -55,6 +55,7 @@ public class ButtonTabComponent extends JPanel {
 
         //make JLabel read titles from JTabbedPane
         JLabel label = new JLabel() {
+            @Override
             public String getText() {
                 int i = pane.indexOfTabComponent(ButtonTabComponent.this);
                 if (i != -1) {

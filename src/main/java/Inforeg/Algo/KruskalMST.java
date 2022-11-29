@@ -91,13 +91,14 @@ public class KruskalMST extends Algorithm implements Processing {
                         arc = G.findLine(a.getTo(), a.getFrom());
                     }
                     if (arc != null){
-                        arc.setColor(Color.RED);
+                        arc.setColorDisplayed(Color.RED);
                         p += arc.getPoids();
                     }
 
                 }
             }
             d.setResultat("L'arbre couvrant minimal du graphe a un poids de " + p + ".");
+            d.algoFinished();
         } else {
             JOptionPane.showMessageDialog(null, "Le graphe n'est pas connexe !", "Kruskal MST", JOptionPane.INFORMATION_MESSAGE);
         }

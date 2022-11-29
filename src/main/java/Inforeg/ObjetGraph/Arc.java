@@ -19,12 +19,11 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import static java.lang.Math.sqrt;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Arc implements Comparable<Arc> {
 
-    private boolean selected;
-    
-    
     public int width;
     /**
      * Cercle/Nœud de départ
@@ -42,6 +41,8 @@ public class Arc implements Comparable<Arc> {
      * Couleur
      */
     private Color color;
+
+    private Color colorDisplayed;
     /**
      * Flux
      */
@@ -50,7 +51,7 @@ public class Arc implements Comparable<Arc> {
      * Nail
      */
     //private Nail clou;
-    
+
     private ArrayList<Nail> nails;
     /**
      * Rayon des clous
@@ -67,52 +68,28 @@ public class Arc implements Comparable<Arc> {
      * @param c
      */
     public Arc(Node fromPoint, Node toPoint, int pds, Color c) {
-        selected = false;
         this.from = fromPoint;
         this.to = toPoint;
         this.poids = pds;
         this.color = c;
+        this.colorDisplayed = c;
         this.width = DEFAULT_LINE_WIDTH;
         this.nails = new ArrayList<>();
-        int x, y;
-        if (from != null && to != null){
-            if (from!=to) {
-                x = (int) (from.getCx() + to.getCx()) / 2;
-                y = (int) (from.getCy() + to.getCy()) / 2;          
-            } else {
-                x = (int) (from.getCx() + from.getHeight());
-                y = (int) (from.getCy() + from.getHeight());              
-            }
-            //this.clou = new Nail(x, y, RCLOU, c);
-            nails.add(new Nail(x, y, RCLOU, c));
-            
-        } else {
-            //this.clou = null;
-        }
-        
-        
-        
-
     }
-    
-    public Arc(Node fromPoint, Node toPoint, int pds, Color c, Nail nail){
-        selected = false;
+
+    public Arc(Node fromPoint, Node toPoint, int pds, Color c, Nail nail) {
         this.from = fromPoint;
         this.to = toPoint;
         this.poids = pds;
         this.color = c;
-        //this.clou = nail;
+        this.colorDisplayed = c;
         this.nails = new ArrayList<>();
-        this.nails.add(nail);
+        this.addNail(nail);
         this.width = DEFAULT_LINE_WIDTH;
     }
 
-    public Nail getClou() {
-        // TEMPORARY
-        return this.nails.get(0);
-    }
-    
-    private void paintLabel(Draw d, Graphics2D g, Point pos, String label, Color textColor, Color bgColor) {
+    protected static void paintLabel(Draw d, Graphics2D g, Vector2D p, String label, Color textColor, Color bgColor) {
+        Point pos = d.toDrawCoordinates(p).toPoint();
         Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(15));
         g.setFont(font);
         FontMetrics metrics = g.getFontMetrics(font);
@@ -121,81 +98,59 @@ public class Arc implements Comparable<Arc> {
         // Determine the X coordinate for the text
         int fontX = (int) (pos.x - metrics.stringWidth(label) / 2);
         int fontY = pos.y;
+        int offset = (int) d.toDrawScale(5);
         g.setPaint(bgColor);
-        g.fillRect(fontX, fontY-(int)bg.getHeight() + metrics.getDescent(), (int)bg.getWidth(), (int)bg.getHeight());
+        g.fillRect(fontX - offset, fontY - (int) bg.getHeight() + metrics.getDescent(), (int) (bg.getWidth() + 2 * offset), (int) bg.getHeight());
         g.setPaint(textColor);
         g.drawString(label, fontX, fontY);
     }
-    
-    private void paintLine(Draw d, Graphics2D g, Vector2D pos1, Vector2D pos2) {
-        Vector2D p1 = d.toDrawCoordinates(pos1.x, pos1.y);
-        Vector2D p2 = d.toDrawCoordinates(pos2.x, pos2.y);
-        g.drawLine((int) p1.x, (int)p1.y, (int)p2.x, (int)p2.y);
-    }
-    
-    public void paint(Draw d, Graphics2D g) {
-        g.setPaint(color);
-        g.setStroke(new BasicStroke((float) d.toDrawScale(DEFAULT_LINE_WIDTH)));
-        Vector2D v1 = d.toDrawCoordinates(from.getCx(), from.getCy());
-        Vector2D v3 = d.toDrawCoordinates(nails.get(0).cx, nails.get(0).cy);
-        int x1 = (int) v1.x;
-        int y1 = (int) v1.y;
-        int x3 = (int) v3.x;
-        int y3 = (int) v3.y;
-        // Painting of lines
-        if (from == to) {
-            g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
-            double radius = sqrt((x1-x3)*(x1-x3) + (y1-y3)*(y1-y3))/2;
-            g.draw(new Ellipse2D.Double((x1+x3)/2-radius,(y1+y3)/2-radius, 2*radius, 2*radius));
-            //d.calcArc(x1,y1,x3,y3,g);
-        } else {
-            Vector2D v2 = d.toDrawCoordinates(to.getCx(), to.getCy());
-            int x2 = (int) v2.x;
-            int y2 = (int) v2.y;
-            //g.drawLine(x1, y1, x3, y3);
-            //g.drawLine(x3, y3, x2, y2);
-            Vector2D start = new Vector2D(from.cx,from.cy); 
-            Vector2D finish = new Vector2D(to.cx,to.cy);
-            if (nails.isEmpty()) {
-                paintLine(d, g, start, finish);
-            } else {
-                Vector2D first = new Vector2D(nails.get(0).cx,nails.get(0).cy);
-                Vector2D last = new Vector2D(nails.get(nails.size()-1).cx,nails.get(nails.size()-1).cy);
-                paintLine(d, g, start, first);
-                paintLine(d, g, last, finish);
-            }
-  
-            for (int i=0; i < nails.size() - 1; i++) {
-                Vector2D pos1 = new Vector2D(nails.get(i).cx,nails.get(i).cy);
-                Vector2D pos2 = new Vector2D(nails.get(i+1).cx,nails.get(i+1).cy);
-                paintLine(d, g, pos1 , pos2);
-            }
 
-            g.setPaint(color); //reset color pour poids
-            if (d.oriente) {
-                int[] t = new int[4];
-                int x4 = (x3 + x2) / 2;
-                int y4 = (y3 + y2) / 2;
-                d.fleche(x3, y3, x4, y4, t);
-                g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
-                g.drawLine(x4, y4, t[0], t[1]);
-                g.drawLine(x4, y4, t[2], t[3]);
-            } 
+    public void paint(Draw d, Graphics2D g) {
+
+        // Painting of lines
+        List<Line> lines = getNailLines(this.width, this.colorDisplayed);
+        int i = 0, size = lines.size();
+        for (Line line : lines) {
+            line.arrow = (i == size / 2 && d.oriente);
+            line.paint(d, g);
+            i++;
         }
         // Painting of nails
-        for (Nail n : nails) {
-            n.paint(d,g,selected);
+        for (Nail nail : nails) {
+            nail.paint(d, g);
         }
-        
-        //clou.paint(d, g, selected);
+
         // Painting of labels
         if (flow != null) {
             String label = Integer.toString(flow);
-            paintLabel(d, g, new Point(x3,y3+(int) d.toDrawScale(20)), label, color, Color.CYAN);
+            Vector2D pos;
+            if (from == to) {
+                pos = from.getCenterPos().plus(new Vector2D(2*Line.CIRCLE_RADIUS,0));
+            } else {
+                if (nails.isEmpty()) {
+                    pos = Vector2D.middle(from.getCenterPos(), to.getCenterPos());
+                } else {
+                    Nail midNail = nails.get(nails.size() / 2);
+                    pos = midNail.getCenterPos();
+                }                
+            }
+            paintLabel(d, g, pos.plus(new Vector2D(0, 22)), label, colorDisplayed, Color.CYAN);
         }
         if (d.pondere) {
             String label = Integer.toString(poids);
-            paintLabel(d, g, new Point(x3,y3-(int) d.toDrawScale(12)), label, color, Color.WHITE);
+            Vector2D pos;
+            if (from == to) {
+                pos = from.getCenterPos().plus(new Vector2D(2*Line.CIRCLE_RADIUS,0));
+            } else {
+                if (nails.isEmpty()) {
+                    pos = Vector2D.middle(from.getCenterPos(), to.getCenterPos());
+                } else {
+                    Nail midNail = nails.get(nails.size() / 2);
+                    pos = midNail.getCenterPos();
+                }                
+            }
+            
+            paintLabel(d, g, pos.minus(new Vector2D(0, 12)), label, color, Color.WHITE);
         }
     }
 
@@ -211,12 +166,24 @@ public class Arc implements Comparable<Arc> {
         return color;
     }
 
-    public void setColor(Color col) {
-        this.color = col;
+    public void setColor(Color color) {
+        this.color = color;
+        this.colorDisplayed = color;
         for (Nail n : nails) {
-          n.color = col;
+            n.color = color;
         }
-        //this.clou.color = col;
+    }
+
+    /**
+     * Change the displayed color of this arc. Reset the color by using reinit()
+     *
+     * @param color new color of this arc
+     */
+    public void setColorDisplayed(Color color) {
+        this.colorDisplayed = color;
+        for (Nail n : nails) {
+            n.color = color;
+        }
     }
 
     /**
@@ -235,7 +202,6 @@ public class Arc implements Comparable<Arc> {
     public void setTo(Node to) {
         this.to = to;
     }
-    
 
     /**
      * Getter du cercle d'arrivée
@@ -270,29 +236,14 @@ public class Arc implements Comparable<Arc> {
         return p;
     }
 
-    public Point getClouPoint() {
-        // TEMPORARY
-        double centerX = this.nails.get(0).getCenterX();
-        double centerY = this.nails.get(0).getCenterY();
-        Point p = new Point((int) centerX, (int) centerY);
-        return p;
-    }
-
-    public void setClou(Nail nouv) {
-        // TEMPORARY
-        this.nails.set(0, nouv);
-    }
-
     public Color getColor() {
         return color;
     }
 
-    public boolean isSelected() {
-        return selected;
-    }
-
     public void setSelected(boolean selected) {
-        this.selected = selected;
+        for (Nail nail : nails) {
+            nail.selected = false;
+        }
     }
 
     public Integer getFlow() {
@@ -302,16 +253,91 @@ public class Arc implements Comparable<Arc> {
     public void setFlow(Integer flow) {
         this.flow = flow;
     }
-    
+
     @Override
     public String toString() {
         return "Arc | poids: " + poids + ", " + from.toString() + " -> " + to.toString() + " |";
     }
+
     /**
      * @param compareEdge = Arc à comparer
      * @return la différence entre les deux poids des arcs
      */
     public int compareTo(Arc compareEdge) {
         return this.poids - compareEdge.poids;
+    }
+
+    public ArrayList<Nail> getNails() {
+        return nails;
+    }
+
+    public void addNail(Nail nail) {
+        List<Line> hitbox = getNailLines(width + 5, Color.RED);
+        int i = 0;
+        while (i < hitbox.size() && !hitbox.get(i).contains(nail.cx, nail.cy)) {
+            i++;
+        }
+        nails.add(i, nail);
+        nail.arc = this;
+    }
+
+    private List<Line> getNailLines(int width, Color color) {
+        List<Line> lines = new ArrayList<>();
+        if (from == to) {
+            lines.add(new Line(from, width, color));
+        } else {
+            if (nails.isEmpty()) {
+                lines.add(new Line(from, to, width, color));
+            } else {
+                lines.add(new Line(from, nails.get(0), width, color));
+            }
+
+            for (int i = 0; i < nails.size() - 1; i++) {
+                lines.add(new Line(nails.get(i), nails.get(i + 1), width, color));
+            }
+
+            if (!nails.isEmpty()) {
+                lines.add(new Line(nails.get(nails.size() - 1), to, width, color));
+            }
+        }
+        return lines;
+    }
+
+    /**
+     *
+     * @param x global coordinate x of a point
+     * @param y global coordinate y of a point
+     * @param d
+     * @return true if the point (x ,y) touches this arc
+     */
+    public boolean contains(int x, int y) {
+        List<Line> hitbox = getNailLines(width + 5, Color.RED);
+        for (Line line : hitbox) {
+            if (line.contains(x, y)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Color getColorDisplayed() {
+        return colorDisplayed;
+    }
+    
+    @Deprecated
+    /**
+     * Will be deleted once saved is supported
+     */
+    public Nail getClou() {
+        if (nails.isEmpty()) {
+            return null;
+        } else {
+            return nails.get(0);
+        }
+    }
+
+    public void reinit() {
+        setColorDisplayed(color);
+        flow = null;
     }
 }

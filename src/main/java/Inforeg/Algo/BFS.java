@@ -2,6 +2,7 @@ package Inforeg.Algo;
 
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.Node;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -24,19 +25,16 @@ public class BFS extends Algorithm implements AlgorithmS {
         stack.add(start);
         LinkedList<String> order = new LinkedList<>();
         boolean[] visited = new boolean[d.getNodes().size()];
+        ArrayList<LinkedList<Integer>> listAdj = d.getG().getListAdj();
         while (!stack.isEmpty()) {
             int current = stack.remove();
             if(!visited[current]){
                 visited[current] = true;
                 order.add(d.getNodes().get(current).getLabel());
-                int[][] adj = d.getG().getAdj();
-                for (int i=0;i<adj.length;i++) {
-                    if (adj[current][i]>0){
-                        if (!visited[i]){
-                            stack.add(i);
-                        }
+                for (int i : listAdj.get(current)) {
+                    if (!visited[i]){
+                        stack.add(i);
                     }
-
                 }
             }
         }
@@ -45,6 +43,7 @@ public class BFS extends Algorithm implements AlgorithmS {
             res += s + " | ";
         }
         d.setResultat(res);
+        d.algoFinished();
     }
     
     
@@ -54,7 +53,7 @@ public class BFS extends Algorithm implements AlgorithmS {
         if (d.isAuto()){
             process(d, d.getNodes().get(0));
         } else {
-            d.setSt(true);
+            d.setStatus(Draw.ALGO_INPUT);
         }
     }
 
