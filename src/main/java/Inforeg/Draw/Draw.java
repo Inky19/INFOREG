@@ -177,123 +177,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     private static final int MAX_ZOOM = 1000;
     private static final int MIN_ZOOM = 50;
 
-    
-    public int getNextNodeId() {
-        return nextNodeId;
-    }
 
-    public void setNextNodeId(int nextNodeId) {
-        this.nextNodeId = nextNodeId;
-    }
-
-    public void setDest(Node n) {
-        this.dest = n;
-    }
-
-    public void setSrc(Node n) {
-        this.src = n;
-    }
-
-    public Graph getG() {
-        return this.G;
-    }
-
-    public void setPondere(boolean bool) {
-        this.pondere = bool;
-    }
-
-    public boolean getPondere() {
-        return this.pondere;
-    }
-
-    public float getLineWidth() {
-        return this.lineWidth;
-    }
-
-    public void setLineWidth(float w) {
-        this.lineWidth = w;
-    }
-
-    public double getCircleW() {
-        return Draw.nodeRadius;
-    }
-
-    public void setCircleW(double r) {
-        Draw.nodeRadius = r;
-    }
-    
-    public String getPathSauvegarde() {
-        return pathSauvegarde;
-    }
-
-    public void setPathSauvegarde(String nomSauvegarde) {
-        this.pathSauvegarde = nomSauvegarde;
-    }
-
-    public boolean getOriente() {
-        return oriente;
-    }
-
-    public void setOriente(boolean oriente) {
-        this.oriente = oriente;
-    }
-    
-    public void setCurrentColor(Color c) {
-        this.currentColor = c;
-    }
-
-    public ArrayList<Arc> getLines() {
-        return G.getLines();
-    }
-
-    public ArrayList<Node> getNodes() {
-        return G.getNodes();
-    }
-
-    public History getTransitions() {
-        return this.transitions;
-    }
-
-    public void setInterface(Interface inter) {
-        this.inter = inter;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public Algorithm getAlgo() {
-        return algo;
-    }
-
-    public void setAlgo(Algorithm algo) {
-        this.algo = algo;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public String getResultat() {
-        return resultat;
-    }
-
-    public void setResultat(String resultat) {
-        this.resultat = resultat;
-        inter.refreshResult();
-    }
-
-    public JLabel getInfoTop() {
-        return infoTop;
-    }
-    
-    public boolean isAuto(){
-        return inter.isAuto();
-    }
     
 
     public Draw(boolean oriente, boolean pondere) {
@@ -550,19 +434,6 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     // Si on clique deux fois sur un Nœud, on le supprime
                     if (inter.getActiveTool() == Interface.NOEUD_TOOL && currentNode != null) {
                         if (evt.getClickCount() >= 2) {
-                            // On ajoute l'action à la pile
-                            // On ajoute les arcs qui seront supprimés
-                            if (G.getLines().size() > 0) {
-                                for (int i = 0; i < G.getLines().size(); i++) {
-                                    Arc l = G.getLines().get(i);
-                                    if (l.getFrom().equals(currentNode) || l.getTo().equals(currentNode)) {
-                                        transitions.createLog(History.REMOVE_ARC, l);
-                                    }
-                                }
-                            }
-                            // La reconstruction du noeud sera placée au haut de la pile
-                            
-                            //
                             ActionMenu.deleteNode(d, currentNode);
                         }
                     }
@@ -1103,6 +974,18 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         }
     }
     
+    public void deleteSelected(){
+        ArrayList<Node> deletedNodes = new ArrayList<>();
+        for (Node n: G.getNodes()){
+            if (n.isSelected()){
+                System.out.println(n.getLabel());
+                deletedNodes.add(n);
+            }
+        }
+        for (Node n: deletedNodes){
+            ActionMenu.deleteNode(this, n);
+        }
+    }
     
     
     private void updateCursor(boolean onNode, boolean onNail, boolean onArc) {
@@ -1203,5 +1086,123 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             move = false;
             repaint();
         }
+    }
+    
+        
+    public int getNextNodeId() {
+        return nextNodeId;
+    }
+
+    public void setNextNodeId(int nextNodeId) {
+        this.nextNodeId = nextNodeId;
+    }
+
+    public void setDest(Node n) {
+        this.dest = n;
+    }
+
+    public void setSrc(Node n) {
+        this.src = n;
+    }
+
+    public Graph getG() {
+        return this.G;
+    }
+
+    public void setPondere(boolean bool) {
+        this.pondere = bool;
+    }
+
+    public boolean getPondere() {
+        return this.pondere;
+    }
+
+    public float getLineWidth() {
+        return this.lineWidth;
+    }
+
+    public void setLineWidth(float w) {
+        this.lineWidth = w;
+    }
+
+    public double getCircleW() {
+        return Draw.nodeRadius;
+    }
+
+    public void setCircleW(double r) {
+        Draw.nodeRadius = r;
+    }
+    
+    public String getPathSauvegarde() {
+        return pathSauvegarde;
+    }
+
+    public void setPathSauvegarde(String nomSauvegarde) {
+        this.pathSauvegarde = nomSauvegarde;
+    }
+
+    public boolean getOriente() {
+        return oriente;
+    }
+
+    public void setOriente(boolean oriente) {
+        this.oriente = oriente;
+    }
+    
+    public void setCurrentColor(Color c) {
+        this.currentColor = c;
+    }
+
+    public ArrayList<Arc> getLines() {
+        return G.getLines();
+    }
+
+    public ArrayList<Node> getNodes() {
+        return G.getNodes();
+    }
+
+    public History getTransitions() {
+        return this.transitions;
+    }
+
+    public void setInterface(Interface inter) {
+        this.inter = inter;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public Algorithm getAlgo() {
+        return algo;
+    }
+
+    public void setAlgo(Algorithm algo) {
+        this.algo = algo;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getResultat() {
+        return resultat;
+    }
+
+    public void setResultat(String resultat) {
+        this.resultat = resultat;
+        inter.refreshResult();
+    }
+
+    public JLabel getInfoTop() {
+        return infoTop;
+    }
+    
+    public boolean isAuto(){
+        return inter.isAuto();
     }
 }

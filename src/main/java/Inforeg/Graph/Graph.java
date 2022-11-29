@@ -96,7 +96,7 @@ public class Graph {
         for (Arc arc : linesCopy) {
             if (arc.getFrom()== node || arc.getTo()== node) {
                 lines.remove(arc);
-                System.out.println(true);
+                
             }
         }
         nodes.remove(node);
