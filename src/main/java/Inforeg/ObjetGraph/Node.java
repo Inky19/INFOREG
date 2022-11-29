@@ -196,6 +196,10 @@ public class Node extends Ellipse2D.Double implements Attachable {
     public void setOutlineColor(Color color) {
         this.outlineColor= color;
     }
+
+    public Color getOutlineColor() {
+        return outlineColor;
+    }
     
     public void reinit() {
         this.colorDisplayed = color;

@@ -252,10 +252,7 @@ public class Graph {
     }
     
     
-    
-    @Deprecated
     public Arc findLine(int from, int to) {
-        updateVariable(); // PROVISOIRE
         for (Arc l : lines) {
             if (((hashNode.get(l.getFrom()) == from)&&(hashNode.get(l.getTo())== to))||(!oriente && (hashNode.get(l.getFrom()) == to)&&(hashNode.get(l.getTo())== from))) {
                 return l;

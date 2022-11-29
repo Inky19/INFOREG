@@ -37,6 +37,8 @@ public abstract class AssetLoader {
     public static final ImageIcon upArrow = new ImageIcon(getURL("asset/icons/arrow-up.png"));
     public static final ImageIcon colorIco = new ImageIcon(getURL("asset/icons/color.png"));
     public static final ImageIcon pinIco = new ImageIcon(getURL("asset/icons/pin.png"));
+    public static final ImageIcon previousIco = new ImageIcon(getURL("asset/icons/previous.png"));
+    public static final ImageIcon nextIco = new ImageIcon(getURL("asset/icons/next.png"));
     // Cursor
     public static final Cursor pinCursor = tkit.createCustomCursor(pinImg, new Point(3,29), "pinCursor");
     public static final Cursor paintCursor = tkit.createCustomCursor(paintImg, new Point(3,29), "paintCursor");

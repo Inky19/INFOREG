@@ -5,6 +5,7 @@
 package Inforeg.UI;
 
 import Inforeg.Algo.Algorithm;
+import Inforeg.Interface;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -26,6 +27,8 @@ import javax.swing.JPanel;
 public class AlgoBox extends JPanel{
     
     private static Dimension buttonSize = new Dimension(124,27);
+    public static final Color BUTTON_COLOR = Color.decode("#ffce2e");
+    public static final Color BUTTON_SELECTED_COLOR = Color.decode("#f7d86f");
 
     private String name;
     private List<Algorithm> algos;
@@ -56,7 +59,7 @@ public class AlgoBox extends JPanel{
 
     public void addAlgo(Algorithm algo) {
         algos.add(algo);
-        JButton algoButton = new JButton(algo.getName());
+        ToolButton algoButton = new ToolButton(algo.getName(),BUTTON_COLOR,BUTTON_SELECTED_COLOR,null);
         algoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         algoButton.setMaximumSize(buttonSize);
         algoButton.addActionListener(new ActionListener(){

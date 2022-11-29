@@ -67,14 +67,19 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
         dist[src] = 0;
         // Source has no predecesseur
         predecesseur[src] = -1;
-
+        Node node;
         // Find shortest path for all vertices
         for (int count = 0; count < g.getNbsommets() - 1; count++) {
             // Pick the minimum distance vertex from the set of vertices
             // not yet processed. u is always equal to src in first
             // iteration.
             int u = findMin(dist, vu, g.getNbsommets());
-
+            // ##### STEP #####
+            node = d.getNode(u);
+            d.stepBysStep.colorNode(node, Color.ORANGE,true);
+            d.stepBysStep.setInfoText("Distance la plus petite du noeud "+node.getLabel()+" est "+dist[u] );
+            d.stepBysStep.nextStep();
+            // ################
             // Mark the picked vertex as processed
             vu[u] = true;
 
@@ -86,6 +91,12 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
             {
                 if (!vu[v] && g.getAdjMatrix()[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + g.getAdjMatrix()[u][v] < dist[v]) {
                     dist[v] = dist[u] + g.getAdjMatrix()[u][v];
+                    // ##### STEP #####
+                    node = d.getNode(v);
+                    d.stepBysStep.colorNode(node, Color.GRAY,true);
+                    d.stepBysStep.setInfoText("Mise a jour de "+node.getLabel()+" nouvelle distance "+dist[v] );
+                    d.stepBysStep.nextStep();
+                    // ################
                     predecesseur[v] = u;
                 }
             }

@@ -10,6 +10,8 @@ Commentaires ajoutés
 =============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.Save.saveManager;
+import Inforeg.UI.ToolButton;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
@@ -35,9 +37,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
 public class StartMenu {
-
+    
     public static void main(String[] args) throws IOException {
-
+        Color selectedColor = Color.decode("#c2c1be");
+        Color buttonColor = Color.decode("#dbdbdb");
         // Création de la fenêtre d'accueil
         JFrame J = new JFrame("INFOREG");
         J.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -61,11 +64,12 @@ public class StartMenu {
         JLabel banner = new JLabel(new ImageIcon(bannerImgResized));
         
         JCheckBox graphOriente = new JCheckBox("Orienté");
-
+        graphOriente.setFocusPainted(false);
         JCheckBox graphPond = new JCheckBox("Pondéré");
+        graphPond.setFocusPainted(false);
 
         // Bouton générant un nouveau graphe
-        JButton nouveau = new JButton("Créer");
+        ToolButton nouveau = new ToolButton("Créer",buttonColor,selectedColor, null);
         nouveau.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -88,7 +92,7 @@ public class StartMenu {
         });
 
         // Bouton permettant de charger un graphe existant
-        JButton charge = new JButton("Charger un Graphe existant");
+        ToolButton charge = new ToolButton("Charger un Graphe existant",buttonColor,selectedColor,null);
         charge.setAlignmentX(Component.CENTER_ALIGNMENT);
         charge.addActionListener(new ActionListener() {
             @Override
