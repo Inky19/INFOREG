@@ -72,7 +72,7 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
     // graph
     @Override
     public void process(Draw d) {
-        d.setSt(true);
+        d.setStatus(1);
     }
     
     @Override
@@ -150,8 +150,8 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
                 }
             }
         }
-
         d.setResultat("Le flot maximal du graphe entre les sommets " + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + " est de " + max_flow + ".");
+        d.algoFinished();
     }
 
 

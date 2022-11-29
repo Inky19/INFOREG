@@ -44,6 +44,10 @@ public class StepByStep {
         currentAction.add(new SetText(text));
     }
     
+    public int getNbStep() {
+        return steps.size();
+    }
+    
     //
     public void nextStep() {
         steps.add(currentAction);

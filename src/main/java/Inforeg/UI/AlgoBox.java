@@ -19,6 +19,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
+import javax.swing.plaf.metal.MetalBorders;
 
 /**
  *
@@ -26,9 +28,9 @@ import javax.swing.JPanel;
  */
 public class AlgoBox extends JPanel{
     
-    private static Dimension buttonSize = new Dimension(124,27);
-    public static final Color BUTTON_COLOR = Color.decode("#ffce2e");
-    public static final Color BUTTON_SELECTED_COLOR = Color.decode("#f7d86f");
+    private static final Dimension buttonSize = new Dimension(124,27);
+    public static final Color BUTTON_COLOR = Color.decode("#aeb4b8");
+    public static final Color BUTTON_SELECTED_COLOR = Color.decode("#cadbde");
 
     private String name;
     private List<Algorithm> algos;
@@ -49,10 +51,12 @@ public class AlgoBox extends JPanel{
         this.setVisible(true);
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -62,10 +66,8 @@ public class AlgoBox extends JPanel{
         ToolButton algoButton = new ToolButton(algo.getName(),BUTTON_COLOR,BUTTON_SELECTED_COLOR,null);
         algoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         algoButton.setMaximumSize(buttonSize);
-        algoButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                window.selectAlgo(algo);
-            }
+        algoButton.addActionListener((ActionEvent e) -> {
+            window.selectAlgo(algo);
         });
         
         this.add(algoButton);

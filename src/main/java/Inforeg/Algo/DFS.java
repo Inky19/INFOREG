@@ -28,6 +28,7 @@ public class DFS extends Algorithm implements AlgorithmS {
             res += s + " | ";
         }
         d.setResultat(res);
+        d.algoFinished();
     }
     
     private void dfsRecursive(int current, boolean[] visited, LinkedList<String> order, Draw d){
@@ -51,7 +52,7 @@ public class DFS extends Algorithm implements AlgorithmS {
         if (d.isAuto()){
             process(d, d.getNodes().get(0));
         } else {
-            d.setSt(true);
+            d.setStatus(Draw.ALGO_INPUT);
         }
     }
 

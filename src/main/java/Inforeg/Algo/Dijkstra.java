@@ -23,7 +23,7 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
     
     @Override
     public void process(Draw d) {
-        d.setSt(true);
+        d.setStatus(Draw.ALGO_INPUT);
     }
     
     /**
@@ -123,6 +123,7 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
                     + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + ".");
         } else {
             d.repaint();
+            d.algoFinished();
             d.setResultat("Il existe un plus court chemin entre les sommets "
                     + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel()
                     + ", de distance " + dist[dest] + ".");

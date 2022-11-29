@@ -97,6 +97,7 @@ public class PrimMST extends Algorithm implements AlgorithmS, Processing {
                 }
             }
             d.setResultat("L'arbre couvrant minimal du graphe a un poids de " + p + ".");
+            d.algoFinished();
             //JOptionPane.showMessageDialog(null, "L'arbre couvrant minimal du graphe a un poids de " + p + ".", "Prim MST", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null, "Le graphe n'est pas connexe !", "Prim MST", JOptionPane.INFORMATION_MESSAGE);
@@ -122,7 +123,7 @@ public class PrimMST extends Algorithm implements AlgorithmS, Processing {
         if (d.isAuto()){
             process(d, d.getNodes().get(0));
         } else {
-            d.setSt(true);
+            d.setStatus(Draw.ALGO_INPUT);
         }
     }
 
