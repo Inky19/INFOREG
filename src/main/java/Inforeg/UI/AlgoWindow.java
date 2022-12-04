@@ -30,6 +30,7 @@ public class AlgoWindow extends JDialog{
     public AlgoWindow(JFrame frame, Draw d){
         
         super(frame, "Liste des algorithmes");
+        this.setResizable(false);
         this.d = d;
         
         this.setSize(500, 500);
