@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg;
 
 import java.awt.Cursor;
@@ -12,7 +8,7 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 
 /**
- *
+ * Classe qui charge l'ensemble des ressources du logiciel
  * @author Rémi
  */
 public abstract class AssetLoader {
@@ -39,6 +35,7 @@ public abstract class AssetLoader {
     public static final ImageIcon pinIco = new ImageIcon(getURL("asset/icons/pin.png"));
     public static final ImageIcon previousIco = new ImageIcon(getURL("asset/icons/previous.png"));
     public static final ImageIcon nextIco = new ImageIcon(getURL("asset/icons/next.png"));
+    public static final ImageIcon resetIco = new ImageIcon(getURL("asset/icons/reset.png"));
     // Cursor
     public static final Cursor pinCursor = tkit.createCustomCursor(pinImg, new Point(3,29), "pinCursor");
     public static final Cursor paintCursor = tkit.createCustomCursor(paintImg, new Point(3,29), "paintCursor");

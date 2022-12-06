@@ -25,6 +25,7 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
@@ -501,15 +502,13 @@ public abstract class Interface {
         JLabel l2 = new JLabel("  Traitement :");
         toolBarButtons.add(l2);
         toolBarButtons.addSeparator();
-
+        
         ToolButton connexeButton = new ToolButton("Connexe",AlgoBox.BUTTON_COLOR,AlgoBox.BUTTON_SELECTED_COLOR,null);
         connexeButton.setHorizontalAlignment(SwingConstants.CENTER);
         connexeButton.setMaximumSize(new Dimension(buttonSize.width, connexeButton.getMaximumSize().height));
-        connexeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                mode = TRAITEMENT_MODE;
-                connexe();
-            }
+        connexeButton.addActionListener((ActionEvent e) -> {
+            mode = TRAITEMENT_MODE;
+            connexe();
         });
         toolBarButtons.add(connexeButton);
         toolBarButtons.addSeparator();
@@ -892,6 +891,7 @@ public abstract class Interface {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 ActionMenu.deleteNode(d, n);
+                d.getTransitions().push();
             }
 
         });

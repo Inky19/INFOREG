@@ -34,7 +34,9 @@ public abstract class ActionMenu {
             String currentLbl = n.getLabel();
             n.setLabel(lbl);
             d.repaint();
-            d.getTransitions().createLog(History.LABEL_NODE, n, currentLbl, lbl);
+            History t = d.getTransitions();
+            t.createLog(History.LABEL_NODE, n, currentLbl, lbl);
+            t.push();
         }
     }
 
@@ -56,7 +58,8 @@ public abstract class ActionMenu {
         }
         d.getG().removeNode(n);
         d.repaint();
-        d.getTransitions().createLog(History.REMOVE_NODE, n);
+        History t = d.getTransitions();
+        t.createLog(History.REMOVE_NODE, n);
     }
     
     /**
@@ -68,7 +71,9 @@ public abstract class ActionMenu {
     public static void deleteArc(Draw d, Arc a) {
         d.getG().removeLine(a);
         d.repaint();
-        d.getTransitions().createLog(History.REMOVE_ARC, a);
+        History t = d.getTransitions();
+        t.createLog(History.REMOVE_ARC, a);
+        t.push();
     }
 
     
@@ -111,7 +116,10 @@ public abstract class ActionMenu {
             line.setPoids(pds);
             d.repaint();
             // On ajoute l'action à la pile
-            d.getTransitions().createLog(History.LABEL_ARC, line, Integer.toString(currentPds), text);
+            History t = d.getTransitions();
+            t.createLog(History.LABEL_ARC, line, Integer.toString(currentPds), text);
+            t.push();
+            
         } catch (Exception e) {
             System.out.println("Pas un entier !");
         }
