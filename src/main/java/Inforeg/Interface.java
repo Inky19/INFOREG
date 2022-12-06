@@ -11,8 +11,9 @@ import Inforeg.Algo.AlgorithmST;
 import static Inforeg.AssetLoader.*;
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.Arc;
-import Inforeg.Save.ExportLatex;
+import Inforeg.Save.ExportLatexOLD;
 import Inforeg.ObjetGraph.Node;
+import Inforeg.Save.ExportLatex;
 import Inforeg.Save.saveManager;
 import Inforeg.UI.AlgoBox;
 import Inforeg.UI.AlgoWindow;
@@ -720,8 +721,7 @@ public abstract class Interface {
         exportLatex.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                ExportLatex frameLatex = new ExportLatex();
-                frameLatex.frameLatex(d);
+                ExportLatex.export(frame, d);
             }
         });
         exporter.add(exportLatex);
@@ -811,6 +811,7 @@ public abstract class Interface {
         //clear(colorSample);
     }
 
+    
     /*
      *   Méthodes suivantes incertaines/inutiles pour l'instant
      */

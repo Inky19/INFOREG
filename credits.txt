@@ -1,0 +1,12 @@
+Icons :
+
+- "Color", "label", "select", "move"
+  icons from Remix Icon under Apache2 license
+  https://github.com/Remix-Design/remixicon
+
+- "Fit to screen"
+   icon by harits prabowo
+   https://freeicons.io/profile/9037
+   Free commercial use license
+
+
