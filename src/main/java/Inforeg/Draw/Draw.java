@@ -42,11 +42,9 @@ import javax.swing.JSlider;
 import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
 import Inforeg.UI.Vector2D;
-import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
@@ -54,11 +52,13 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
     private Interface inter;
     /**
-     * Piles Ctrl+Z et Ctrl+Y *
+     * Piles Ctrl+Z et Ctrl+Y.
      */
     private History transitions = new History();
+    /**
+     * Mode étape par étape
+     */
     public StepByStep stepBysStep;
-    //Pour les Nœuds :
     /**
      * Rayon intial des cercles représentants les Nœuds
      */
@@ -68,36 +68,36 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      */
     private static double nodeRadius = RINIT;
     /**
-     * Nombre maximum de nœuds d'un graphe, défini dans la classe Graph
-     */
-    public static final int MAX = 1000;
-    /**
-     * Liste des cerlces représentant les Nœuds
-     */
-    //private ArrayList<Node> nodes = new ArrayList<>();
-    /**
-     * Indice du dernier cercle sélectionné, initialisé à -1
+     * Noeud sous le curseur de la souris, null si aucun.
      */
     private Node currentNode = null;
+    /**
+     * Clou sous le curseur de la souris, null si aucun.
+     */
     private Nail currentNail = null;
+    /**
+     * Arc sous le curseur de la souris, null si aucun.
+     */
     private Arc currentArc = null;
-    //private static int countArcClicks = 0;
     /**
      * Couleur courante de la classe, initilisée à bleue
      */
     private Color currentColor = Color.BLUE;
+    /**
+     *
+     */
     private JLabel info;
     private JLabel infoTop;
-    
-    public boolean move;
-    // Position précédente avant un déplacement
-    private Vector2D prevPos;
-    
+    /**
+     *
+     */
+    private boolean move;
+
     /**
      * Dernier algorithme associé à l'onglet
      */
     private Algorithm algo;
-    
+
     /**
      * Active la sélection d'un nœud source et d'un nœud de destination.
      */
@@ -106,11 +106,6 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public static final int ALGO_INPUT = 1;
     public static final int ALGO_FINISH = 2;
 
-    /**
-     * Valeur du prochain id disponible pour créer un noeud
-     */
-    private int nextNodeId;
-    
     private Node src = null;
     private Node dest = null;
     public boolean oriente;
@@ -118,20 +113,11 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     private String pathSauvegarde = " ";
     private String fileName;
     private String resultat;
-
-    //Pour les Arcs :
     /**
      * Dernier Nœud sur lequel on a passé la souris
      */
     private Node fromPoint = null;
-    /**
-     * Liste des Arcs
-     */
-    //private ArrayList<MyLine> lines = new ArrayList<>();
-    /**
-     * Arc courant
-     */
-    //private int currentArcIndex = -1;
+    private boolean multiselected = false;
     /**
      * Initial Line width
      */
@@ -172,14 +158,17 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     //Camera
     private Point currentMousePosition;
     private Point currentCameraPosition;
-    private Point camera = new Point(0,0);
+    private Point camera = new Point(0, 0);
     private float zoom = 100f;
     private static final int MAX_ZOOM = 1000;
     private static final int MIN_ZOOM = 50;
 
-
-    
-
+    /**
+     * Constructeur d'une nouvelle fenêtre de dessin.
+     *
+     * @param oriente true pour un graphe orienté
+     * @param pondere true pour un graphe pondéré
+     */
     public Draw(boolean oriente, boolean pondere) {
         resultat = "";
         this.oriente = oriente;
@@ -187,10 +176,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         this.pondere = pondere;
         this.status = 0;
         this.stepBysStep = new StepByStep();
-        
+
         move = false;
         fileName = "";
-        nextNodeId = 0;
         infoTop = new JLabel();
         infoTop.setHorizontalAlignment(SwingConstants.CENTER);
         infoTop.setFont(new Font("Dialog", Font.BOLD, 15));
@@ -217,15 +205,15 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             zoomLabel.setText(value + "%");
             repaint();
         });
-        
+
         JButton fitToScreen = new JButton(AssetLoader.fitIco);
         fitToScreen.setPreferredSize(new Dimension(24, 24));
         fitToScreen.addActionListener((ActionEvent e) -> {
             fitScreen();
         });
         info = new JLabel();
-        bottomLayout.add(info,BorderLayout.WEST);
-        tools.add(fitToScreen);        
+        bottomLayout.add(info, BorderLayout.WEST);
+        tools.add(fitToScreen);
         tools.add(zoomSlider);
         tools.add(zoomLabel);
         tools.setFloatable(false);
@@ -244,13 +232,13 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent evt) {
-                
+
                 currentMousePosition = evt.getLocationOnScreen();
                 currentCameraPosition = new Point(camera);
-                
-                switch (evt.getButton()){
-                    case MouseEvent.BUTTON1:
-                        
+
+                switch (evt.getButton()) {
+                    case MouseEvent.BUTTON1: // Left Click
+
                         if (inter.getMode() == Interface.EDITION_MODE) {
                             int x = evt.getX();
                             int y = evt.getY();
@@ -259,14 +247,15 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             currentArc = findArc(x, y);
                             currentNail = findNail(x, y);
                             // Si on souhaite ajouter un Nœud :
-                            switch (inter.getActiveTool()){
+                            switch (inter.getActiveTool()) {
                                 case Interface.NOEUD_TOOL -> {
                                     if (currentNode == null && currentNail == null) { // not inside a circle
                                         addNode(x, y);
                                         // On ajoute l'action à la pile
                                         transitions.createLog(History.ADD_NODE, G.getNodes().get(G.getNodes().size() - 1));
+                                        transitions.push();
                                     }
-                        }
+                                }
                                 case Interface.LABEL_TOOL -> {
                                     if (currentNode != null) { // inside a circle
 
@@ -277,20 +266,20 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                             ActionMenu.setPoids(d, currentArc);
                                         }
                                     }
-                        }
+                                }
                                 case Interface.COLOR_TOOL -> {
-                                    if (currentNode != null){
+                                    if (currentNode != null) {
                                         ActionMenu.colorNode(d, currentNode, inter.getColor());
                                     } else if (currentArc != null) {
                                         ActionMenu.colorArc(d, currentArc, inter.getColor());
                                     }
-                        }
+                                }
                                 case Interface.PIN_TOOL -> {
                                     if (currentNail == null) {
                                         currentNail = addNail(x, y);
-                                        updateCursor(false,true, false);
+                                        updateCursor(false, true, false);
                                     }
-                        }
+                                }
                                 case Interface.ARC_TOOL -> {
                                     if ((currentNode != null) && (fromPoint == null)) {
                                         fromPoint = currentNode;
@@ -298,8 +287,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                     } else if (fromPoint != null && currentNode == null) {
                                         fromPoint.setSelect(false);
                                         fromPoint = null;
-                                    }  
-                                    else if ((currentNode != null) && (fromPoint != null)) { // inside circle
+                                    } else if ((currentNode != null) && (fromPoint != null)) { // inside circle
                                         Node p = currentNode;
                                         p.setSelect(true);
                                         repaint();
@@ -312,18 +300,17 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                                     addLine(newLine);
                                                     // On ajoute l'action à la pile
                                                     transitions.createLog(History.ADD_ARC, newLine);
+                                                    transitions.push();
                                                 }
                                                 fromPoint.setSelect(false);
                                                 fromPoint = null;
-                                                
-                                                
+
                                             } catch (Exception e) {
                                                 System.out.println("Pas un entier !");
-                                                //fromPoint = null;
                                             } finally {
-                                                if (fromPoint!=null) {
+                                                if (fromPoint != null) {
                                                     fromPoint.setSelect(false);
-                                                    fromPoint = null;                                                    
+                                                    fromPoint = null;
                                                 }
 
                                             }
@@ -333,42 +320,55 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                                 addLine(newLine);
                                                 // On ajoute l'action à la pile
                                                 transitions.createLog(History.ADD_ARC, newLine);
+                                                transitions.push();
                                             }
                                             fromPoint.setSelect(false);
                                             fromPoint = null;
                                         }
                                         p.setSelect(false);
-                                
+
                                     }
                                     repaint();
-                        }
-                                
+                                }
+
                                 case Interface.SELECT_TOOL -> {
-                                    if (currentNode == null && currentNail == null) {//not on circle or arc
+                                    if (currentNode == null && currentNail == null) { //not on circle or arc
                                         deselectAll();
                                         selectXstart = x;
                                         selectYstart = y;
+                                    } else {
+                                        for (Node n : G.getNodes()) {
+                                            if (n.isSelected()) {
+                                                n.prevPos = new Vector2D(n.cx, n.cy);
+                                            }
+                                        }
+                                        for (Arc a : G.getLines()) {
+                                            for (Nail nail : a.getNails()) {
+                                                if (nail.selected) {
+                                                    nail.prevPos = new Vector2D(nail.cx, nail.cy);
+                                                }
+                                            }
+                                        }
                                     }
-                        }
+                                }
                             }
-                    // Si on souhaite ajouter un label à un Nœud :
-                            if (inter.getActiveTool() != Interface.SELECT_TOOL){
-                                    deselectAll();
+                            if (inter.getActiveTool() != Interface.SELECT_TOOL) {
+                                deselectAll();
                             }
                         }
                         break;
-                    case MouseEvent.BUTTON3:
-                        if ((inter.getMode() == Interface.EDITION_MODE)){
+                    case MouseEvent.BUTTON3: // Right click
+                        if ((inter.getMode() == Interface.EDITION_MODE)) {
                             int x = evt.getX();
                             int y = evt.getY();
                             Node n = findNode(x, y);
                             Arc a = findArc(x, y);
-                            if (n != null){
+                            if (n != null) {
                                 inter.rightClickNode(n, x, y);
-                            } else if(a != null) {
+                            } else if (a != null) {
                                 inter.rightClickArc(a, x, y);
                             }
-                        } 
+                        }
 
                         break;
                 }
@@ -378,47 +378,60 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             public void mouseReleased(MouseEvent evt) {
                 move = false;
                 repaint();
-                switch (evt.getButton()){
+                switch (evt.getButton()) {
                     case MouseEvent.BUTTON1: // Clic gauche
                         if (inter.getMode() == Interface.EDITION_MODE) {
                             int x = evt.getX();
                             int y = evt.getY();
                             // Vérifie si on clique où non sur un cercle existant
                             currentNode = findNode(x, y);
-                            if (currentNode != null && prevPos!=null) {
-                                Node n = currentNode;
-                                transitions.createLog(History.MOVE_NODE, n, prevPos.x, prevPos.y, n.getCx(), n.getCy());
-                                prevPos = null;
+                            if (currentNode != null && currentNode.prevPos != null) {
+                                transitions.createLog(History.MOVE_NODE, currentNode, currentNode.prevPos.x, currentNode.prevPos.y, currentNode.getCx(), currentNode.getCy());
+                                transitions.push();
+                                currentNode.prevPos = null;
                             }
-                            if (currentNail !=null && prevPos!=null) {
+                            if (currentNail != null && currentNail.prevPos != null) {
                                 //Nail n = G.getLines().get(currentArcIndex).getClou();
-                                transitions.createLog(History.MOVE_NAIL, currentNail, prevPos.x, prevPos.y, currentNail.getCx(), currentNail.getCy());
-                                prevPos = null;
+                                transitions.createLog(History.MOVE_NAIL, currentNail, currentNail.prevPos.x, currentNail.prevPos.y, currentNail.getCx(), currentNail.getCy());
+                                transitions.push();
+                                currentNail.prevPos = null;
                             }
                         }
                         if (inter.getActiveTool() == inter.SELECT_TOOL) {
-                            drawZone = false;
-                            for (Node n: G.getNodes()){
-                                int x = (int) n.getCenterX();
-                                int y = (int) n.getCenterY();
-                                if (zoneR.contains(x, y)) {
+                            for (Node n : G.getNodes()) {
+                                if (multiselected && n.isSelected() && n.prevPos != null) {
+                                    transitions.createLog(History.MOVE_NODE, n, n.cx, n.cy, n.prevPos.x, n.prevPos.y);
+                                    System.out.println(n);
+                                    n.prevPos = null;
+                                } else if (zoneR.contains(n.getCenterX(), n.getCenterY())) {
                                     n.setMultiSelected(true);
+                                    
+                                    multiselected = true;
                                 }
                             }
-                            for (Arc a: G.getLines()){
-                                for (Nail n : a.getNails()) {
-                                    if (zoneR.contains(n.x, n.y)) {
-                                        n.selected = true;
+                            for (Arc a : G.getLines()) {
+                                for (Nail nail : a.getNails()) {
+                                    if (nail.prevPos != null && multiselected == true) {
+                                        transitions.createLog(History.MOVE_NAIL, nail, nail.cx, nail.cy, nail.prevPos.x, nail.prevPos.y);
+                                        System.out.println(nail);
+                                        nail.prevPos = null;
+                                    }
+                                    if (zoneR.contains(nail.getCenterX(), nail.getCenterY())) {
+                                        nail.selected = true;
+                                        multiselected = true;
                                     }
                                 }
                             }
+                            if (multiselected == true && drawZone == false) {
+                                System.out.println("oui");
+                                transitions.push();
+                            }
+                            drawZone = false;
                             repaint();
                         }
                         break;
-                      
+
                 }
-                
-                 
             }
 
             @Override
@@ -428,53 +441,57 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     int x = evt.getX();
                     int y = evt.getY();
                     //currentArcIndex = oldFindArc(x, y);
-                    currentNail = findNail(x ,y);
+                    currentNail = findNail(x, y);
                     currentArc = findArc(x, y);
                     currentNode = findNode(x, y);
                     // Si on clique deux fois sur un Nœud, on le supprime
                     if (inter.getActiveTool() == Interface.NOEUD_TOOL && currentNode != null) {
                         if (evt.getClickCount() >= 2) {
                             ActionMenu.deleteNode(d, currentNode);
+                            transitions.push();
                         }
                     }
                     if (inter.getActiveTool() == inter.ARC_TOOL) {
                         if (evt.getClickCount() >= 2 && currentArc != null && currentNode == null) {
                             transitions.createLog(History.REMOVE_ARC, currentArc);
+                            transitions.push();
                             G.removeLine(currentArc);
                         }
                     }
-                    
+
                     if (inter.getActiveTool() == Interface.PIN_TOOL) {
                         if (evt.getClickCount() >= 2 && currentNail != null) {
                             transitions.createLog(History.REMOVE_NAIL, currentNail);
+                            transitions.push();
                             currentNail.delete();
                         }
                     }
-                    
-                    
+
                     if (inter.getActiveTool() == inter.SELECT_TOOL) {
                         if (currentNode == null && currentNail == null) {//not on circle or arc
-                            for (Node n: G.getNodes()){
+                            for (Node n : G.getNodes()) {
                                 n.setMultiSelected(false);
+                                n.prevPos = null;
                             }
-                            for (Arc a: G.getLines()){
+                            for (Arc a : G.getLines()) {
                                 a.setSelected(false);
                             }
                         }
+
                     }
                 }
                 if (inter.getMode() == inter.TRAITEMENT_MODE) {
-                    if (status==ALGO_INPUT) {
+                    if (status == ALGO_INPUT) {
                         int x = evt.getX();
                         int y = evt.getY();
-                        
-                        if ((algo) instanceof AlgorithmST){
+
+                        if ((algo) instanceof AlgorithmST) {
                             if (src == null) {
-                            
+
                                 src = findNode(x, y);
                                 if (src != null) {
-                                   src.setColorDisplayed(Color.GREEN); 
-                                   infoTop.setText("Sélectionner le nœud de destination");
+                                    src.setColorDisplayed(Color.GREEN);
+                                    infoTop.setText("Sélectionner le nœud de destination");
                                 }
                                 repaint();
                             } else if (dest == null) {
@@ -496,7 +513,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                             }
                         } else if (algo instanceof AlgorithmS) {
                             src = findNode(x, y);
-                            if (src != null){
+                            if (src != null) {
                                 repaint();
                                 ((AlgorithmS) algo).process(d, src);
                                 status = ALGO_NEUTRAL;
@@ -512,25 +529,29 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
     }
 
-    //Méthode permettant de draw les éléments.
+    /**
+     * Méthode d'affichage de la zone de dessin.
+     *
+     * @param g
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Toolkit.getDefaultToolkit().sync();
         /* Anti aliasing
         To reduce lag on linux and mac, anti-aliasing is used only when move is true 
-        */ 
-        if (!move){
+         */
+        if (!move) {
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
-        
+
         //order : draw line puis draw circles
-        for (Arc a: G.getLines()){
+        for (Arc a : G.getLines()) {
             a.paint(this, (Graphics2D) g);
         }
         // Draw circles
-        for (Node n : G.getNodes()){
-            n.paint(this, (Graphics2D) g);  
+        for (Node n : G.getNodes()) {
+            n.paint(this, (Graphics2D) g);
         }
         // Multiselect zone
         if (Draw.drawZone) {
@@ -549,26 +570,27 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public Vector2D toDrawCoordinates(double x, double y) {
         Rectangle r = this.getBounds();
         int W = r.width, H = r.height;
-        int w = (int) (W * 100/zoom);
-        int h = (int) (H * 100/zoom);
-        int newX = (int) (( x - camera.x + w/2) * zoom/100);
-        int newY = (int) (( y - camera.y + h/2) * zoom/100);
-        return new Vector2D(newX,newY);
+        int w = (int) (W * 100 / zoom);
+        int h = (int) (H * 100 / zoom);
+        int newX = (int) ((x - camera.x + w / 2) * zoom / 100);
+        int newY = (int) ((y - camera.y + h / 2) * zoom / 100);
+        return new Vector2D(newX, newY);
     }
-    
+
     public Vector2D toDrawCoordinates(Vector2D p) {
         return toDrawCoordinates(p.x, p.y);
     }
-    
-    
+
     /**
      * Renvoie le nœud correspondant à l'id en paramètre dans la liste nodes.
+     *
      * @param id Id du nœud recherché
-     * @return Nœud correspondant à l'id en paramètre. Renvoie null si non trouvé.
+     * @return Nœud correspondant à l'id en paramètre. Renvoie null si non
+     * trouvé.
      */
-    public Node getNodeFromId(int id){
-        for (Node node: G.getNodes()){
-            if (node.getId() == id){
+    public Node getNodeFromId(int id) {
+        for (Node node : G.getNodes()) {
+            if (node.getId() == id) {
                 return node;
             }
         }
@@ -585,20 +607,20 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public Vector2D toGlobalCoordinates(double x, double y) {
         Rectangle r = this.getBounds();
         int W = r.width, H = r.height;
-        int w = (int) (W * 100/zoom);
-        int h = (int) (H * 100/zoom);
-        int newX = (int) (x * 100 / zoom + camera.x - w/2);
-        int newY = (int) (y * 100 / zoom + camera.y - h/2);        
-        return new Vector2D(newX,newY);
+        int w = (int) (W * 100 / zoom);
+        int h = (int) (H * 100 / zoom);
+        int newX = (int) (x * 100 / zoom + camera.x - w / 2);
+        int newY = (int) (y * 100 / zoom + camera.y - h / 2);
+        return new Vector2D(newX, newY);
     }
 
     public Vector2D toGlobalCoordinates(Vector2D p) {
         return toGlobalCoordinates(p.x, p.y);
     }
-    
-    
+
     /**
      * Redimensionne une dimension à l'échelle de la zone de dessin
+     *
      * @param h
      * @return
      */
@@ -608,6 +630,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
     /**
      * Redimensionne une dimension à l'échelle globale.
+     *
      * @param h
      * @return
      */
@@ -631,9 +654,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         }
         return null;
     }
-    
+
     /**
-     * 
+     *
      * @param x
      * @param y
      * @return Un clou à la position (x,y) si il existe, null sinon.
@@ -649,9 +672,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         }
         return null;
     }
-    
+
     /**
-     * 
+     *
      * @param x
      * @param y
      * @return Un arc à la position (x,y) si il existe, null sinon.
@@ -659,13 +682,12 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public Arc findArc(int x, int y) {
         Vector2D v = toGlobalCoordinates(x, y);
         for (Arc arc : this.getLines()) {
-            if (arc.contains((int)v.x, (int)v.y)) {
+            if (arc.contains((int) v.x, (int) v.y)) {
                 return arc;
             }
         }
         return null;
     }
-    
 
     /**
      * Ajoute un cercle dans la liste nodes et actualise l'affichage
@@ -675,29 +697,26 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      */
     public void addNode(double x, double y) {
         inter.tabSaved(false);
-        nextNodeId++;
         //On ajoute un cercle à la liste nodes et on actualise les attributs concernés
-        Vector2D v = toGlobalCoordinates((int)x,(int)y);
+        Vector2D v = toGlobalCoordinates((int) x, (int) y);
         //G.addNode(new Node(v.x, v.y, nodeRadius, String.valueOf(G.getNodes().size()), nextNodeId));
         G.addNode(v.x, v.y, nodeRadius);
-        currentNode = G.getNodes().get(G.getNodes().size()-1);
+        currentNode = G.getNodes().get(G.getNodes().size() - 1);
         //On actualise l'affichage avec le nouveau cercle
         repaint();
     }
-    
+
     public Nail addNail(double x, double y) {
         if (currentArc != null) {
             Vector2D pos = toGlobalCoordinates(x, y);
-            Nail nail = new Nail(pos.x,pos.y);
+            Nail nail = new Nail(pos.x, pos.y);
             currentArc.addNail(nail);
             repaint();
-            return nail; 
+            return nail;
         }
         return null;
     }
-    
-    
-    
+
     @Deprecated
     public int find(Ellipse2D.Double circ) {
         boolean trouve = false;
@@ -724,33 +743,34 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public void addLine(Arc line) {
         inter.tabSaved(false);
         G.addLine(line);
-        repaint(); 
+        repaint();
     }
 
     public Arc findLine(int src, int dest) {
         return G.findLine(src, dest);
     }
-    
+
     public Arc findLine(Node from, Node to) {
         return G.findLine(from, to);
     }
-    
+
     public Node getNode(int ind) {
         return G.getNode(ind);
     }
-   
+
     /**
      * Permet de changer l'état de l'indicateur de sauvegarde de l'onglet.
-     * @param saved 
+     *
+     * @param saved
      */
-    public void saveState(boolean saved){
+    public void saveState(boolean saved) {
         inter.tabSaved(saved);
     }
-    
+
     public void removeLine(Arc arc) {
         inter.tabSaved(false);
         G.removeLine(arc);
-        repaint(); 
+        repaint();
     }
 
     @Deprecated
@@ -775,7 +795,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         Nail nail = findNail(x, y);
         Arc arc = findArc(x, y);
         // Show info
-        if (nail!=null) {
+        if (nail != null) {
             info.setText(nail.arc.toString());
         } else if (n != null) {
             info.setText(n.toString());
@@ -785,7 +805,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             info.setText(null);
         }
         // Cursor Handling
-        updateCursor((n!=null),(nail!=null),(arc!=null));
+        updateCursor((n != null), (nail != null), (arc != null));
     }
 
     /**
@@ -807,15 +827,15 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     double transx = x - currentNode.getCx();
                     double transy = y - currentNode.getCy();
 
-                    for (Node n: G.getNodes()){
-                        if (n.isSelected()){
+                    for (Node n : G.getNodes()) {
+                        if (n.isSelected()) {
                             n.addCx(transx);
                             n.addCy(transy);
                         }
                     }
-                    for (Arc a: G.getLines()){
+                    for (Arc a : G.getLines()) {
                         for (Nail nail : a.getNails()) {
-                           if (nail.selected) {
+                            if (nail.selected) {
                                 nail.cx += transx;
                                 nail.cy += transy;
                             }
@@ -824,8 +844,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     repaint();
                 } else {
                     // On ajoute l'action à la pile
-                    if (prevPos==null) {
-                        prevPos = new Vector2D(currentNode.getCx(),currentNode.getCy());
+                    if (currentNode.prevPos == null) {
+                        currentNode.prevPos = new Vector2D(currentNode.getCx(), currentNode.getCy());
                     }
                     currentNode.updatePos(x, y);
                     zoneR = new Rectangle(Integer.MIN_VALUE, Integer.MIN_VALUE, 0, 0); //permet d'éviter qu'un ensemble de points soient toujours sélectionner
@@ -844,15 +864,15 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     double transy;
                     transy = y - currentNail.cy;
 
-                    for (Node n: G.getNodes()){
-                        if (n.isSelected()){
+                    for (Node n : G.getNodes()) {
+                        if (n.isSelected()) {
                             n.addCx(transx);
                             n.addCy(transy);
                         }
                     }
-                    for (Arc a: G.getLines()){
+                    for (Arc a : G.getLines()) {
                         for (Nail nail : a.getNails()) {
-                            if (nail.selected){
+                            if (nail.selected) {
                                 nail.cx += transx;
                                 nail.cy += transy;
                             }
@@ -860,9 +880,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                     }
                     repaint();
                 } else {
-                    Arc line = currentNail.arc;
-                    if (prevPos == null) {
-                        prevPos = new Vector2D(currentNail.cx,currentNail.cy);
+                    if (currentNail.prevPos == null) {
+                        currentNail.prevPos = new Vector2D(currentNail.cx, currentNail.cy);
                     }
                     currentNail.cx = x;
                     currentNail.cy = y;
@@ -887,17 +906,16 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                 repaint();
             }
         }
-        
+
         if (inter.getMode() == inter.DEPLACEMENT_MODE) {
             Point currentScreenLocation = event.getLocationOnScreen();
             camera.x = (int) (currentCameraPosition.x + toGlobalScale(currentMousePosition.x - currentScreenLocation.x));
             camera.y = (int) (currentCameraPosition.y + toGlobalScale(currentMousePosition.y - currentScreenLocation.y));
             Draw.drawZone = false;
-                       
+
             repaint();
         }
-        
-        
+
         if (inter.getMode() == inter.TRAITEMENT_MODE) {
             Draw.drawZone = false;
             repaint();
@@ -908,16 +926,15 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         for (Node n : G.getNodes()) {
             n.reinit();
         }
-        for (Arc a: G.getLines()){
+        for (Arc a : G.getLines()) {
             a.reinit();
         }
     }
 
-    public void doRedraw(){
-         getTopLevelAncestor().revalidate();
-         getTopLevelAncestor().repaint();
-     }
-    
+    public void doRedraw() {
+        getTopLevelAncestor().revalidate();
+        getTopLevelAncestor().repaint();
+    }
 
     /**
      *
@@ -935,7 +952,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             double factor = getTailleCirc();
             nodeRadius = factor * Draw.RINIT;
             //lineWidth = (float) factor*Draw.LINIT;
-            for (Node n: G.getNodes()){
+            for (Node n : G.getNodes()) {
                 n.updateSize(nodeRadius);
             }
             repaint();
@@ -951,8 +968,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             double factor = (float) inter.getEpaisseur() / 5;
             lineWidth = (float) factor * Arc.DEFAULT_LINE_WIDTH;
             System.out.println(lineWidth);
-            for (Arc l: G.getLines()){
-                l.width = (int)lineWidth;
+            for (Arc l : G.getLines()) {
+                l.width = (int) lineWidth;
             }
             repaint();
         }
@@ -964,30 +981,35 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public void exportGraphe() {
         G.updateVariable();
     }
-    
+
     private void deselectAll() {
-        for (Node n: G.getNodes()){
+        for (Node n : G.getNodes()) {
             n.setMultiSelected(false);
+            n.prevPos = null;
         }
-        for (Arc a: G.getLines()){
+        for (Arc a : G.getLines()) {
             a.setSelected(false);
+            for (Nail nail : a.getNails()) {
+                nail.prevPos = null;
+            }
         }
+        multiselected = false;
     }
-    
-    public void deleteSelected(){
+
+    public void deleteSelected() {
         ArrayList<Node> deletedNodes = new ArrayList<>();
-        for (Node n: G.getNodes()){
-            if (n.isSelected()){
+        for (Node n : G.getNodes()) {
+            if (n.isSelected()) {
                 System.out.println(n.getLabel());
                 deletedNodes.add(n);
             }
         }
-        for (Node n: deletedNodes){
+        for (Node n : deletedNodes) {
             ActionMenu.deleteNode(this, n);
         }
+        transitions.push();
     }
-    
-    
+
     private void updateCursor(boolean onNode, boolean onNail, boolean onArc) {
         switch (Interface.getMode()) {
             case Interface.EDITION_MODE -> {
@@ -998,28 +1020,28 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         } else {
                             setCursor(Cursor.getDefaultCursor());
                         }
-                }
+                    }
                     case Interface.NOEUD_TOOL -> {
                         if (onNode) {
                             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         } else {
                             setCursor(Cursor.getDefaultCursor());
                         }
-                }
+                    }
                     case Interface.SELECT_TOOL -> {
-                        if (onNode || (onNail || onArc)) { 
+                        if (onNode || (onNail || onArc)) {
                             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         } else {
                             setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
                         }
-                }
+                    }
                     case Interface.ARC_TOOL -> {
-                        if (onArc) {
+                        if (onArc || onNode) {
                             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                         } else {
                             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                         }
-                }
+                    }
                     case Interface.PIN_TOOL -> {
                         if (onNail) {
                             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -1028,34 +1050,38 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         } else {
                             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                         }
-                }
+                    }
                     case Interface.COLOR_TOOL -> {
-                        if (onArc||onNode) {
+                        if (onArc || onNode) {
                             setCursor(AssetLoader.paintCursor);
                         } else {
                             setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
                         }
-                }
+                    }
                 }
             }
-            case Interface.DEPLACEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-            case Interface.TRAITEMENT_MODE -> setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+            case Interface.DEPLACEMENT_MODE ->
+                setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+            case Interface.TRAITEMENT_MODE ->
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         }
     }
-    
+
     public void setInfoText(String text) {
         infoTop.setText(text);
     }
-    
+
     public String getInfoText() {
         return infoTop.getText();
     }
 
+    /**
+     * Affiche les résultats lorsque lorsque l'algorithme est terminé
+     */
     public void algoFinished() {
         inter.showResult();
     }
-    
-    
+
     private void fitScreen() {
         ArrayList<Node> nodes = G.getNodes();
         if (!nodes.isEmpty()) {
@@ -1064,37 +1090,36 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             Double maxX = -10000d;
             Double maxY = -10000d;
             for (Node n : nodes) {
-                minX = Double.min(n.getCx(),minX);
-                minY = Double.min(n.getCy(),minY);
-                maxX = Double.max(n.getCx(),maxX);
-                maxY = Double.max(n.getCy(),maxY);    
+                minX = Double.min(n.getCx(), minX);
+                minY = Double.min(n.getCy(), minY);
+                maxX = Double.max(n.getCx(), maxX);
+                maxY = Double.max(n.getCy(), maxY);
             }
             for (Arc a : G.getLines()) {
                 for (Nail n : a.getNails()) {
-                    minX = Double.min(n.getCx(),minX);
-                    minY = Double.min(n.getCy(),minY);
-                    maxX = Double.max(n.getCx(),maxX);
-                    maxY = Double.max(n.getCy(),maxY);  
-                }  
+                    minX = Double.min(n.getCx(), minX);
+                    minY = Double.min(n.getCy(), minY);
+                    maxX = Double.max(n.getCx(), maxX);
+                    maxY = Double.max(n.getCy(), maxY);
+                }
             }
-            float zoomX = (float) (90*Draw.this.getBounds().getWidth()/(maxX-minX+2*Draw.nodeRadius));
-            float zoomY = (float) (90*Draw.this.getBounds().getHeight()/(maxY-minY+2*Draw.nodeRadius));
-            zoom = (int)Float.min(zoomX,zoomY);
-            zoomSlider.setValue((int)zoom);
-            zoomLabel.setText((int)zoom+"%");
-            camera = new Point((int)(maxX+minX)/2, (int)(maxY+minY)/2);
+            float zoomX = (float) (90 * Draw.this.getBounds().getWidth() / (maxX - minX + 2 * Draw.nodeRadius));
+            float zoomY = (float) (90 * Draw.this.getBounds().getHeight() / (maxY - minY + 2 * Draw.nodeRadius));
+            zoom = (int) Float.min(zoomX, zoomY);
+            zoomSlider.setValue((int) zoom);
+            zoomLabel.setText((int) zoom + "%");
+            camera = new Point((int) (maxX + minX) / 2, (int) (maxY + minY) / 2);
             move = false;
             repaint();
         }
     }
-    
-        
+
     public int getNextNodeId() {
-        return nextNodeId;
+        return G.getNextId();
     }
 
     public void setNextNodeId(int nextNodeId) {
-        this.nextNodeId = nextNodeId;
+        this.G.setNextId(nextNodeId);
     }
 
     public void setDest(Node n) {
@@ -1117,22 +1142,6 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         return this.pondere;
     }
 
-    public float getLineWidth() {
-        return this.lineWidth;
-    }
-
-    public void setLineWidth(float w) {
-        this.lineWidth = w;
-    }
-
-    public double getCircleW() {
-        return Draw.nodeRadius;
-    }
-
-    public void setCircleW(double r) {
-        Draw.nodeRadius = r;
-    }
-    
     public String getPathSauvegarde() {
         return pathSauvegarde;
     }
@@ -1148,7 +1157,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public void setOriente(boolean oriente) {
         this.oriente = oriente;
     }
-    
+
     public void setCurrentColor(Color c) {
         this.currentColor = c;
     }
@@ -1201,8 +1210,8 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     public JLabel getInfoTop() {
         return infoTop;
     }
-    
-    public boolean isAuto(){
+
+    public boolean isAuto() {
         return inter.isAuto();
     }
 }

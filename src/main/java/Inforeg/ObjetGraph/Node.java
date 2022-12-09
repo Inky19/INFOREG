@@ -20,11 +20,14 @@ public class Node extends Ellipse2D.Double implements Attachable {
     // Global coordinate of the node
     public double cx;
     public double cy;
+    public Vector2D prevPos;
     // Global radius
     private double r;
     // Color of the node
     private Color color;
+    private Color colorDisplayed;
     private Color outlineColor;
+    // Defeult color
     private final static Color MULTISELECTED_COLOR = Color.GREEN;
     private final static Color SELECTED_COLOR = Color.decode("#ddb9ff");
     private final static Color DEFAULT_COLOR = Color.WHITE;
@@ -36,8 +39,7 @@ public class Node extends Ellipse2D.Double implements Attachable {
     // Whether or not the node is selected
     private boolean multiSelected;
     private boolean selected;
-    // Color displayed by the node
-    private Color colorDisplayed;
+
     
     public Node(){
         super();
@@ -207,7 +209,7 @@ public class Node extends Ellipse2D.Double implements Attachable {
         this.selected = false;
         this.multiSelected = false;
     }
-    
+      
     @Override
     public String toString() {
         return "Noeud | label: " + label +", x: " + cx + ", y: " + cy + " |";

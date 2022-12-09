@@ -8,7 +8,7 @@ import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.Node;
 
 /**
- *
+ * Algorithmes qui demandent un noeud de départ.
  * @author inky19
  */
 public interface AlgorithmS {

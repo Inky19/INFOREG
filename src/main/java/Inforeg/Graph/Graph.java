@@ -19,7 +19,7 @@ import java.util.Map.Entry;
 public class Graph {
 
     /**
-     * Nombre de Noeuds du Graph
+     * Nombre de Noeuds du Graphe
      */
     protected int nbsommets;
     boolean oriente;
@@ -30,7 +30,7 @@ public class Graph {
     private int nextId;
     // Structure de données de traitement
     protected int[][] adjMatrix;
-    private ArrayList<LinkedList<Integer>> listAdj = new ArrayList<>();
+    private final ArrayList<LinkedList<Integer>> listAdj = new ArrayList<>();
     // Passage de noeud à int
     private final HashMap<Node, Integer> hashNode;
     //private final HashMap<MyLine, Integer> hashArc;
@@ -289,6 +289,14 @@ public class Graph {
 
     public boolean isOriente() {
         return oriente;
+    }
+    
+    public int getNextId() {
+        return nextId;
+    }
+
+    public void setNextId(int nextId) {
+        this.nextId = nextId;
     }
     
     
