@@ -43,13 +43,18 @@ public class StepByStep {
     public void setInfoText(String text) {
         currentStep.add(new SetText(text));
     }
-    //
+    // Fin actions possibles
     /**
      * @return nb le nombre d'étapes enregistrées
      */
     public int getNbStep() {
         return steps.size();
     }
+    
+    public int getCurrentStepIndex() {
+        return stepIndex;
+    }
+    
     /**
      * 
      * @return true si l'étape en cours ne contient pas d'action.

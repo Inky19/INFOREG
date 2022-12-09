@@ -17,6 +17,7 @@ import Inforeg.Save.saveManager;
 import Inforeg.UI.AlgoBox;
 import Inforeg.UI.AlgoWindow;
 import Inforeg.UI.ButtonTabComponent;
+import Inforeg.UI.CheckBox;
 import Inforeg.UI.ToolButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -85,6 +86,7 @@ public abstract class Interface {
     protected JPanel paneImage;
     private JPanel resultContainer; // Contient la zone de résultats et la barre avec le bouton pour la réduire
     private JPanel resultPanel; // Zone de résultats
+    private JLabel stepByStepLabel;
     private JScrollPane resultScrollPane; // Contient la zone de résultats (resultPanel) et permet d'utiliser des barres de défilement si cette zone est trop grande.
     protected Draw d;
 
@@ -534,7 +536,7 @@ public abstract class Interface {
         algoPanel.setMaximumSize(new Dimension(buttonSize.width, Integer.MAX_VALUE));
         algoPanel.setPreferredSize(algoPanel.getMaximumSize());
         algoPanel.setAlignmentX(0);
-        ToolButton algoGo = new ToolButton("GO", Color.decode("#85fc3f"), Color.decode("#95db72"), null);
+        ToolButton algoGo = new ToolButton(playIco, null , AlgoBox.BUTTON_COLOR, null);
         algoGo.addActionListener((ActionEvent e) -> {
             if (d.getAlgo() == null) {
                 JOptionPane.showMessageDialog(null, "Aucun algorithme sélectionné.", "Algorithme", JOptionPane.INFORMATION_MESSAGE);
@@ -555,16 +557,34 @@ public abstract class Interface {
                 d.repaint();
             }
         });
-        stepByStep = new JCheckBox("Step by step");
+        ToolButton resetButton = new ToolButton(resetIco, null, AlgoBox.BUTTON_COLOR, null);
+        resetButton.addActionListener(((ActionEvent e) -> {
+            d.reinit();
+            stepBystepBar.setVisible(false);
+            d.repaint();
+        }));
+        algoPanel.add(resetButton);
+
+        JToolBar goAndReset = new JToolBar();
+        goAndReset.setBorderPainted(false);
+        goAndReset.setFloatable(false);
+        goAndReset.setOpaque(false);
+        
+        algoPanel.add(goAndReset);
+        goAndReset.add(algoGo);
+        goAndReset.add(resetButton);
+        
+        stepByStep = new CheckBox("Step by step");
         algoPanel.add(stepByStep);
-        autoStart = new JCheckBox("<html><body>Départ auto</body></html>");
+        autoStart = new CheckBox("<html><body>Départ auto</body></html>");
         autoStart.setVisible(false);
         algoPanel.add(autoStart);
-        algoPanel.add(algoGo);
+        
         stepBystepBar = new JToolBar();
+        stepBystepBar.setLayout(new BorderLayout());
         stepBystepBar.setFloatable(false);
         stepBystepBar.setBorderPainted(false);
-
+        
         previousStep = new ToolButton(previousIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
         previousStep.setFocusPainted(false);
         nextStep = new ToolButton(nextIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
@@ -573,6 +593,7 @@ public abstract class Interface {
                 nextStep.setEnabled(true);
             }
             d.stepBysStep.executePreviousStep(d);
+            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
             if (d.stepBysStep.isFirstStep()) {
                 previousStep.setEnabled(false);
             }
@@ -582,14 +603,19 @@ public abstract class Interface {
                 previousStep.setEnabled(true);
             }
             d.stepBysStep.executeNextStep(d);
+            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
             if (d.stepBysStep.isLastStep()) {
                 nextStep.setEnabled(false);
             }
         });
         stepBystepBar.setVisible(false);
         stepBystepBar.setOpaque(false);
-        stepBystepBar.add(previousStep);
-        stepBystepBar.add(nextStep);
+        
+        stepByStepLabel = new JLabel("");
+        stepBystepBar.add(stepByStepLabel,BorderLayout.NORTH);
+
+        stepBystepBar.add(previousStep, BorderLayout.WEST);
+        stepBystepBar.add(nextStep,BorderLayout.EAST);
         algoPanel.add(stepBystepBar);
 
         toolBarButtons.add(algoPanel);
@@ -1024,6 +1050,7 @@ public abstract class Interface {
     public void showResult() {
         if (stepByStep.isSelected()) {
             stepBystepBar.setVisible(true);
+            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
             previousStep.setEnabled(false);
             nextStep.setEnabled(d.stepBysStep.getNbStep() > 0);
         } else {

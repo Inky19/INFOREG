@@ -28,6 +28,7 @@ public class Line {
     public int width;
     public Color color;
     public boolean arrow = false;
+    public boolean circle = false;
 
     public Line(Attachable from, Attachable to) {
         this.p1 = from.getCenterPos();
@@ -77,7 +78,15 @@ public class Line {
         this.width = width;
         this.color = color;
     }
-
+    
+    public Line(Attachable from, Attachable to, int width, Color color, boolean circle) {
+        this.p1 = from.getCenterPos();
+        this.p2 = to.getCenterPos();
+        this.width = width;
+        this.color = color;
+        this.circle = circle;
+    }
+    
     public boolean contains(double x, double y) {
         if (p1 == null && p2 == null) {
             return false;
@@ -115,9 +124,13 @@ public class Line {
         } else if (p1 == null || p2 == null) {
             paintCircle(d, g, p2==null ? p1 : p2);
         } else {
-            paintLine(d, g, p1, p2);
-            if (arrow) {
-                paintArrow(d, g);
+            if (circle) {
+                paintCircle(d, g, p1, p2);
+            } else {
+                paintLine(d, g, p1, p2);
+                if (arrow) {
+                    paintArrow(d, g);
+                }
             }
         }
     }
@@ -136,6 +149,14 @@ public class Line {
         g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
         g.setColor(color);
         double radius = d.toDrawScale(CIRCLE_RADIUS);
+        g.draw(new Ellipse2D.Double((aPos.x + bPos.x) / 2 - radius, (aPos.y + bPos.y) / 2 - radius, 2 * radius, 2 * radius));
+    }
+    private void paintCircle(Draw d, Graphics2D g, Vector2D a, Vector2D b) {
+        Vector2D aPos = d.toDrawCoordinates(a);
+        Vector2D bPos = d.toDrawCoordinates(b);
+        g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
+        g.setColor(color);
+        double radius = d.toDrawScale(Vector2D.dist(a, b)/2);
         g.draw(new Ellipse2D.Double((aPos.x + bPos.x) / 2 - radius, (aPos.y + bPos.y) / 2 - radius, 2 * radius, 2 * radius));
     }
 

@@ -339,7 +339,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                                     } else {
                                         for (Node n : G.getNodes()) {
                                             if (n.isSelected()) {
-                                                n.prevPos = new Vector2D(n.cx, n.cy);
+                                                n.prevPos = new Vector2D(n.getCx(), n.getCy());
                                             }
                                         }
                                         for (Arc a : G.getLines()) {
@@ -400,7 +400,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         if (inter.getActiveTool() == inter.SELECT_TOOL) {
                             for (Node n : G.getNodes()) {
                                 if (multiselected && n.isSelected() && n.prevPos != null) {
-                                    transitions.createLog(History.MOVE_NODE, n, n.cx, n.cy, n.prevPos.x, n.prevPos.y);
+                                    transitions.createLog(History.MOVE_NODE, n, n.getCx(), n.getCy(), n.prevPos.x, n.prevPos.y);
                                     System.out.println(n);
                                     n.prevPos = null;
                                 } else if (zoneR.contains(n.getCenterX(), n.getCenterY())) {
@@ -490,14 +490,14 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
 
                                 src = findNode(x, y);
                                 if (src != null) {
-                                    src.setColorDisplayed(Color.GREEN);
+                                    src.setOutlineColor(Color.GREEN);
                                     infoTop.setText("Sélectionner le nœud de destination");
                                 }
                                 repaint();
                             } else if (dest == null) {
                                 dest = findNode(x, y);
                                 if (dest != null) {
-                                    dest.setColorDisplayed(Color.RED);
+                                    dest.setOutlineColor(Color.RED);
                                     repaint();
                                     ((AlgorithmST) algo).process(d, src, dest);
                                     src = null;
@@ -514,6 +514,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
                         } else if (algo instanceof AlgorithmS) {
                             src = findNode(x, y);
                             if (src != null) {
+                                src.setOutlineColor(Color.BLUE);
                                 repaint();
                                 ((AlgorithmS) algo).process(d, src);
                                 status = ALGO_NEUTRAL;

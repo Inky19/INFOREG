@@ -10,6 +10,7 @@ Commentaires ajoutés
 =============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.Save.saveManager;
+import Inforeg.UI.CheckBox;
 import Inforeg.UI.ToolButton;
 import java.awt.Color;
 import java.awt.Component;
@@ -68,11 +69,8 @@ public class StartMenu {
         Image bannerImgResized = bannerImg.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
         JLabel banner = new JLabel(new ImageIcon(bannerImgResized));
         
-        JCheckBox graphOriente = new JCheckBox("Orienté");
-        graphOriente.setIcon(AssetLoader.checkBox0);
-        graphOriente.setSelectedIcon(AssetLoader.checkBox1);
-        graphOriente.setFocusPainted(false);
-        JCheckBox graphPond = new JCheckBox("Pondéré");
+        CheckBox graphOriente = new CheckBox("Orienté");
+        CheckBox graphPond = new CheckBox("Pondéré");
         graphPond.setFocusPainted(false);
 
         // Bouton générant un nouveau graphe

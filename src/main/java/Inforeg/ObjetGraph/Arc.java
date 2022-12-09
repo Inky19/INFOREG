@@ -76,6 +76,9 @@ public class Arc implements Comparable<Arc> {
         this.colorDisplayed = c;
         this.width = DEFAULT_LINE_WIDTH;
         this.nails = new ArrayList<>();
+        if (from == to) {
+            nails.add(new Nail(from.getCx() + 2*Line.CIRCLE_RADIUS,from.getCy(), this));
+        }
     }
 
     public Arc(Node fromPoint, Node toPoint, int pds, Color c, Nail nail) {
@@ -120,7 +123,6 @@ public class Arc implements Comparable<Arc> {
         for (Nail nail : nails) {
             nail.paint(d, g);
         }
-
         // Painting of labels
         if (flow != null) {
             String label = Integer.toString(flow);
@@ -264,6 +266,7 @@ public class Arc implements Comparable<Arc> {
      * @param compareEdge = Arc à comparer
      * @return la différence entre les deux poids des arcs
      */
+    @Override
     public int compareTo(Arc compareEdge) {
         return this.poids - compareEdge.poids;
     }
@@ -273,6 +276,9 @@ public class Arc implements Comparable<Arc> {
     }
 
     public void addNail(Nail nail) {
+        if (from == to) {
+            return; // Can't add nail to self arc
+        }
         List<Line> hitbox = getNailLines(width + 5, Color.RED);
         int i = 0;
         while (i < hitbox.size() && !hitbox.get(i).contains(nail.cx, nail.cy)) {
@@ -285,7 +291,7 @@ public class Arc implements Comparable<Arc> {
     private List<Line> getNailLines(int width, Color color) {
         List<Line> lines = new ArrayList<>();
         if (from == to) {
-            lines.add(new Line(from, width, color));
+            lines.add(new Line(from,nails.get(0), width, color, true));
         } else {
             if (nails.isEmpty()) {
                 lines.add(new Line(from, to, width, color));
@@ -327,7 +333,7 @@ public class Arc implements Comparable<Arc> {
     
     @Deprecated
     /**
-     * Will be deleted once saved is supported
+     * Will be deleted once save is supported
      */
     public Nail getClou() {
         if (nails.isEmpty()) {

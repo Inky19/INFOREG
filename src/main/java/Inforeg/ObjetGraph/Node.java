@@ -18,8 +18,8 @@ import Inforeg.UI.Vector2D;
  */
 public class Node extends Ellipse2D.Double implements Attachable {
     // Global coordinate of the node
-    public double cx;
-    public double cy;
+    private double cx;
+    private double cy;
     public Vector2D prevPos;
     // Global radius
     private double r;

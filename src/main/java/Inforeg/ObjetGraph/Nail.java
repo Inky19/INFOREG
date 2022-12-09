@@ -114,7 +114,7 @@ public class Nail extends Ellipse2D.Double implements Attachable {
     }
     
     public void delete() {
-        if (arc != null) {
+        if (arc != null && arc.getFrom() != arc.getTo()) {
             arc.getNails().remove(this);
         }
     }
