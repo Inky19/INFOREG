@@ -632,7 +632,7 @@ public abstract class Interface {
         FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
         JPanel pnlTab = new JPanel(f);
         pnlTab.setOpaque(false);
-        JButton addTabButton = new ToolButton("+", null, Color.RED, null);
+        JButton addTabButton = new ToolButton("+", null, Color.LIGHT_GRAY, null);
         addTabButton.setOpaque(false); //
         //addTabButton.setBorder (null);
         addTabButton.setContentAreaFilled(false);

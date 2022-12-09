@@ -76,8 +76,8 @@ public class Arc implements Comparable<Arc> {
         this.colorDisplayed = c;
         this.width = DEFAULT_LINE_WIDTH;
         this.nails = new ArrayList<>();
-        if (from == to) {
-            nails.add(new Nail(from.getCx() + 2*Line.CIRCLE_RADIUS,from.getCy(), this));
+        if (from == to && from != null) {
+            nails.add(new Nail(fromPoint.getCx() + 2*Line.CIRCLE_RADIUS,fromPoint.getCy(), this));
         }
     }
 
