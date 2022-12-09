@@ -948,9 +948,9 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * Méthode permettant de modifier la taille des noeuds
      */
     public void tailleCirc() {
+        double factor = getTailleCirc();
+        nodeRadius = factor * Draw.RINIT;
         if (!G.getNodes().isEmpty()) {
-            double factor = getTailleCirc();
-            nodeRadius = factor * Draw.RINIT;
             //lineWidth = (float) factor*Draw.LINIT;
             for (Node n : G.getNodes()) {
                 n.updateSize(nodeRadius);
@@ -964,9 +964,10 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
      * noeuds
      */
     public void epaisseurLines() {
+        double factor = (float) inter.getEpaisseur() / 5;
+        lineWidth = (float) factor * Arc.DEFAULT_LINE_WIDTH;
         if (!G.getNodes().isEmpty()) {
-            double factor = (float) inter.getEpaisseur() / 5;
-            lineWidth = (float) factor * Arc.DEFAULT_LINE_WIDTH;
+            
             System.out.println(lineWidth);
             for (Arc l : G.getLines()) {
                 l.width = (int) lineWidth;
@@ -1142,6 +1143,22 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         return this.pondere;
     }
 
+    public float getLineWidth() {
+        return this.lineWidth;
+    }
+
+    public void setLineWidth(float w) {
+        this.lineWidth = w;
+    }
+
+    public double getNodeRadius() {
+        return Draw.nodeRadius;
+    }
+
+    public void setNodeRadius(double r) {
+        Draw.nodeRadius = r;
+    }
+    
     public String getPathSauvegarde() {
         return pathSauvegarde;
     }

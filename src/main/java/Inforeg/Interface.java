@@ -17,6 +17,7 @@ import Inforeg.Save.saveManager;
 import Inforeg.UI.AlgoBox;
 import Inforeg.UI.AlgoWindow;
 import Inforeg.UI.ButtonTabComponent;
+import Inforeg.UI.LatexWindow;
 import Inforeg.UI.ToolButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -717,8 +718,9 @@ public abstract class Interface {
         JMenuItem exportLatex = new JMenuItem("Exporter au format LaTeX");
         exportLatex.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent ae) {
-                ExportLatex.export(frame, d);
+            public void actionPerformed(ActionEvent ae) {                
+                LatexWindow latexWin = new LatexWindow(frame, d);
+                latexWin.setVisible(true);
             }
         });
         exporter.add(exportLatex);
