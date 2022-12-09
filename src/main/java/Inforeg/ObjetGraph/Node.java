@@ -209,7 +209,7 @@ public class Node extends Ellipse2D.Double implements Attachable {
         this.selected = false;
         this.multiSelected = false;
     }
-    
+      
     @Override
     public String toString() {
         return "Noeud | label: " + label +", x: " + cx + ", y: " + cy + " |";

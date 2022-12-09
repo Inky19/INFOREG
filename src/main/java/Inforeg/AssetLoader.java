@@ -8,7 +8,7 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 
 /**
- * Classe qui charge l'ensemble des ressources du logiciel
+ * Classe qui charge l'ensemble des ressources du logiciel.
  * @author Rémi
  */
 public abstract class AssetLoader {
@@ -36,6 +36,8 @@ public abstract class AssetLoader {
     public static final ImageIcon previousIco = new ImageIcon(getURL("asset/icons/previous.png"));
     public static final ImageIcon nextIco = new ImageIcon(getURL("asset/icons/next.png"));
     public static final ImageIcon resetIco = new ImageIcon(getURL("asset/icons/reset.png"));
+    public static final ImageIcon checkBox0 = new ImageIcon(getURL("asset/icons/checkbox0.png"));
+    public static final ImageIcon checkBox1 = new ImageIcon(getURL("asset/icons/checkbox1.png"));
     // Cursor
     public static final Cursor pinCursor = tkit.createCustomCursor(pinImg, new Point(3,29), "pinCursor");
     public static final Cursor paintCursor = tkit.createCustomCursor(paintImg, new Point(3,29), "paintCursor");

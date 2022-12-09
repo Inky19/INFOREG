@@ -15,13 +15,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 /**
- * 
+ * Coloration gloutonne de graphe.
  * @author Rémi
  * 
- * Avant execution de l'algorithme les noeuds sont associé à des entiers à l'aide de la HashMap.
- * Le graphe est ensuite transformé en une liste d'adjacence listAdj tenant compte des entiers.
- * L'algorithme parcours l'ensemble des noeuds et assigne la plus petite couleur possible en regardant les voisins.
- * Les couleurs sont représentées par des entiers qui sont convertis en couleur en utilisant la variable static COLORS.
  */
 public class Coloration extends Algorithm{  
     private ArrayList<LinkedList<Integer>> listAdj;

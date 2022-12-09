@@ -3,7 +3,7 @@ package Inforeg.Algo;
 import Inforeg.Draw.Draw;
 
 /**
- *
+ * Algorithme : utiliser la fonction process pour executer l'algorithme
  * @author inky19
  */
 public abstract class Algorithm {
@@ -20,6 +20,10 @@ public abstract class Algorithm {
     
     private String name;
     
+    /**
+     * Execution de l'algorithme.
+     * @param d la zone de dessin
+     */
     public abstract void process(Draw d);
 
     public String getName() {
@@ -32,10 +36,5 @@ public abstract class Algorithm {
 
     public boolean isAutoStart() {
         return autoStart;
-    }
-    
-    
-    
-    
-    
+    }   
 }

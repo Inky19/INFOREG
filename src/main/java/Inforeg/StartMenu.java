@@ -14,23 +14,18 @@ import Inforeg.UI.ToolButton;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
+import java.awt.Taskbar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.JCheckBox;
@@ -41,6 +36,16 @@ public class StartMenu {
     public static void main(String[] args) throws IOException {
         Color selectedColor = Color.decode("#c2c1be");
         Color buttonColor = Color.decode("#dbdbdb");
+        
+        try {
+            //set icon for mac os (and other systems which do support this method)
+            final Taskbar taskbar = Taskbar.getTaskbar();
+            taskbar.setIconImage(AssetLoader.appIco.getImage());
+        } catch (final UnsupportedOperationException e) {
+            System.out.println("The os does not support: 'taskbar.setIconImage'");
+        } catch (final SecurityException e) {
+            System.out.println("There was a security exception for: 'taskbar.setIconImage'");
+        }   
         // Création de la fenêtre d'accueil
         JFrame J = new JFrame("INFOREG");
         J.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -64,6 +69,8 @@ public class StartMenu {
         JLabel banner = new JLabel(new ImageIcon(bannerImgResized));
         
         JCheckBox graphOriente = new JCheckBox("Orienté");
+        graphOriente.setIcon(AssetLoader.checkBox0);
+        graphOriente.setSelectedIcon(AssetLoader.checkBox1);
         graphOriente.setFocusPainted(false);
         JCheckBox graphPond = new JCheckBox("Pondéré");
         graphPond.setFocusPainted(false);
@@ -117,5 +124,5 @@ public class StartMenu {
         mainPanel.add(buttonsPanel);
         J.setVisible(true);
     }
-
+    
 }

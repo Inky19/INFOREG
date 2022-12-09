@@ -13,7 +13,10 @@ import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 
-
+/**
+ * Algorithme de djikstra
+ * @author Rémi
+ */
 public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
 
     public Dijkstra(){

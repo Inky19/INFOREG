@@ -8,7 +8,7 @@ import java.awt.Color;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * Regroupe les actions exécutables sur un arc. Ajoute l'action à l'historique.
  * @author inky19
  */
 public abstract class ActionMenu {
