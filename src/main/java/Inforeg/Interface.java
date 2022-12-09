@@ -11,7 +11,6 @@ import Inforeg.Algo.AlgorithmST;
 import static Inforeg.AssetLoader.*;
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.Arc;
-import Inforeg.Save.ExportLatexOLD;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.Save.ExportLatex;
 import Inforeg.Save.saveManager;
@@ -32,7 +31,6 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
@@ -112,9 +110,9 @@ public abstract class Interface {
     private JButton previousStep;
     private JButton nextStep;
     private JToolBar stepBystepBar;
-    
+
     private ToolButton selectedButton;
-    
+
     private JCheckBox autoStart;
     private JCheckBox stepByStep;
 
@@ -168,10 +166,10 @@ public abstract class Interface {
      */
     protected static int epaisseur;
 
-    private static Dimension buttonSize = new Dimension(92,44);
-    
+    private static Dimension buttonSize = new Dimension(92, 44);
+
     private JPopupMenu menuNode;
-    
+
     private static final Color TOOL_BUTTON_COLOR = Color.decode("#d9d9d9");
     private static final Color TOOL_BUTTON_FOCUS_COLOR = Color.decode("#d1d1d1");
     private static final Color TOOL_BUTTON_SELECTED_COLOR = Color.decode("#85b8d4");
@@ -251,7 +249,6 @@ public abstract class Interface {
      */
     public void createAndShowGui() {
 
-
         frame = new JFrame("INFOREG " + d.getPathSauvegarde());
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
@@ -284,7 +281,7 @@ public abstract class Interface {
         addMenuBar();
         initRightMenuBar();
         initContextMenu();
-        
+
         JPanel contentPanel = new JPanel(new BorderLayout());
         frame.add(toolBarButtons, BorderLayout.WEST);
         frame.setJMenuBar(menuBar);
@@ -295,18 +292,18 @@ public abstract class Interface {
         tabsPanel.setPreferredSize(new Dimension(500, 500));
 
         contentPanel.add(tabsPanel);
-        
+
         this.d.repaint();
         // ZONE DES RÉSULTATS
-        
-        resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE,resultZoneSize));
+
+        resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultZoneSize));
         // Titre de la zone :
         JPanel titlePanel = new JPanel(new BorderLayout());
         JLabel titleResult = new JLabel("     Résultats :");
-        ToolButton showResult = new ToolButton(downArrow,null,TOOL_BUTTON_FOCUS_COLOR,null);
+        ToolButton showResult = new ToolButton(downArrow, null, TOOL_BUTTON_FOCUS_COLOR, null);
         showResult.setOpaque(false);
         showResult.addActionListener((ActionEvent e) -> {
-            if (resultContainer.getPreferredSize().height <= resultTitleSize){
+            if (resultContainer.getPreferredSize().height <= resultTitleSize) {
                 resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultZoneSize));
                 showResult.setIcon(downArrow);
                 showResult.unselect();
@@ -320,16 +317,16 @@ public abstract class Interface {
         });
         titlePanel.add(titleResult, BorderLayout.LINE_START);
         titlePanel.add(showResult, BorderLayout.LINE_END);
-        titlePanel.setBackground(new Color(227,239,247));
-        titlePanel.setPreferredSize(new Dimension(Integer.MAX_VALUE,resultTitleSize));
-        resultContainer.add(titlePanel,BorderLayout.NORTH);
+        titlePanel.setBackground(new Color(227, 239, 247));
+        titlePanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultTitleSize));
+        resultContainer.add(titlePanel, BorderLayout.NORTH);
         // Zone en elle même :
-        
-        resultScrollPane.setPreferredSize(new Dimension(Integer.MAX_VALUE,resultZoneSize-resultTitleSize));
+
+        resultScrollPane.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultZoneSize - resultTitleSize));
         resultContainer.add(resultScrollPane, BorderLayout.SOUTH);
-        
+
         // Ajout de la zone
-        contentPanel.add(resultContainer,BorderLayout.SOUTH);
+        contentPanel.add(resultContainer, BorderLayout.SOUTH);
         frame.add(contentPanel);
         //frame.pack();// remi : Je pense pas que c'est utile ici
         frame.setVisible(true);
@@ -350,7 +347,7 @@ public abstract class Interface {
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
 
-        ToolButton colorButton = new ToolButton("Color",null,TOOL_BUTTON_FOCUS_COLOR,TOOL_BUTTON_SELECTED_COLOR);
+        ToolButton colorButton = new ToolButton("Color", null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         colorButton.setMaximumSize(buttonSize);
         colorButton.setMnemonic('o');
         colorButton.setToolTipText("Choose a Color");
@@ -369,7 +366,7 @@ public abstract class Interface {
         };
         colorButton.addActionListener(colorListener);
         colorButton.setIcon(new ImageIcon(colorSample));
-        
+
         setColor(this.color);
 
         //ajoute un séparateur de taille par défaut
@@ -419,9 +416,9 @@ public abstract class Interface {
         tools.setBorderPainted(false);
         tools.setOpaque(false);
         tools.setAlignmentX(FlowLayout.LEFT);
-        tools.setLayout(new GridLayout(2,2));
+        tools.setLayout(new GridLayout(2, 2));
         // Move Button
-        ToolButton moveButton = new ToolButton(moveCursor,null,TOOL_BUTTON_FOCUS_COLOR,TOOL_BUTTON_SELECTED_COLOR);
+        ToolButton moveButton = new ToolButton(moveCursor, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         moveButton.setToolTipText("Déplacement");
         moveButton.addActionListener((ActionEvent e) -> {
             mode = DEPLACEMENT_MODE;
@@ -429,7 +426,7 @@ public abstract class Interface {
         });
         tools.add(moveButton);
         // Select Button
-        ToolButton selectButton = new ToolButton(selectCursor,null,TOOL_BUTTON_FOCUS_COLOR,TOOL_BUTTON_SELECTED_COLOR);
+        ToolButton selectButton = new ToolButton(selectCursor, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         selectButton.setToolTipText("Sélection");
         selectButton.setBackground(TOOL_BUTTON_COLOR);
         selectButton.addActionListener((ActionEvent e) -> {
@@ -440,7 +437,7 @@ public abstract class Interface {
         tools.add(selectButton);
         toolBarButtons.add(tools);
         // Brush Button
-        ToolButton brushButton = new ToolButton(colorIco,null,TOOL_BUTTON_FOCUS_COLOR,TOOL_BUTTON_SELECTED_COLOR);
+        ToolButton brushButton = new ToolButton(colorIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         brushButton.setToolTipText("Pinceau");
         brushButton.addActionListener((ActionEvent e) -> {
             mode = EDITION_MODE;
@@ -449,7 +446,7 @@ public abstract class Interface {
         });
         tools.add(brushButton);
         // Pin Button
-        ToolButton pinButton = new ToolButton(pinIco,null,TOOL_BUTTON_FOCUS_COLOR,TOOL_BUTTON_SELECTED_COLOR);
+        ToolButton pinButton = new ToolButton(pinIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         pinButton.setToolTipText("Clou");
         pinButton.addActionListener((ActionEvent e) -> {
             mode = EDITION_MODE;
@@ -457,14 +454,14 @@ public abstract class Interface {
             selectButton(pinButton);
         });
         tools.add(pinButton);
-        
+
         toolBarButtons.add(colorButton);
         toolBarButtons.addSeparator();
         JLabel l1 = new JLabel("  Ajouter :");
         toolBarButtons.add(l1);
         toolBarButtons.addSeparator();
         // Node Button
-        ToolButton nodeButton = new ToolButton("Noeud", nodeIco,null,TOOL_BUTTON_FOCUS_COLOR,TOOL_BUTTON_SELECTED_COLOR);
+        ToolButton nodeButton = new ToolButton("Noeud", nodeIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         nodeButton.setFocusPainted(false);
         nodeButton.setBackground(TOOL_BUTTON_COLOR);
         nodeButton.addActionListener((ActionEvent e) -> {
@@ -475,7 +472,7 @@ public abstract class Interface {
         toolBarButtons.add(nodeButton);
         nodeButton.setMaximumSize(buttonSize);
         // Arc Button
-        ToolButton arcButton = new ToolButton("Arc", arcIco,null,TOOL_BUTTON_FOCUS_COLOR,TOOL_BUTTON_SELECTED_COLOR);
+        ToolButton arcButton = new ToolButton("Arc", arcIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         arcButton.setFocusPainted(false);
         arcButton.setBackground(TOOL_BUTTON_COLOR);
         arcButton.setHorizontalAlignment(SwingConstants.LEFT);
@@ -487,7 +484,7 @@ public abstract class Interface {
         });
         toolBarButtons.add(arcButton);
         // Label Button
-        ToolButton labelButton = new ToolButton("Label", labelIco,null,TOOL_BUTTON_FOCUS_COLOR,TOOL_BUTTON_SELECTED_COLOR);
+        ToolButton labelButton = new ToolButton("Label", labelIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         labelButton.setFocusPainted(false);
         labelButton.setBackground(TOOL_BUTTON_COLOR);
         labelButton.setMaximumSize(buttonSize);
@@ -504,19 +501,17 @@ public abstract class Interface {
         toolBarButtons.add(l2);
         toolBarButtons.addSeparator();
 
-        ToolButton connexeButton = new ToolButton("Connexe",AlgoBox.BUTTON_COLOR,AlgoBox.BUTTON_SELECTED_COLOR,null);
+        ToolButton connexeButton = new ToolButton("Connexe", AlgoBox.BUTTON_COLOR, AlgoBox.BUTTON_SELECTED_COLOR, null);
         connexeButton.setHorizontalAlignment(SwingConstants.CENTER);
         connexeButton.setMaximumSize(new Dimension(buttonSize.width, connexeButton.getMaximumSize().height));
-        connexeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                mode = TRAITEMENT_MODE;
-                connexe();
-            }
+        connexeButton.addActionListener((ActionEvent e) -> {
+            mode = TRAITEMENT_MODE;
+            connexe();
         });
         toolBarButtons.add(connexeButton);
         toolBarButtons.addSeparator();
 
-        ToolButton algoButton = new ToolButton("▼",null,TOOL_BUTTON_FOCUS_COLOR,null);
+        ToolButton algoButton = new ToolButton("▼", null, TOOL_BUTTON_FOCUS_COLOR, null);
         Dimension algoButtonSize = new Dimension(buttonSize.width, algoButton.getMaximumSize().height);
         algoButton.setMaximumSize(algoButtonSize);
         algoButton.setPreferredSize(algoButtonSize);
@@ -540,7 +535,7 @@ public abstract class Interface {
         algoPanel.setMaximumSize(new Dimension(buttonSize.width, Integer.MAX_VALUE));
         algoPanel.setPreferredSize(algoPanel.getMaximumSize());
         algoPanel.setAlignmentX(0);
-        ToolButton algoGo = new ToolButton("GO",Color.decode("#85fc3f"),Color.decode("#95db72"),null);
+        ToolButton algoGo = new ToolButton("GO", Color.decode("#85fc3f"), Color.decode("#95db72"), null);
         algoGo.addActionListener((ActionEvent e) -> {
             if (d.getAlgo() == null) {
                 JOptionPane.showMessageDialog(null, "Aucun algorithme sélectionné.", "Algorithme", JOptionPane.INFORMATION_MESSAGE);
@@ -548,12 +543,13 @@ public abstract class Interface {
                 mode = Interface.TRAITEMENT_MODE;
                 d.exportGraphe();
                 d.reinit();
+                selectButton(null);
                 stepBystepBar.setVisible(false);
                 d.stepBysStep.init();
                 if (d.getAlgo() instanceof AlgorithmST) {
                     d.setStatus(Draw.ALGO_INPUT);
                 }
-                if (d.getAlgo() instanceof AlgorithmST || (d.getAlgo() instanceof AlgorithmS && !isAuto())){
+                if (d.getAlgo() instanceof AlgorithmST || (d.getAlgo() instanceof AlgorithmS && !isAuto())) {
                     d.getInfoTop().setText("Sélectionner le nœud source");
                 }
                 d.getAlgo().process(d);
@@ -569,25 +565,25 @@ public abstract class Interface {
         stepBystepBar = new JToolBar();
         stepBystepBar.setFloatable(false);
         stepBystepBar.setBorderPainted(false);
-        
-        previousStep = new ToolButton(previousIco,null,TOOL_BUTTON_FOCUS_COLOR,null);
+
+        previousStep = new ToolButton(previousIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
         previousStep.setFocusPainted(false);
-        nextStep = new ToolButton(nextIco,null,TOOL_BUTTON_FOCUS_COLOR,null);
+        nextStep = new ToolButton(nextIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
         previousStep.addActionListener((ActionEvent e) -> {
-            if (d.stepBysStep.lastStep()) {
+            if (d.stepBysStep.isLastStep()) {
                 nextStep.setEnabled(true);
             }
             d.stepBysStep.executePreviousStep(d);
-            if (d.stepBysStep.firstStep()) {
+            if (d.stepBysStep.isFirstStep()) {
                 previousStep.setEnabled(false);
             }
         });
         nextStep.addActionListener((ActionEvent e) -> {
-            if (d.stepBysStep.firstStep()) {
+            if (d.stepBysStep.isFirstStep()) {
                 previousStep.setEnabled(true);
             }
             d.stepBysStep.executeNextStep(d);
-            if (d.stepBysStep.lastStep()) {
+            if (d.stepBysStep.isLastStep()) {
                 nextStep.setEnabled(false);
             }
         });
@@ -596,9 +592,9 @@ public abstract class Interface {
         stepBystepBar.add(previousStep);
         stepBystepBar.add(nextStep);
         algoPanel.add(stepBystepBar);
-        
-       toolBarButtons.add(algoPanel);
-        
+
+        toolBarButtons.add(algoPanel);
+
     }
 
     ;
@@ -606,12 +602,12 @@ public abstract class Interface {
     public abstract void connexe();
 
     private void initTabs() {
-        
+
         tabsPanel = new JTabbedPane();
         FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
         JPanel pnlTab = new JPanel(f);
         pnlTab.setOpaque(false);
-        JButton addTabButton = new JButton("+");
+        JButton addTabButton = new ToolButton("+", null, Color.RED, null);
         addTabButton.setOpaque(false); //
         //addTabButton.setBorder (null);
         addTabButton.setContentAreaFilled(false);
@@ -785,13 +781,13 @@ public abstract class Interface {
         menuBar.add(aboutMenu);
 
         //CTRL Z / CTRL Y
-        back = new ToolButton(backIco, null,TOOL_BUTTON_COLOR,null);
+        back = new ToolButton(backIco, null, TOOL_BUTTON_COLOR, null);
         back.setPreferredSize(new Dimension(50, 32));
         back.addActionListener((ActionEvent ae) -> {
             History piles = d.getTransitions();
             piles.back(d);
         });
-        forward = new ToolButton(forwardIco,null,TOOL_BUTTON_FOCUS_COLOR,null);
+        forward = new ToolButton(forwardIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
         forward.setPreferredSize(new Dimension(50, 32));
         forward.addActionListener((ActionEvent ae) -> {
             History piles = d.getTransitions();
@@ -814,7 +810,6 @@ public abstract class Interface {
         //clear(colorSample);
     }
 
-    
     /*
      *   Méthodes suivantes incertaines/inutiles pour l'instant
      */
@@ -846,23 +841,22 @@ public abstract class Interface {
         clear(canvasImage);
 
     }
-    
-    
-    private void initShortcuts(JPanel contentPanel){
-    
-    Action actionListener = new AbstractAction() {
-      public void actionPerformed(ActionEvent actionEvent) {
-        d.deleteSelected();
-      }
-    };
-    KeyStroke del = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true);
-    InputMap inputMap = contentPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-    String DEL_KEY = "delAction";
-    inputMap.put(del, DEL_KEY);
-    ActionMap actionMap = contentPanel.getActionMap();
-    actionMap.put(DEL_KEY, actionListener);
-    contentPanel.setActionMap(actionMap);
-}
+
+    private void initShortcuts(JPanel contentPanel) {
+
+        Action actionListener = new AbstractAction() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                d.deleteSelected();
+            }
+        };
+        KeyStroke del = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true);
+        InputMap inputMap = contentPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        String DEL_KEY = "delAction";
+        inputMap.put(del, DEL_KEY);
+        ActionMap actionMap = contentPanel.getActionMap();
+        actionMap.put(DEL_KEY, actionListener);
+        contentPanel.setActionMap(actionMap);
+    }
 
     public void initContextMenu() {
         menuNode = new JPopupMenu();
@@ -889,12 +883,13 @@ public abstract class Interface {
                 }
             }
         });
-        
+
         JMenuItem deleteNode = new JMenuItem("Supprimer");
         deleteNode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 ActionMenu.deleteNode(d, n);
+                d.getTransitions().push();
             }
 
         });
@@ -903,14 +898,14 @@ public abstract class Interface {
         menuNode.add(deleteNode);
         menuNode.show(d, x, y);
     }
-    
+
     public void rightClickArc(Arc a, int x, int y) {
         menuNode = new JPopupMenu();
         JMenuItem renameArc = new JMenuItem("Changer poids");
         renameArc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                ActionMenu.setPoids(d , a);
+                ActionMenu.setPoids(d, a);
             }
 
         });
@@ -924,7 +919,7 @@ public abstract class Interface {
                 }
             }
         });
-        
+
         JMenuItem deleteArc = new JMenuItem("Supprimer");
         deleteArc.addActionListener(new ActionListener() {
             @Override
@@ -980,8 +975,8 @@ public abstract class Interface {
         g.dispose();
         imageLabel.repaint();
     }
-    
-    public void refreshResult(){
+
+    public void refreshResult() {
         resultPanel.removeAll();
         JTextField text = new JTextField(d.getResultat());
         text.setEditable(false);
@@ -1013,11 +1008,11 @@ public abstract class Interface {
     public Color getColor() {
         return color;
     }
-    
-    public boolean isAuto(){
+
+    public boolean isAuto() {
         return autoStart.isSelected();
     }
-    
+
     public void selectButton(ToolButton button) {
         if (selectedButton != null) {
             selectedButton.unselect();

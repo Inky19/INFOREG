@@ -24,6 +24,7 @@ public class Nail extends Ellipse2D.Double implements Attachable {
     
     public double cx;
     public double cy;
+    public Vector2D prevPos;
     public double r;
     public Color color;
     public boolean selected = false;

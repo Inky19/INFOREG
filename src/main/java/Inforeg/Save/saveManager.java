@@ -110,8 +110,8 @@ public abstract class saveManager {
                 // Recupération des propriétés de Draw = Première ligne
                 String line = reader.readLine();
                 String[] data = line.split(SEP);
-                Boolean pondere = Boolean.parseBoolean(data[2]);
-                Boolean oriente = Boolean.parseBoolean(data[3]);
+                Boolean pondere = Boolean.valueOf(data[2]);
+                Boolean oriente = Boolean.valueOf(data[3]);
                 
                 Draw d = new Draw(oriente,pondere);
                 d.setNextNodeId(Integer.parseInt(data[4]));

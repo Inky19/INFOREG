@@ -17,43 +17,60 @@ import java.util.LinkedList;
  */
 public class StepByStep {
     private ArrayList<LinkedList<StepAction>> steps;
-    private LinkedList<StepAction> currentAction;
+    private LinkedList<StepAction> currentStep;
     private int stepIndex;
     
 
     public StepByStep() {
         steps = new ArrayList<>();
-        currentAction = new LinkedList<>();
+        currentStep = new LinkedList<>();
         stepIndex = 0;
     }
     
     public void init() {
         stepIndex = 0;
         steps = new ArrayList<>();
-        currentAction = new LinkedList<>();
+        currentStep = new LinkedList<>();
     }
-    // Actions
+    // Actions possibles
     public void colorNode(Node n, Color c, Boolean outline) {
-        currentAction.add(new ColorNode(n,c, outline));
+        currentStep.add(new ColorNode(n,c, outline));
     }
     public void colorArc(Arc a, Color c) {
-        currentAction.add(new ColorArc(a,c));
+        currentStep.add(new ColorArc(a,c));
     }
     
     public void setInfoText(String text) {
-        currentAction.add(new SetText(text));
+        currentStep.add(new SetText(text));
     }
-    
+    //
+    /**
+     * @return nb le nombre d'étapes enregistrées
+     */
     public int getNbStep() {
         return steps.size();
     }
-    
-    //
-    public void nextStep() {
-        steps.add(currentAction);
-        currentAction = new LinkedList<>();
+    /**
+     * 
+     * @return true si l'étape en cours ne contient pas d'action.
+     */
+    public boolean stepEmpty() {
+        return currentStep.isEmpty();
     }
     
+    
+    /**
+     * Permet d'enregistrer l'étape courante et de passer à la suivante
+     */
+    public void nextStep() {
+        steps.add(currentStep);
+        currentStep = new LinkedList<>();
+    }
+    /**
+     * Affiche l'étape suivante
+     * @param d Zone de dessin
+     * @return false si il n'y a plus d'étape à afficher
+     */
     public boolean executeNextStep(Draw d) {
         if (stepIndex < steps.size()) {
             for (StepAction action : steps.get(stepIndex)) {
@@ -65,7 +82,11 @@ public class StepByStep {
             return false;
         }
     }
-    
+    /**
+    * Affiche l'étape précédente
+    * @param d
+    * @return false si il n'y a plus d'étape à afficher
+    */
     public boolean executePreviousStep(Draw d) {
         if (0 < stepIndex) {
             stepIndex--;
@@ -78,11 +99,11 @@ public class StepByStep {
         }
     }
     
-    public boolean firstStep() {
+    public boolean isFirstStep() {
         return (stepIndex == 0);
     }
     
-    public boolean lastStep() {
+    public boolean isLastStep() {
         return (stepIndex==steps.size());
     }
 }

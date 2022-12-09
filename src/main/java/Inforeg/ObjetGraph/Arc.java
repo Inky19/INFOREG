@@ -9,21 +9,19 @@ Date de dernière modification : 11/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.UI.Vector2D;
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import static java.lang.Math.sqrt;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Arc implements Comparable<Arc> {
-
+    /**
+     * Epaisseur de l'arc
+     */
     public int width;
     /**
      * Cercle/Nœud de départ
@@ -41,22 +39,25 @@ public class Arc implements Comparable<Arc> {
      * Couleur
      */
     private Color color;
-
+    /**
+     * Couleur affichée
+     */
     private Color colorDisplayed;
     /**
      * Flux
      */
     private Integer flow = null;
     /**
-     * Nail
+     * Clous
      */
-    //private Nail clou;
-
     private ArrayList<Nail> nails;
     /**
      * Rayon des clous
      */
     public static final int RCLOU = 3;
+    /**
+     * Taille par défaut de l'arc
+     */
     public static final int DEFAULT_LINE_WIDTH = 3;
 
     /**

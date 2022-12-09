@@ -11,6 +11,14 @@ import Inforeg.Draw.Draw;
  * @author remir
  */
 interface StepAction {
+    /**
+     * Action à executer dans le sens direct
+     * @param d Zone de dessin
+     */
     public void execute(Draw d);
+    /**
+     * Action à executer dans le sens inverse
+     * @param d 
+     */
     public void reverse(Draw d);
 } 

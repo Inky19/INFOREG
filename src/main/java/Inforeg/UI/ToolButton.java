@@ -5,38 +5,41 @@
 package Inforeg.UI;
 
 import java.awt.Color;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputListener;
 
 /**
  *
- * @author remir
+ * @author Rémi
  */
 public class ToolButton extends JButton {
     public Color color;
     public Color focusColor;
     public Color selectedColor;
     private boolean selected = false;
+    private boolean enabled = true;
     
     public ToolButton(String text,Color color, Color focusColor, Color selectedColor) {
         super(text);
+        
         this.color = color;
         this.focusColor = focusColor;
         this.selectedColor = selectedColor;
         setFocusPainted(false);
         setBorderPainted(false);
-        setBackground(color); 
+        
         focus();
+        
         if (color == null) {
             setOpaque(false);
+            setBackground(Color.BLACK);
+        } else {
+            setBackground(color); 
         }
         updateUI();
+        
     }
     
     public ToolButton(Icon icon,Color color, Color focusColor, Color selectedColor) {
@@ -46,10 +49,14 @@ public class ToolButton extends JButton {
         this.selectedColor = selectedColor;
         setFocusPainted(false);
         setBorderPainted(false);
-        setBackground(color);
+        
+        
         focus();
         if (color==null) {
             setOpaque(false);
+            setBackground(Color.BLUE);
+        } else {
+            setBackground(color);
         }
         updateUI();
     }
@@ -61,10 +68,12 @@ public class ToolButton extends JButton {
         this.selectedColor = selectedColor;
         setFocusPainted(false);
         setBorderPainted(false);
-        setBackground(color);
         focus();
         if (color==null) {
             setOpaque(false);
+            setBackground(Color.BLACK);
+        } else {
+            setBackground(color);
         }
         updateUI();
         
@@ -91,12 +100,20 @@ public class ToolButton extends JButton {
         }
     }
     
-    public void focus() {
+    @Override
+    public void setEnabled(boolean b) {
+        setBackground(color);
+        super.setEnabled(b);
+        enabled = b;
+        
+    }
+    
+    private void focus() {
         
         addMouseListener(new MouseInputListener() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                if (!selected) {
+                if (!selected && enabled) {
                     if (focusColor==null) {
                         setOpaque(false);
                     } else {
@@ -108,7 +125,7 @@ public class ToolButton extends JButton {
 
             @Override
             public void mouseExited(MouseEvent e) {
-                if (!selected) {
+                if (!selected && enabled) {
                     if (color==null) {
                         setOpaque(false);
                     } else {
