@@ -84,17 +84,8 @@ public class StartMenu {
                 if (!graphPond.isSelected()) {
                     d.setPondere(false);
                 }
-                
-                if (graphOriente.isSelected()) {
-                    //d.setOriente(Draw.ORIENTE);
-                    SwingUtilities.invokeLater(new InterfaceO(d)::createAndShowGui);
-                } else {
-                    //d.setOriente(Draw.NONORIENTE);
-                    SwingUtilities.invokeLater(new InterfaceNO(d)::createAndShowGui);
-                }
-                
+                SwingUtilities.invokeLater(new Interface(d)::createAndShowGui);
                 J.dispatchEvent(new WindowEvent(J, WindowEvent.WINDOW_CLOSING));
-
             }
         });
 
@@ -105,11 +96,7 @@ public class StartMenu {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 Draw d = saveManager.load();
-                if (d.getOriente()){
-                    SwingUtilities.invokeLater(new InterfaceO(d)::createAndShowGui);
-                } else {
-                    SwingUtilities.invokeLater(new InterfaceNO(d)::createAndShowGui);
-                }
+                SwingUtilities.invokeLater(new Interface(d)::createAndShowGui);
                 J.dispatchEvent(new WindowEvent(J, WindowEvent.WINDOW_CLOSING));
             }
         });

@@ -10,6 +10,7 @@ import Inforeg.Algo.AlgorithmS;
 import Inforeg.Algo.AlgorithmST;
 import static Inforeg.AssetLoader.*;
 import Inforeg.Draw.Draw;
+import static Inforeg.Graph.GraphFunction.connected;
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.Save.ExportLatex;
@@ -73,7 +74,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public abstract class Interface {
+public class Interface {
 
     public static final String VERSION = "2.0";
     protected JFrame frame;
@@ -599,7 +600,20 @@ public abstract class Interface {
 
     ;
     
-    public abstract void connexe();
+    public void connexe(){
+        mode = TRAITEMENT_MODE;
+        d.getG().updateVariable();
+        String ori = "";
+        if (d.oriente){
+            ori = " fortement";
+        }
+        if (connected(d.getG())) {
+            JOptionPane.showMessageDialog(d, "Le graphe est"+ori+" connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(d, "Le graphe n'est pas"+ori+" connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
+        }
+    
+    }
 
     private void initTabs() {
 
@@ -733,7 +747,30 @@ public abstract class Interface {
         menuBar.add(fileMenu);
     }
 
-    public abstract void addMenuBar();
+    public final AbstractAction ExportMatrix = new AbstractAction() {
+        {
+            putValue(Action.NAME, "Export Matrice d'Adjacence");
+            putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
+            putValue(Action.SHORT_DESCRIPTION, "Affiche la matrice d'adjacence du graphe (CTRL+A)");
+            putValue(Action.ACCELERATOR_KEY,
+                    KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
+        }
+        @Override
+        public void actionPerformed(ActionEvent ea) {
+            String non = "";
+            if (!d.oriente){
+                non = "non ";
+            }
+            d.exportGraphe();
+            JOptionPane.showMessageDialog(d, "La matrice d'adjacence du graphe ("+non+"orienté) est :\n\n" + d.getG().afficher(), "Matrice d'adjacence", JOptionPane.INFORMATION_MESSAGE);
+        }
+    };
+    
+    public void addMenuBar(){
+        JMenu traitMenu = new JMenu("Traitement");
+        menuBar.add(traitMenu);
+        exporter.add(new JMenuItem(ExportMatrix));
+    }
 
     public void initRightMenuBar() {
         JMenu helpMenu = new JMenu("Aide");
