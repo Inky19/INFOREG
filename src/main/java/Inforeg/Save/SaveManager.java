@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Other/File.java to edit this template
- */
 package Inforeg.Save;
 
 import Inforeg.Draw.Draw;
@@ -19,7 +15,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
-import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 /**
@@ -49,7 +44,7 @@ public abstract class SaveManager {
             d.setPathSauvegarde(path);
             d.setFileName(name.substring(0, name.length() - 8)); // Nom sans l'extension .inforeg
             return saveToFile(d, path);
-            }
+        }
         return false;
     }
 
@@ -92,7 +87,7 @@ public abstract class SaveManager {
                 nails = arc.getNails();
                 arcLine = "Arc" + SEP + arc.getFrom().getId() + SEP + arc.getTo().getId() + SEP + arc.getPoids() + SEP + color2Hex(arc.getColor()) + SEP + nails.size();
                 // Sauvegarde des clous
-                for (Nail nail: nails){
+                for (Nail nail : nails) {
                     arcLine += SEP + nail.getCx() + SEP + nail.getCy() + SEP + nail.getR();
                 }
                 fileBuffer.write(arcLine);
@@ -107,9 +102,10 @@ public abstract class SaveManager {
     }
 
     /**
-     * Charge une instance de Draw depuis un fichier de sauvegarde.
-     * Retourn null en cas d'erreur.
-     * @return 
+     * Charge une instance de Draw depuis un fichier de sauvegarde. Retourn null
+     * en cas d'erreur.
+     *
+     * @return
      */
     public static Draw load() {
         JFileChooser fileExplorer = new JFileChooser();
@@ -120,7 +116,6 @@ public abstract class SaveManager {
             String[] filePath = formatPath(file);
             String name = filePath[0];
             String path = filePath[1];
-
             try {
                 BufferedReader reader = new BufferedReader(new FileReader(file));
                 // Recupération des propriétés de Draw = Première ligne
@@ -128,12 +123,12 @@ public abstract class SaveManager {
                 String[] data = line.split(SEP);
                 Boolean pondere = Boolean.valueOf(data[2]);
                 Boolean oriente = Boolean.valueOf(data[3]);
-                
-                Draw d = new Draw(oriente,pondere);
+
+                Draw d = new Draw(oriente, pondere);
                 d.setNextNodeId(Integer.parseInt(data[4]));
                 d.setFileName(name.substring(0, name.length() - 8)); // Nom sans l'extension .inforeg
                 d.setPathSauvegarde(path);
-                
+
                 line = reader.readLine();
                 while (line != null) {
                     data = line.split(SEP);
@@ -155,7 +150,7 @@ public abstract class SaveManager {
                             int id2 = Integer.parseInt(data[2]);
                             int pond = Integer.parseInt(data[3]);
                             color = hex2Color(data[4]);
-                            
+
                             // L'intégralité des nœuds doivent être chargés pour pouvoir trouver leur id.
                             // Il est donc nécessaire que le fichier de sauvegarde ne comporte pas des lignes "Arc" avant des "Node" pour être sûr que cela marche.
                             Node n1 = d.getNodeFromId(id1);
@@ -166,13 +161,13 @@ public abstract class SaveManager {
                             int nbrNails = Integer.parseInt(data[5]);
                             int ind = 6; // Indice du permier clou
                             Nail nail = null;
-                            double nailx = 0; 
-                            double naily = 0; 
+                            double nailx = 0;
+                            double naily = 0;
                             double radius = 0;
-                            for (int i=0; i<nbrNails; i++){
+                            for (int i = 0; i < nbrNails; i++) {
                                 nailx = Double.parseDouble(data[ind]);
-                                naily = Double.parseDouble(data[ind+1]);
-                                radius = Double.parseDouble(data[ind+2]);
+                                naily = Double.parseDouble(data[ind + 1]);
+                                radius = Double.parseDouble(data[ind + 2]);
                                 ind += 3;
                                 nail = new Nail(nailx, naily, radius, color, arc);
                                 arc.loadNail(nail);
@@ -192,9 +187,9 @@ public abstract class SaveManager {
                 return d;
 
             } catch (FileNotFoundException e) {
-                JOptionPane.showMessageDialog(null, "Une erreur s'est produite lors de la lecture du fichier.\n" + e.toString(), "Erreur de chargement", JOptionPane.ERROR_MESSAGE);
-            } catch (IOException e){
-                
+                JOptionPane.showMessageDialog(null, "Le fichier n'a pas été trouvé.", "Erreur de chargement", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Une erreur s'est produite lors de la lecture du fichier.\nLe fichier est peut-être corrompu.", "Erreur de chargement", JOptionPane.ERROR_MESSAGE);
             }
 
         }
@@ -224,6 +219,7 @@ public abstract class SaveManager {
 
     /**
      * Fonction pour convertir une couleur de Color en format hexadécimal
+     *
      * @param color Couleur à convertir
      * @return Code RGB hexadécimal en string : RRGGBB
      */
@@ -231,9 +227,9 @@ public abstract class SaveManager {
         String r = Integer.toHexString(color.getRed());
         String g = Integer.toHexString(color.getGreen());
         String b = Integer.toHexString(color.getBlue());
-        String[] rgb = new String[] {r,g,b};
-        for (int i = 0; i < 3; i++){
-            if (rgb[i].length()<2){
+        String[] rgb = new String[]{r, g, b};
+        for (int i = 0; i < 3; i++) {
+            if (rgb[i].length() < 2) {
                 rgb[i] = "0" + rgb[i];
             }
         }
@@ -241,7 +237,9 @@ public abstract class SaveManager {
     }
 
     /**
-     * Fonction pour convertir une couleur en format hexadécimal RRGGBB en couleur de Color
+     * Fonction pour convertir une couleur en format hexadécimal RRGGBB en
+     * couleur de Color
+     *
      * @param colorHex Couleur à convertir
      * @return Objet Color correspondant
      */
