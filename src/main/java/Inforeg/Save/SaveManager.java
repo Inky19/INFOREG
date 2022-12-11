@@ -38,7 +38,7 @@ public abstract class SaveManager {
         int res = fileExplorer.showOpenDialog(null);
         if (res == JFileChooser.APPROVE_OPTION) {
             File file = fileExplorer.getSelectedFile();
-            String[] filePath = formatPath(file);
+            String[] filePath = Utils.formatPath(file, "inforeg");
             String name = filePath[0];
             String path = filePath[1];
             d.setPathSauvegarde(path);
@@ -70,7 +70,7 @@ public abstract class SaveManager {
             ArrayList<Node> nodes = d.getNodes();
             for (Node node : nodes) {
                 fileBuffer.newLine();
-                fileBuffer.write("Node" + SEP + node.getId() + SEP + node.getLabel() + SEP + node.getCx() + SEP + node.getCy() + SEP + node.getR() + SEP + color2Hex(node.getColorDisplayed()));
+                fileBuffer.write("Node" + SEP + node.getId() + SEP + node.getLabel() + SEP + node.getCx() + SEP + node.getCy() + SEP + node.getR() + SEP + Utils.color2Hex(node.getColorDisplayed()));
             }
 
             // Sauvegarde des arcs
@@ -85,7 +85,7 @@ public abstract class SaveManager {
             for (Arc arc : arcs) {
                 fileBuffer.newLine();
                 nails = arc.getNails();
-                arcLine = "Arc" + SEP + arc.getFrom().getId() + SEP + arc.getTo().getId() + SEP + arc.getPoids() + SEP + color2Hex(arc.getColor()) + SEP + nails.size();
+                arcLine = "Arc" + SEP + arc.getFrom().getId() + SEP + arc.getTo().getId() + SEP + arc.getPoids() + SEP + Utils.color2Hex(arc.getColor()) + SEP + nails.size();
                 // Sauvegarde des clous
                 for (Nail nail : nails) {
                     arcLine += SEP + nail.getCx() + SEP + nail.getCy() + SEP + nail.getR();
@@ -113,7 +113,7 @@ public abstract class SaveManager {
 
         if (res == JFileChooser.APPROVE_OPTION) {
             File file = fileExplorer.getSelectedFile();
-            String[] filePath = formatPath(file);
+            String[] filePath = Utils.formatPath(file, "inforeg");
             String name = filePath[0];
             String path = filePath[1];
             try {
@@ -140,7 +140,7 @@ public abstract class SaveManager {
                             double cx = Double.parseDouble(data[3]);
                             double cy = Double.parseDouble(data[4]);
                             double r = Double.parseDouble(data[5]);
-                            color = hex2Color(data[6]);
+                            color = Utils.hex2Color(data[6]);
 
                             Node node = new Node(cx, cy, r, color, label, id);
                             d.getNodes().add(node);
@@ -149,7 +149,7 @@ public abstract class SaveManager {
                             int id1 = Integer.parseInt(data[1]);
                             int id2 = Integer.parseInt(data[2]);
                             int pond = Integer.parseInt(data[3]);
-                            color = hex2Color(data[4]);
+                            color = Utils.hex2Color(data[4]);
 
                             // L'intégralité des nœuds doivent être chargés pour pouvoir trouver leur id.
                             // Il est donc nécessaire que le fichier de sauvegarde ne comporte pas des lignes "Arc" avant des "Node" pour être sûr que cela marche.
@@ -195,58 +195,5 @@ public abstract class SaveManager {
         }
 
         return null;
-    }
-
-    /**
-     * Formate le chemin du fichier et son nom avec l'extension .inforeg s'il
-     * n'existe pas.
-     *
-     * @param file Fichier cible
-     * @return [name, path] : nom et chemin du fichier sous forme de String dans
-     * une array de taille 2.
-     */
-    public static String[] formatPath(File file) {
-        String name = file.getName();
-        String path = "";
-        if (name.length() < 8 || !name.toLowerCase().substring(name.length() - 8).equals(".inforeg")) {
-            path = file.getPath() + ".inforeg";
-            name += ".inforeg";
-        } else {
-            path = file.getPath();
-        }
-        return new String[]{name, path};
-    }
-
-    /**
-     * Fonction pour convertir une couleur de Color en format hexadécimal
-     *
-     * @param color Couleur à convertir
-     * @return Code RGB hexadécimal en string : RRGGBB
-     */
-    public static String color2Hex(Color color) {
-        String r = Integer.toHexString(color.getRed());
-        String g = Integer.toHexString(color.getGreen());
-        String b = Integer.toHexString(color.getBlue());
-        String[] rgb = new String[]{r, g, b};
-        for (int i = 0; i < 3; i++) {
-            if (rgb[i].length() < 2) {
-                rgb[i] = "0" + rgb[i];
-            }
-        }
-        return (rgb[0] + rgb[1] + rgb[2]);
-    }
-
-    /**
-     * Fonction pour convertir une couleur en format hexadécimal RRGGBB en
-     * couleur de Color
-     *
-     * @param colorHex Couleur à convertir
-     * @return Objet Color correspondant
-     */
-    public static Color hex2Color(String colorHex) {
-        int R = Integer.decode("0x" + colorHex.substring(0, 2));
-        int G = Integer.decode("0x" + colorHex.substring(2, 4));
-        int B = Integer.decode("0x" + colorHex.substring(4, 6));
-        return new Color(R, G, B);
     }
 }

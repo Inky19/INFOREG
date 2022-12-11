@@ -154,12 +154,16 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
     private static boolean drawZone = false;
     //Bouton
     private final JSlider zoomSlider;
+    private JButton fitToScreen;
     private final JLabel zoomLabel;
     //Camera
     private Point currentMousePosition;
     private Point currentCameraPosition;
+    private Point savedCameraPosition = new Point(0, 0);;
     private Point camera = new Point(0, 0);
     private float zoom = 100f;
+    private float savedZoom = 0f;
+    private Color savedColor = Color.WHITE;
     private static final int MAX_ZOOM = 1000;
     private static final int MIN_ZOOM = 50;
 
@@ -206,7 +210,7 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
             repaint();
         });
 
-        JButton fitToScreen = new JButton(AssetLoader.fitIco);
+        fitToScreen = new JButton(AssetLoader.fitIco);
         fitToScreen.setPreferredSize(new Dimension(24, 24));
         fitToScreen.addActionListener((ActionEvent e) -> {
             fitScreen();
@@ -717,6 +721,41 @@ public class Draw extends JPanel implements MouseMotionListener, DrawFunction {
         return null;
     }
 
+    /**
+     * Prépare la zone de dessin à être exporter en image (cache l'interface, ajouste la position).
+     */
+    public void prepareExport(){
+        showUI(false);
+        setOpaque(false);
+        savedColor = getBackground();
+        setBackground(new Color(0,0,0,0));
+        savedZoom = zoom;
+        savedCameraPosition = camera;
+        fitScreen();
+    }
+    
+    /**
+     * Restaure l'interface, la caméra et le zoom après un export.
+     */
+    public void restoreAfterExport(){
+        showUI(true);
+        setOpaque(true);
+        setBackground(savedColor);
+        zoom = savedZoom;
+        camera = savedCameraPosition;
+    }
+    
+    /**
+     * Afficher ou cacher les éléments d'interface sur la zone de dessin (zoom, bouton fit to screen...)
+     * @param show 
+     */
+    public void showUI(boolean show){
+        zoomSlider.setVisible(show);
+        fitToScreen.setVisible(show);
+        zoomLabel.setVisible(show);
+        repaint();
+    }
+    
     @Deprecated
     public int find(Ellipse2D.Double circ) {
         boolean trouve = false;
