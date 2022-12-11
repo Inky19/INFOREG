@@ -271,6 +271,14 @@ public class Arc implements Comparable<Arc> {
     public ArrayList<Nail> getNails() {
         return nails;
     }
+    
+    /**
+     * Permet l'ajout des clous lors du chargement d'un fichier
+     * @param nail Clou à ajouter
+     */
+    public void loadNail(Nail nail){
+        nails.add(nail);
+    }
 
     public void addNail(Nail nail) {
         List<Line> hitbox = getNailLines(width + 5, Color.RED);
