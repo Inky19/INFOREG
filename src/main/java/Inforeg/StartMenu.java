@@ -9,7 +9,7 @@ Date de dernière modification : 18/03/2022
 Commentaires ajoutés
 =============================================*/
 import Inforeg.Draw.Draw;
-import Inforeg.Save.saveManager;
+import Inforeg.Save.SaveManager;
 import Inforeg.UI.ToolButton;
 import java.awt.Color;
 import java.awt.Component;
@@ -95,7 +95,7 @@ public class StartMenu {
         charge.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                Draw d = saveManager.load();
+                Draw d = SaveManager.load();
                 SwingUtilities.invokeLater(new Interface(d)::createAndShowGui);
                 J.dispatchEvent(new WindowEvent(J, WindowEvent.WINDOW_CLOSING));
             }

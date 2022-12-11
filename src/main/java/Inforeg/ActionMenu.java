@@ -3,7 +3,7 @@ package Inforeg;
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
-import Inforeg.Save.saveManager;
+import Inforeg.Save.SaveManager;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 
@@ -24,8 +24,8 @@ public abstract class ActionMenu {
         String lbl = "";
         while (!validName) {
             lbl = JOptionPane.showInputDialog("Entrer label :");
-            if (lbl != null && lbl.contains(saveManager.SEP)) {
-                JOptionPane.showMessageDialog(null, "Un label ne peut pas comporter \"" + saveManager.SEP + "\"\n(Motif réservé pour la sauvegarde)", "Nom invalide", JOptionPane.WARNING_MESSAGE);
+            if (lbl != null && lbl.contains(SaveManager.SEP)) {
+                JOptionPane.showMessageDialog(null, "Un label ne peut pas comporter \"" + SaveManager.SEP + "\"\n(Motif réservé pour la sauvegarde)", "Nom invalide", JOptionPane.WARNING_MESSAGE);
             } else {
                 validName = true;
             }
