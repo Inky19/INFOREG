@@ -14,6 +14,7 @@ import static Inforeg.Graph.GraphFunction.connected;
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.Save.ExportLatex;
+import Inforeg.Save.ExportPNG;
 import Inforeg.Save.SaveManager;
 import Inforeg.UI.AlgoBox;
 import Inforeg.UI.AlgoWindow;
@@ -279,7 +280,6 @@ public class Interface {
         initToolBar();
         initPaneImage();
         initLeftMenuBar();
-        addMenuBar();
         initRightMenuBar();
         initContextMenu();
 
@@ -729,7 +729,7 @@ public class Interface {
 
         exporter = new JMenu("Exporter");
 
-        JMenuItem exportLatex = new JMenuItem("Exporter au format LaTeX");
+        JMenuItem exportLatex = new JMenuItem("Format LaTeX");
         exportLatex.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {                
@@ -737,7 +737,17 @@ public class Interface {
                 latexWin.setVisible(true);
             }
         });
+        JMenuItem exportPNG = new JMenuItem("Image PNG");
+        exportPNG.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {        
+                ExportPNG.export(d);
+            }
+        });
+        
         exporter.add(exportLatex);
+        exporter.add(exportPNG);
+        exporter.add(ExportMatrix);
         fileMenu.add(ouvrir);
         fileMenu.addSeparator();
         fileMenu.add(Save);
@@ -745,6 +755,9 @@ public class Interface {
         fileMenu.addSeparator();
         fileMenu.add(exporter);
         menuBar.add(fileMenu);
+        
+        JMenu traitMenu = new JMenu("Traitement");
+        menuBar.add(traitMenu);
     }
 
     public final AbstractAction ExportMatrix = new AbstractAction() {
@@ -766,12 +779,6 @@ public class Interface {
         }
     };
     
-    public void addMenuBar(){
-        JMenu traitMenu = new JMenu("Traitement");
-        menuBar.add(traitMenu);
-        exporter.add(new JMenuItem(ExportMatrix));
-    }
-
     public void initRightMenuBar() {
         JMenu helpMenu = new JMenu("Aide");
         JMenu aboutMenu = new JMenu("A propos");
