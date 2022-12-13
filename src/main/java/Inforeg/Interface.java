@@ -14,7 +14,8 @@ import static Inforeg.Graph.GraphFunction.connected;
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.Save.ExportLatex;
-import Inforeg.Save.saveManager;
+import Inforeg.Save.ExportPNG;
+import Inforeg.Save.SaveManager;
 import Inforeg.UI.AlgoBox;
 import Inforeg.UI.AlgoWindow;
 import Inforeg.UI.ButtonTabComponent;
@@ -202,10 +203,10 @@ public class Interface {
             // Si un fichier de sauvegarde existe déjà, on l'écrase et on effectue une nouvelle sauvegarde
             if (d.getPathSauvegarde() != " ") {
                 File f = new File(d.getPathSauvegarde());
-                save_success = saveManager.saveToFile(d, d.getPathSauvegarde());
+                save_success = SaveManager.saveToFile(d, d.getPathSauvegarde());
                 // Sinon, on créé un nouveau fichier de sauvegarde
             } else {
-                save_success = saveManager.save(d);
+                save_success = SaveManager.save(d);
                 if (d != null) {
                     tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
                     tabsPanel.updateUI();
@@ -225,7 +226,7 @@ public class Interface {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            boolean save_success = saveManager.save(d);
+            boolean save_success = SaveManager.save(d);
             if (d != null) {
                 tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
                 tabsPanel.updateUI();
@@ -287,7 +288,6 @@ public class Interface {
         initTabs();
         initPaneImage();
         initLeftMenuBar();
-        addMenuBar();
         initRightMenuBar();
         initContextMenu();
 
@@ -761,7 +761,7 @@ public class Interface {
         ouvrir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                Draw newD = saveManager.load();
+                Draw newD = SaveManager.load();
                 if (newD != null) {
                     newD.repaint();
                     d = newD;
@@ -773,7 +773,7 @@ public class Interface {
 
         exporter = new JMenu("Exporter");
 
-        JMenuItem exportLatex = new JMenuItem("Exporter au format LaTeX");
+        JMenuItem exportLatex = new JMenuItem("Format LaTeX");
         exportLatex.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {                
@@ -781,7 +781,17 @@ public class Interface {
                 latexWin.setVisible(true);
             }
         });
+        JMenuItem exportPNG = new JMenuItem("Image PNG");
+        exportPNG.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {        
+                ExportPNG.export(d);
+            }
+        });
+        
         exporter.add(exportLatex);
+        exporter.add(exportPNG);
+        exporter.add(ExportMatrix);
         fileMenu.add(ouvrir);
         fileMenu.addSeparator();
         fileMenu.add(Save);
@@ -789,6 +799,9 @@ public class Interface {
         fileMenu.addSeparator();
         fileMenu.add(exporter);
         menuBar.add(fileMenu);
+        
+        JMenu traitMenu = new JMenu("Traitement");
+        menuBar.add(traitMenu);
     }
 
     public final AbstractAction ExportMatrix = new AbstractAction() {
