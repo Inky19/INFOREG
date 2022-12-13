@@ -9,11 +9,16 @@ Date de dernière modification : 11/03/2022
 =============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.UI.Vector2D;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.font.GlyphVector;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +40,8 @@ public class Arc implements Comparable<Arc> {
      * Poids de l'Arc
      */
     private int poids;
+    
+    private ArrayList<AttachedLabel> labels;
     /**
      * Couleur
      */
@@ -76,6 +83,7 @@ public class Arc implements Comparable<Arc> {
         this.colorDisplayed = c;
         this.width = DEFAULT_LINE_WIDTH;
         this.nails = new ArrayList<>();
+        this.labels = new ArrayList<>();
         if (from == to && from != null) {
             nails.add(new Nail(fromPoint.getCx() + 2*Line.CIRCLE_RADIUS,fromPoint.getCy(), this));
         }
@@ -92,10 +100,9 @@ public class Arc implements Comparable<Arc> {
         this.width = DEFAULT_LINE_WIDTH;
     }
 
-    protected static void paintLabel(Draw d, Graphics2D g, Vector2D p, String label, Color textColor, Color bgColor) {
+    protected static void paintLabel(Draw d, Graphics2D g, Vector2D p, String label, Color textColor, Color bgColor, int size) {
         Point pos = d.toDrawCoordinates(p).toPoint();
-        Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(15));
-        g.setFont(font);
+        Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(size));
         FontMetrics metrics = g.getFontMetrics(font);
         Rectangle2D bg = metrics.getStringBounds(label, g);
 
@@ -103,11 +110,16 @@ public class Arc implements Comparable<Arc> {
         int fontX = (int) (pos.x - metrics.stringWidth(label) / 2);
         int fontY = pos.y;
         int offset = (int) d.toDrawScale(5);
-        g.setPaint(bgColor);
-        g.fillRect(fontX - offset, fontY - (int) bg.getHeight() + metrics.getDescent(), (int) (bg.getWidth() + 2 * offset), (int) bg.getHeight());
+        if (bgColor != null) {
+            g.setPaint(bgColor);
+            g.fillRect(fontX - offset, fontY - (int) bg.getHeight() + metrics.getDescent(), (int) (bg.getWidth() + 2 * offset), (int) bg.getHeight());
+        }
         g.setPaint(textColor);
+        g.setFont(font);
         g.drawString(label, fontX, fontY);
     }
+    
+
 
     public void paint(Draw d, Graphics2D g) {
 
@@ -115,7 +127,7 @@ public class Arc implements Comparable<Arc> {
         List<Line> lines = getNailLines(this.width, this.colorDisplayed);
         int i = 0, size = lines.size();
         for (Line line : lines) {
-            line.arrow = (i == size / 2 && d.oriente);
+            line.arrow = (i == size - 1 && d.oriente); // affichage de la flèche sur la dernière ligne
             line.paint(d, g);
             i++;
         }
@@ -137,7 +149,7 @@ public class Arc implements Comparable<Arc> {
                     pos = midNail.getCenterPos();
                 }                
             }
-            paintLabel(d, g, pos.plus(new Vector2D(0, 22)), label, colorDisplayed, Color.CYAN);
+            paintLabel(d, g, pos.plus(new Vector2D(0, 22)), label, colorDisplayed, Color.CYAN, 15);
         }
         if (d.pondere) {
             String label = Integer.toString(poids);
@@ -152,8 +164,7 @@ public class Arc implements Comparable<Arc> {
                     pos = midNail.getCenterPos();
                 }                
             }
-            
-            paintLabel(d, g, pos.minus(new Vector2D(0, 12)), label, color, Color.WHITE);
+            paintLabel(d, g, pos.minus(new Vector2D(0, 12)), label, colorDisplayed, Color.WHITE, 15);
         }
     }
 

@@ -1,6 +1,9 @@
 package Inforeg.UI;
 
 import Inforeg.Draw.Draw;
+import Inforeg.Save.ExportLatex;
+import java.awt.BorderLayout;
+import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -13,6 +16,8 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -50,15 +55,21 @@ public class LatexWindow extends JDialog {
     private JRadioButton nodeColCust;
     private JRadioButton arcColCust;
     
+    private JCheckBox showNails;
+    private JCheckBox adaptSize;
+    
+    private JTextArea exportArea;
+    
 
     public LatexWindow(JFrame frame, Draw d) {
         super(frame, "Exporter en format LaTeX");
         nButtonColor = Color.WHITE;
         nButtonColor = Color.BLACK;
-        nColor = Color.WHITE;
-        aColor = Color.BLACK;
-        nSize = 0;
-        aSize = 0;
+        nColor = null;
+        aColor = null;
+        nSize = (int)d.getNodeRadius();
+        aSize = (int)d.getLineWidth();
+        exportArea = null;
         
         // Paramètres de la fenêtre
         this.setResizable(false);
@@ -72,12 +83,25 @@ public class LatexWindow extends JDialog {
         tabs.addTab("Configuration", config);
         tabs.addTab("Export", export);
 
+        Dimension containerSize = new Dimension(400, 170);
+        
         // ONGLET DE CONFIGURATION
         JPanel nodes = new JPanel();
+        nodes.setMaximumSize(containerSize);
+        nodes.setPreferredSize(containerSize);
+        nodes.setLayout(new BoxLayout(nodes, BoxLayout.Y_AXIS));
         nodes.setBorder(BorderFactory.createTitledBorder("Nœuds"));
+        JPanel nodesContainer = new JPanel();
         JRadioButton nodeSizeGraph = new JRadioButton("Taille du graphe");
+        nodeSizeGraph.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {nSize = (int)d.getNodeRadius();}});
+        
         JRadioButton nodeSizeCust = new JRadioButton("Personnalisée (mm) : ");
         JTextField nodeSizeEntry = new JTextField();
+        nodeSizeCust.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {nSize = Integer.valueOf(nodeSizeEntry.getText());}});
 
         ButtonGroup nodeSizeGroup = new ButtonGroup();
         nodeSizeGroup.add(nodeSizeGraph);
@@ -85,7 +109,7 @@ public class LatexWindow extends JDialog {
         nodeSizeGraph.setSelected(true);
 
         JPanel nodesSize = createContainer("Taille", new JComponent[]{nodeSizeGraph, nodeSizeCust, nodeSizeEntry});
-        nodes.add(nodesSize);
+        nodesContainer.add(nodesSize);
 
         // Menu de sélection des couleurs
         JRadioButton nodeColGraph = new JRadioButton("Couleur du graphe");
@@ -113,15 +137,33 @@ public class LatexWindow extends JDialog {
         custNodePanel.add(nodeColorButton);
         JPanel nodesColor = createContainer("Couleur", new JComponent[]{nodeColGraph, nodeColWhite, custNodePanel});
         nodesColor.setLayout(new BoxLayout(nodesColor, BoxLayout.Y_AXIS));
-        nodes.add(nodesColor);
+        nodesContainer.add(nodesColor);
 
+        adaptSize = new JCheckBox("Adapter la taille des nœuds en fonction de leur label");
+        JPanel wrapperNode = new JPanel(new BorderLayout());
+        wrapperNode.add(adaptSize, BorderLayout.PAGE_START);
+        nodes.add(nodesContainer);
+        nodes.add(wrapperNode);
         config.add(nodes);
 
         JPanel arcs = new JPanel();
+        arcs.setMaximumSize(containerSize);
+        arcs.setPreferredSize(containerSize);
+        arcs.setLayout(new BoxLayout(arcs, BoxLayout.Y_AXIS));
+        JPanel arcsContainers = new JPanel();
         arcs.setBorder(BorderFactory.createTitledBorder("Arcs"));
         JRadioButton arcSizeGraph = new JRadioButton("Épaisseur du graphe");
+        arcSizeGraph.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {aSize = (int)d.getLineWidth();}});
+        
         JRadioButton arcSizeCust = new JRadioButton("Personnalisée (mm) : ");
         JTextField arcSizeEntry = new JTextField();
+        arcSizeCust.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {aSize = Integer.valueOf(arcSizeEntry.getText());}});
+        
+        
 
         ButtonGroup arcSizeGroup = new ButtonGroup();
         arcSizeGroup.add(arcSizeGraph);
@@ -129,8 +171,8 @@ public class LatexWindow extends JDialog {
         arcSizeGraph.setSelected(true);
 
         JPanel arcsSize = createContainer("Épaisseur", new JComponent[]{arcSizeGraph, arcSizeCust, arcSizeEntry});
-        arcs.add(arcsSize);
-
+        arcsContainers.add(arcsSize);
+        
         // Menu de sélection des couleurs
         JRadioButton arcColGraph = new JRadioButton("Couleur du graphe");
         arcColGraph.addActionListener(new ActionListener() {
@@ -164,16 +206,37 @@ public class LatexWindow extends JDialog {
         custArcPanel.add(arcColorButton);
         JPanel arcsColor = createContainer("Couleur", new JComponent[]{arcColGraph, arcColWhite, custArcPanel});
         arcsColor.setLayout(new BoxLayout(arcsColor, BoxLayout.Y_AXIS));
-        arcs.add(arcsColor);
-
+        arcsContainers.add(arcsColor);
+        showNails = new JCheckBox("Afficher les clous");
+        JPanel wraperArc = new JPanel(new BorderLayout());
+        wraperArc.add(showNails, BorderLayout.PAGE_START);
+        
+        arcs.add(arcsContainers);
+        arcs.add(wraperArc);
         config.add(arcs);
 
         // ONGLET DE L'EXPORT
-        JTextArea exportArea = new JTextArea("test");
+        export.setLayout(new BoxLayout(export, BoxLayout.Y_AXIS));
+        JPanel wrapperArea = new JPanel();
+        exportArea = new JTextArea();
         JScrollPane exportScrollPane = new JScrollPane(exportArea);
         exportScrollPane.setPreferredSize(new Dimension(400, 400));
-        export.add(exportScrollPane);
+        wrapperArea.add(exportScrollPane);
+        export.add(wrapperArea);
 
+        JButton exportButton = new ToolButton("Exporter",Color.GRAY,Color.LIGHT_GRAY,null);
+        exportButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ExportLatex exportLatex = new ExportLatex();
+                setExport(exportLatex.export(d, nColor, aColor, nSize, aSize, adaptSize.isSelected(), showNails.isSelected()));
+            }
+        });
+
+        
+        exportButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        export.add(exportButton);
+        
         this.add(tabs);
         this.setModal(true);
     }
@@ -225,6 +288,12 @@ public class LatexWindow extends JDialog {
         colorButton.addActionListener(colorListener);
         colorButton.setIcon(new ImageIcon(colorSample));
         return colorButton;
+    }
+    
+    public void setExport(String string){
+        exportArea.setText(string);
+        exportArea.revalidate();
+        exportArea.repaint();
     }
 
 }

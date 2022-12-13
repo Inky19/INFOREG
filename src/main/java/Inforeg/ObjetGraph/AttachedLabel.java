@@ -17,36 +17,52 @@ import java.awt.geom.Rectangle2D;
  *
  * @author remir
  */
-public class Label {
+public class AttachedLabel {
     
     private static final Color DEFAULT_FONT_COLOR = Color.BLACK;
     private static final Color DEFAULT_BACKGROUND_COLOR = Color.WHITE;
     public String text;
     public String name;
-    public Vector2D pos;
+    private Attachable object;
+    private Vector2D offset;
     public Color textColor = DEFAULT_FONT_COLOR;
     public Color bgColor = DEFAULT_BACKGROUND_COLOR;
 
-    public Label(String label, Vector2D pos) {
+    public AttachedLabel(String label, Attachable object, Vector2D offset) {
         this.text = label;
-        this.pos = pos;
+        this.object = object;
+        this.offset = offset;
+    }
+    
+    public AttachedLabel(String label, Attachable object) {
+        this.text = label;
+        this.object = object;
+        this.offset = new Vector2D(0, 0);
     }
 
-    public Label(String label, Vector2D pos, Color textColor) {
+    public AttachedLabel(String label, Attachable object, Vector2D offset, Color textColor) {
         this.text = label;
-        this.pos = pos;
+        this.offset = offset;
         this.textColor = textColor;
+        this.object = object;
     }
 
-    public Label(String label, Vector2D pos, Color textColor, Color backgroundColor) {
+    public AttachedLabel(String label, Attachable object, Vector2D offset, Color textColor, Color backgroundColor) {
         this.text = label;
-        this.pos = pos;
+        this.offset = offset;
+        this.object = object;
         this.textColor = textColor;
         this.bgColor = backgroundColor;
     }
     
+    
+    //public boolean contains(int x,int y) {
+    //}
+    
+    
+    
     public void paint(Draw d, Graphics2D g) {
-        Point dPos = d.toDrawCoordinates(pos).toPoint();
+        Point dPos = d.toDrawCoordinates(object.getCenterPos()).plus(offset).toPoint();
         Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(15));
         g.setFont(font);
         FontMetrics metrics = g.getFontMetrics(font);

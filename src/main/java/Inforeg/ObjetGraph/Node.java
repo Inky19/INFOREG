@@ -27,7 +27,8 @@ public class Node extends Ellipse2D.Double implements Attachable {
     private Color color;
     private Color colorDisplayed;
     private Color outlineColor;
-    // Defeult color
+    private static int OUTLINE_WIDTH = 7;
+    // Default color
     private final static Color MULTISELECTED_COLOR = Color.GREEN;
     private final static Color SELECTED_COLOR = Color.decode("#ddb9ff");
     private final static Color DEFAULT_COLOR = Color.WHITE;
@@ -97,7 +98,7 @@ public class Node extends Ellipse2D.Double implements Attachable {
         this.height = h;
         this.width = h;
         
-        g.setStroke(new BasicStroke((float)d.toDrawScale(7)));
+        g.setStroke(new BasicStroke((float)d.toDrawScale(OUTLINE_WIDTH)));
         //Outline
         if(multiSelected){
             g.setPaint(MULTISELECTED_COLOR); 
@@ -218,5 +219,10 @@ public class Node extends Ellipse2D.Double implements Attachable {
     @Override
     public Vector2D getCenterPos() {
         return new Vector2D(cx, cy);
+    }
+    
+    @Override
+    public double getRadius() {
+        return r + OUTLINE_WIDTH/2;
     }
 }

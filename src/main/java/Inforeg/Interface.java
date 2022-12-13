@@ -10,6 +10,7 @@ import Inforeg.Algo.AlgorithmS;
 import Inforeg.Algo.AlgorithmST;
 import static Inforeg.AssetLoader.*;
 import Inforeg.Draw.Draw;
+import static Inforeg.Graph.GraphFunction.connected;
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.Save.ExportLatex;
@@ -17,6 +18,7 @@ import Inforeg.Save.saveManager;
 import Inforeg.UI.AlgoBox;
 import Inforeg.UI.AlgoWindow;
 import Inforeg.UI.ButtonTabComponent;
+import Inforeg.UI.LatexWindow;
 import Inforeg.UI.CheckBox;
 import Inforeg.UI.ToolButton;
 import java.awt.BorderLayout;
@@ -73,7 +75,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public abstract class Interface {
+/**
+ * Fenêtre principal de l'application
+ * @author Rémi et François
+ */
+public class Interface {
 
     public static final String VERSION = "2.0";
     protected JFrame frame;
@@ -106,8 +112,9 @@ public abstract class Interface {
     protected JButton save;
     protected JButton load;
     protected JButton clearSelection;
-    protected JButton back;
-    protected JButton forward;
+    private JButton back;
+    private JButton forward;
+    private ToolButton algoButton;
     private JButton previousStep;
     private JButton nextStep;
     private JToolBar stepBystepBar;
@@ -275,8 +282,9 @@ public abstract class Interface {
         resultContainer = new JPanel(new BorderLayout());
         resultPanel = new JPanel(new BorderLayout());
         resultScrollPane = new JScrollPane(resultPanel);
-        initTabs();
+        
         initToolBar();
+        initTabs();
         initPaneImage();
         initLeftMenuBar();
         addMenuBar();
@@ -512,23 +520,20 @@ public abstract class Interface {
         toolBarButtons.add(connexeButton);
         toolBarButtons.addSeparator();
 
-        ToolButton algoButton = new ToolButton("▼", null, TOOL_BUTTON_FOCUS_COLOR, null);
+        algoButton = new ToolButton("▼", null, TOOL_BUTTON_FOCUS_COLOR, null);
         Dimension algoButtonSize = new Dimension(buttonSize.width, algoButton.getMaximumSize().height);
         algoButton.setMaximumSize(algoButtonSize);
         algoButton.setPreferredSize(algoButtonSize);
         algoButton.setHorizontalAlignment(SwingConstants.LEFT);
-        algoButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                AlgoWindow window = new AlgoWindow(frame, d);
-                window.setVisible(true);
-                if (d.getAlgo() != null) {
-                    algoButton.setText("▼ " + d.getAlgo().getName());
-                    autoStart.setVisible(!d.getAlgo().isAutoStart());
-                    toolBarButtons.revalidate();
-                    toolBarButtons.repaint();
-
-                }
-
+        algoButton.addActionListener((ActionEvent e) -> {
+            AlgoWindow window = new AlgoWindow(frame, d);
+            window.setVisible(true);
+            if (d.getAlgo() != null) {
+                algoButton.setText("▼  " + d.getAlgo().getName());
+                autoStart.setVisible(!d.getAlgo().isAutoStart());
+                toolBarButtons.revalidate();
+                toolBarButtons.repaint();
+                
             }
         });
         toolBarButtons.add(algoButton);
@@ -546,7 +551,7 @@ public abstract class Interface {
                 d.reinit();
                 selectButton(null);
                 stepBystepBar.setVisible(false);
-                d.stepBysStep.init();
+                d.stepBysStep.clear();
                 if (d.getAlgo() instanceof AlgorithmST) {
                     d.setStatus(Draw.ALGO_INPUT);
                 }
@@ -561,6 +566,7 @@ public abstract class Interface {
         resetButton.addActionListener(((ActionEvent e) -> {
             d.reinit();
             stepBystepBar.setVisible(false);
+            d.stepBysStep.clear();
             d.repaint();
         }));
         algoPanel.add(resetButton);
@@ -624,7 +630,20 @@ public abstract class Interface {
 
     ;
     
-    public abstract void connexe();
+    public void connexe(){
+        mode = TRAITEMENT_MODE;
+        d.getG().updateVariable();
+        String ori = "";
+        if (d.oriente){
+            ori = " fortement";
+        }
+        if (connected(d.getG())) {
+            JOptionPane.showMessageDialog(d, "Le graphe est"+ori+" connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(d, "Le graphe n'est pas"+ori+" connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
+        }
+    
+    }
 
     private void initTabs() {
 
@@ -650,15 +669,29 @@ public abstract class Interface {
             }
         };
 
-        ChangeListener changeListenenr = new ChangeListener() {
+        ChangeListener switchTab = new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent ce) {
                 JTabbedPane sourceTabbedPane = (JTabbedPane) ce.getSource();
                 int index = sourceTabbedPane.getSelectedIndex();
                 if (index > 0) {
                     d = (Draw) tabsPanel.getSelectedComponent();
+                    if (d.getAlgo() != null) {
+                        algoButton.setText("▼  " + d.getAlgo().getName());
+                        autoStart.setVisible(d.getAlgo() instanceof AlgorithmS);
+                    } else {
+                        algoButton.setText("▼");
+                        autoStart.setVisible(false);
+                    }
+                    if (d.stepBysStep.getNbStep() == 0) {
+                        stepBystepBar.setVisible(false);
+                    } else {
+                        stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
+                        stepBystepBar.setVisible(true);
+                    }
                     currentTab = index;
                     refreshResult();
+                    
                 } else {
                     if (sourceTabbedPane.getTabCount() > 1) {
                         tabsPanel.setSelectedIndex(currentTab);
@@ -681,7 +714,7 @@ public abstract class Interface {
         //tabsPanel.setMnemonicAt(0, KeyEvent.VK_1);
         addTabButton.setFocusable(false);
         addTabButton.addActionListener(listener);
-        tabsPanel.addChangeListener(changeListenenr);
+        tabsPanel.addChangeListener(switchTab);
         tabsPanel.setSelectedIndex(1);
 
         tabsPanel.setVisible(true);
@@ -743,8 +776,9 @@ public abstract class Interface {
         JMenuItem exportLatex = new JMenuItem("Exporter au format LaTeX");
         exportLatex.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent ae) {
-                ExportLatex.export(frame, d);
+            public void actionPerformed(ActionEvent ae) {                
+                LatexWindow latexWin = new LatexWindow(frame, d);
+                latexWin.setVisible(true);
             }
         });
         exporter.add(exportLatex);
@@ -757,7 +791,30 @@ public abstract class Interface {
         menuBar.add(fileMenu);
     }
 
-    public abstract void addMenuBar();
+    public final AbstractAction ExportMatrix = new AbstractAction() {
+        {
+            putValue(Action.NAME, "Export Matrice d'Adjacence");
+            putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
+            putValue(Action.SHORT_DESCRIPTION, "Affiche la matrice d'adjacence du graphe (CTRL+A)");
+            putValue(Action.ACCELERATOR_KEY,
+                    KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
+        }
+        @Override
+        public void actionPerformed(ActionEvent ea) {
+            String non = "";
+            if (!d.oriente){
+                non = "non ";
+            }
+            d.exportGraphe();
+            JOptionPane.showMessageDialog(d, "La matrice d'adjacence du graphe ("+non+"orienté) est :\n\n" + d.getG().afficher(), "Matrice d'adjacence", JOptionPane.INFORMATION_MESSAGE);
+        }
+    };
+    
+    public void addMenuBar(){
+        JMenu traitMenu = new JMenu("Traitement");
+        menuBar.add(traitMenu);
+        exporter.add(new JMenuItem(ExportMatrix));
+    }
 
     public void initRightMenuBar() {
         JMenu helpMenu = new JMenu("Aide");
@@ -1057,5 +1114,4 @@ public abstract class Interface {
             stepBystepBar.setVisible(false);
         }
     }
-
 }
