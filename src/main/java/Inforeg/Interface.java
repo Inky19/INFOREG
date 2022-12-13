@@ -348,13 +348,13 @@ public class Interface {
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
 
-        ToolButton colorButton = new ToolButton("Color", null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        ToolButton colorButton = new ToolButton("Couleur", null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         colorButton.setMaximumSize(buttonSize);
         colorButton.setMnemonic('o');
-        colorButton.setToolTipText("Choose a Color");
+        colorButton.setToolTipText("Choisir une couleur");
         ActionListener colorListener;
         colorListener = (ActionEvent arg0) -> {
-            Color c = JColorChooser.showDialog(frame, "Choose a color", color);
+            Color c = JColorChooser.showDialog(frame, "Choisir une couleur", color);
             if (c != null) {
                 for (int i = 1; i < colorSample.getHeight(); i++) {
                     for (int j = 1; j < colorSample.getHeight(); j++) {
@@ -447,14 +447,14 @@ public class Interface {
         });
         tools.add(brushButton);
         // Pin Button
-        ToolButton pinButton = new ToolButton(pinIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
-        pinButton.setToolTipText("Clou");
-        pinButton.addActionListener((ActionEvent e) -> {
+        ToolButton labelButton = new ToolButton(labelIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        labelButton.setToolTipText("Label");
+        labelButton.addActionListener((ActionEvent e) -> {
             mode = EDITION_MODE;
-            activeTool = PIN_TOOL;
-            selectButton(pinButton);
+            activeTool = LABEL_TOOL;
+            selectButton(labelButton);
         });
-        tools.add(pinButton);
+        tools.add(labelButton);
 
         toolBarButtons.add(colorButton);
         toolBarButtons.addSeparator();
@@ -485,17 +485,17 @@ public class Interface {
         });
         toolBarButtons.add(arcButton);
         // Label Button
-        ToolButton labelButton = new ToolButton("Label", labelIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
-        labelButton.setFocusPainted(false);
-        labelButton.setBackground(TOOL_BUTTON_COLOR);
-        labelButton.setMaximumSize(buttonSize);
-        labelButton.setHorizontalAlignment(SwingConstants.LEFT);
-        labelButton.addActionListener((ActionEvent e) -> {
+        ToolButton pinButton = new ToolButton("Clou", pinIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        pinButton.setFocusPainted(false);
+        pinButton.setBackground(TOOL_BUTTON_COLOR);
+        pinButton.setMaximumSize(buttonSize);
+        pinButton.setHorizontalAlignment(SwingConstants.LEFT);
+        pinButton.addActionListener((ActionEvent e) -> {
             mode = EDITION_MODE;
-            activeTool = LABEL_TOOL;
-            selectButton(labelButton);
+            activeTool = PIN_TOOL;
+            selectButton(pinButton);
         });
-        toolBarButtons.add(labelButton);
+        toolBarButtons.add(pinButton);
 
         toolBarButtons.addSeparator();
         JLabel l2 = new JLabel("  Traitement :");
@@ -600,19 +600,19 @@ public class Interface {
 
     ;
     
-    public void connexe(){
+    public void connexe() {
         mode = TRAITEMENT_MODE;
         d.getG().updateVariable();
         String ori = "";
-        if (d.oriente){
+        if (d.oriente) {
             ori = " fortement";
         }
         if (connected(d.getG())) {
-            JOptionPane.showMessageDialog(d, "Le graphe est"+ori+" connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(d, "Le graphe est" + ori + " connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(d, "Le graphe n'est pas"+ori+" connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(d, "Le graphe n'est pas" + ori + " connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
         }
-    
+
     }
 
     private void initTabs() {
@@ -732,7 +732,7 @@ public class Interface {
         JMenuItem exportLatex = new JMenuItem("Format LaTeX");
         exportLatex.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent ae) {                
+            public void actionPerformed(ActionEvent ae) {
                 LatexWindow latexWin = new LatexWindow(frame, d);
                 latexWin.setVisible(true);
             }
@@ -740,11 +740,11 @@ public class Interface {
         JMenuItem exportPNG = new JMenuItem("Image PNG");
         exportPNG.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent ae) {        
+            public void actionPerformed(ActionEvent ae) {
                 ExportPNG.export(d);
             }
         });
-        
+
         exporter.add(exportLatex);
         exporter.add(exportPNG);
         exporter.add(ExportMatrix);
@@ -755,7 +755,7 @@ public class Interface {
         fileMenu.addSeparator();
         fileMenu.add(exporter);
         menuBar.add(fileMenu);
-        
+
         JMenu traitMenu = new JMenu("Traitement");
         menuBar.add(traitMenu);
     }
@@ -768,17 +768,18 @@ public class Interface {
             putValue(Action.ACCELERATOR_KEY,
                     KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
         }
+
         @Override
         public void actionPerformed(ActionEvent ea) {
             String non = "";
-            if (!d.oriente){
+            if (!d.oriente) {
                 non = "non ";
             }
             d.exportGraphe();
-            JOptionPane.showMessageDialog(d, "La matrice d'adjacence du graphe ("+non+"orienté) est :\n\n" + d.getG().afficher(), "Matrice d'adjacence", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(d, "La matrice d'adjacence du graphe (" + non + "orienté) est :\n\n" + d.getG().afficher(), "Matrice d'adjacence", JOptionPane.INFORMATION_MESSAGE);
         }
     };
-    
+
     public void initRightMenuBar() {
         JMenu helpMenu = new JMenu("Aide");
         JMenu aboutMenu = new JMenu("A propos");
