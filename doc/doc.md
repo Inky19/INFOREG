@@ -9,9 +9,10 @@
     4.1 [Ajout d'éléments](#41-ajout-déléments)  
     4.2 [Modification](#42-modification)  
     4.3 [Affichage](#43-affichage)  
-5. [Sauvegarde et chargement](#5-sauvegarde-et-chargement)
-6. [Exportation en d'autres formats](#6-exportation-en-dautres-formats)
-7. [Annexes]()
+5. [Traitement algorithmique](#5-traitement-algorithmique)
+6. [Sauvegarde et chargement](#6-sauvegarde-et-chargement)
+7. [Exportation en d'autres formats](#6-exportation-en-dautres-formats)
+8. [Annexes]()
 
 <div class="page"/>
 
@@ -142,6 +143,45 @@ Le bouton sélectionner permet de sélectionner des éléments du graphe :
 Un slider en bas à droite permet de régler le niveau de zoom. Lorsqu'il est modifié, le zoom se fait par rapport au centre de la zone de dessin.
 
 Le bouton <img style="vertical-align:middle" src="../src/main/resources/asset/icons/fit.png" width="25px"> à gauche du slider permet de faire un zoom automatique centré sur le graphe.
-## 5. Sauvegarde et chargement
 
-## 6. Exportation en d'autres formats
+## 5. Traitement algorithmique
+
+## 6. Sauvegarde et chargement
+
+### 6.1 Sauvegarde
+
+Inforeg sauvegarde un graphe dans un fichier texte brut avec l'extension `.inforeg`.
+
+La sauvegarde du graphe se fait par le raccourci `CTRL+S` ou par le menu `Fichier > Enregistrer` en haut de la fenêtre.  
+- Si le graphe est nouveau (i.e. n'a pas été chargé depuis un fichier existant), il est demandé de créer un nouveau fichier de sauvegarde.
+- Sinon, l'ancien fichier est écrasé par le nouveau.
+- L'option `Enregistrer sous` permet de sauvegarder le graphe dans un nouveau fichier sans écraser le fichier de sauvegarde précédent. Tout nouvel enregistrement simple suivant écrasera ce nouveau fichier.
+
+<div>
+  <font size=3><b>Stucture d'un fichier de sauvegarde</b></font>
+</div>
+Si un fichier ne peut pas être chargé car il semble corrompu, il est possible que la structure de la sauvegarde est été altérée. Un fichier de sauvegarde doit avoir la forme suivante :
+
+**Légende**  
+`<nom valeur:type>`  
+
+| Nom du type | Type | Valeurs |  
+| ---  | ---|  --- |
+| `bool` | booléen | `true` ou `false` |
+| `int` | entier | ≥ 0 |
+| `double` | décimal |  |
+| `str` | châine de caractères |  |
+| `hex` | couleur hexadécimal | exemple : `123abc` |
+
+
+```
+Inforeg, <version>, <pondéré:bool>, <orienté:bool>, <id du prochain nœud:int>
+########## NODES ##########
+Node, <id:int>, <label:str>, <x:double>, <y:double>, <taille:double>, <couleur:hex>
+########## ARCS ##########
+Arc, <id nœud1:int>, <id nœud2:int>, <pondération:int>, <couleur:hex>, <nombre clous:int>, <clou1_X:double>, <clou1_Y:double>, <clou1_R:int>, ... , <clouN_X:double>, <clouN_Y:double>, <clouN_R:int>
+```
+
+### 6.2 Chargement
+
+## 7. Exportation en d'autres formats
