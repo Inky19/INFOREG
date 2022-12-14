@@ -291,7 +291,11 @@ public class Arc implements Comparable<Arc> {
      * @param nail Clou à ajouter
      */
     public void loadNail(Nail nail){
-        nails.add(nail);
+        if (from == to){
+            nails.set(0, nail);
+        } else {
+            nails.add(nail);
+        }
     }
 
     public void addNail(Nail nail) {
