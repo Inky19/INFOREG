@@ -102,7 +102,9 @@ public class ToolButton extends JButton {
     
     @Override
     public void setEnabled(boolean b) {
-        setBackground(color);
+        if (color!= null) {
+            setBackground(color);
+        }
         super.setEnabled(b);
         enabled = b;
         

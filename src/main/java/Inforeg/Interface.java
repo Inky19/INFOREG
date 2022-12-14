@@ -20,6 +20,7 @@ import Inforeg.UI.AlgoBox;
 import Inforeg.UI.AlgoWindow;
 import Inforeg.UI.ButtonTabComponent;
 import Inforeg.UI.LatexWindow;
+import Inforeg.UI.CheckBox;
 import Inforeg.UI.ToolButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -75,6 +76,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+/**
+ * Fenêtre principal de l'application
+ * @author Rémi et François
+ */
 public class Interface {
 
     public static final String VERSION = "2.0";
@@ -88,6 +93,7 @@ public class Interface {
     protected JPanel paneImage;
     private JPanel resultContainer; // Contient la zone de résultats et la barre avec le bouton pour la réduire
     private JPanel resultPanel; // Zone de résultats
+    private JLabel stepByStepLabel;
     private JScrollPane resultScrollPane; // Contient la zone de résultats (resultPanel) et permet d'utiliser des barres de défilement si cette zone est trop grande.
     protected Draw d;
 
@@ -107,8 +113,9 @@ public class Interface {
     protected JButton save;
     protected JButton load;
     protected JButton clearSelection;
-    protected JButton back;
-    protected JButton forward;
+    private JButton back;
+    private JButton forward;
+    private ToolButton algoButton;
     private JButton previousStep;
     private JButton nextStep;
     private JToolBar stepBystepBar;
@@ -276,8 +283,9 @@ public class Interface {
         resultContainer = new JPanel(new BorderLayout());
         resultPanel = new JPanel(new BorderLayout());
         resultScrollPane = new JScrollPane(resultPanel);
-        initTabs();
+        
         initToolBar();
+        initTabs();
         initPaneImage();
         initLeftMenuBar();
         initRightMenuBar();
@@ -512,23 +520,20 @@ public class Interface {
         toolBarButtons.add(connexeButton);
         toolBarButtons.addSeparator();
 
-        ToolButton algoButton = new ToolButton("▼", null, TOOL_BUTTON_FOCUS_COLOR, null);
+        algoButton = new ToolButton("▼", null, TOOL_BUTTON_FOCUS_COLOR, null);
         Dimension algoButtonSize = new Dimension(buttonSize.width, algoButton.getMaximumSize().height);
         algoButton.setMaximumSize(algoButtonSize);
         algoButton.setPreferredSize(algoButtonSize);
         algoButton.setHorizontalAlignment(SwingConstants.LEFT);
-        algoButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                AlgoWindow window = new AlgoWindow(frame, d);
-                window.setVisible(true);
-                if (d.getAlgo() != null) {
-                    algoButton.setText("▼ " + d.getAlgo().getName());
-                    autoStart.setVisible(!d.getAlgo().isAutoStart());
-                    toolBarButtons.revalidate();
-                    toolBarButtons.repaint();
-
-                }
-
+        algoButton.addActionListener((ActionEvent e) -> {
+            AlgoWindow window = new AlgoWindow(frame, d);
+            window.setVisible(true);
+            if (d.getAlgo() != null) {
+                algoButton.setText("▼  " + d.getAlgo().getName());
+                autoStart.setVisible(!d.getAlgo().isAutoStart());
+                toolBarButtons.revalidate();
+                toolBarButtons.repaint();
+                
             }
         });
         toolBarButtons.add(algoButton);
@@ -536,7 +541,7 @@ public class Interface {
         algoPanel.setMaximumSize(new Dimension(buttonSize.width, Integer.MAX_VALUE));
         algoPanel.setPreferredSize(algoPanel.getMaximumSize());
         algoPanel.setAlignmentX(0);
-        ToolButton algoGo = new ToolButton("GO", Color.decode("#85fc3f"), Color.decode("#95db72"), null);
+        ToolButton algoGo = new ToolButton(playIco, null , AlgoBox.BUTTON_COLOR, null);
         algoGo.addActionListener((ActionEvent e) -> {
             if (d.getAlgo() == null) {
                 JOptionPane.showMessageDialog(null, "Aucun algorithme sélectionné.", "Algorithme", JOptionPane.INFORMATION_MESSAGE);
@@ -546,7 +551,7 @@ public class Interface {
                 d.reinit();
                 selectButton(null);
                 stepBystepBar.setVisible(false);
-                d.stepBysStep.init();
+                d.stepBysStep.clear();
                 if (d.getAlgo() instanceof AlgorithmST) {
                     d.setStatus(Draw.ALGO_INPUT);
                 }
@@ -557,16 +562,35 @@ public class Interface {
                 d.repaint();
             }
         });
-        stepByStep = new JCheckBox("Step by step");
+        ToolButton resetButton = new ToolButton(resetIco, null, AlgoBox.BUTTON_COLOR, null);
+        resetButton.addActionListener(((ActionEvent e) -> {
+            d.reinit();
+            stepBystepBar.setVisible(false);
+            d.stepBysStep.clear();
+            d.repaint();
+        }));
+        algoPanel.add(resetButton);
+
+        JToolBar goAndReset = new JToolBar();
+        goAndReset.setBorderPainted(false);
+        goAndReset.setFloatable(false);
+        goAndReset.setOpaque(false);
+        
+        algoPanel.add(goAndReset);
+        goAndReset.add(algoGo);
+        goAndReset.add(resetButton);
+        
+        stepByStep = new CheckBox("Step by step");
         algoPanel.add(stepByStep);
-        autoStart = new JCheckBox("<html><body>Départ auto</body></html>");
+        autoStart = new CheckBox("<html><body>Départ auto</body></html>");
         autoStart.setVisible(false);
         algoPanel.add(autoStart);
-        algoPanel.add(algoGo);
+        
         stepBystepBar = new JToolBar();
+        stepBystepBar.setLayout(new BorderLayout());
         stepBystepBar.setFloatable(false);
         stepBystepBar.setBorderPainted(false);
-
+        
         previousStep = new ToolButton(previousIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
         previousStep.setFocusPainted(false);
         nextStep = new ToolButton(nextIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
@@ -575,6 +599,7 @@ public class Interface {
                 nextStep.setEnabled(true);
             }
             d.stepBysStep.executePreviousStep(d);
+            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
             if (d.stepBysStep.isFirstStep()) {
                 previousStep.setEnabled(false);
             }
@@ -584,14 +609,19 @@ public class Interface {
                 previousStep.setEnabled(true);
             }
             d.stepBysStep.executeNextStep(d);
+            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
             if (d.stepBysStep.isLastStep()) {
                 nextStep.setEnabled(false);
             }
         });
         stepBystepBar.setVisible(false);
         stepBystepBar.setOpaque(false);
-        stepBystepBar.add(previousStep);
-        stepBystepBar.add(nextStep);
+        
+        stepByStepLabel = new JLabel("");
+        stepBystepBar.add(stepByStepLabel,BorderLayout.NORTH);
+
+        stepBystepBar.add(previousStep, BorderLayout.WEST);
+        stepBystepBar.add(nextStep,BorderLayout.EAST);
         algoPanel.add(stepBystepBar);
 
         toolBarButtons.add(algoPanel);
@@ -621,7 +651,7 @@ public class Interface {
         FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
         JPanel pnlTab = new JPanel(f);
         pnlTab.setOpaque(false);
-        JButton addTabButton = new ToolButton("+", null, Color.RED, null);
+        JButton addTabButton = new ToolButton("+", null, Color.LIGHT_GRAY, null);
         addTabButton.setOpaque(false); //
         //addTabButton.setBorder (null);
         addTabButton.setContentAreaFilled(false);
@@ -639,15 +669,29 @@ public class Interface {
             }
         };
 
-        ChangeListener changeListenenr = new ChangeListener() {
+        ChangeListener switchTab = new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent ce) {
                 JTabbedPane sourceTabbedPane = (JTabbedPane) ce.getSource();
                 int index = sourceTabbedPane.getSelectedIndex();
                 if (index > 0) {
                     d = (Draw) tabsPanel.getSelectedComponent();
+                    if (d.getAlgo() != null) {
+                        algoButton.setText("▼  " + d.getAlgo().getName());
+                        autoStart.setVisible(d.getAlgo() instanceof AlgorithmS);
+                    } else {
+                        algoButton.setText("▼");
+                        autoStart.setVisible(false);
+                    }
+                    if (d.stepBysStep.getNbStep() == 0) {
+                        stepBystepBar.setVisible(false);
+                    } else {
+                        stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
+                        stepBystepBar.setVisible(true);
+                    }
                     currentTab = index;
                     refreshResult();
+                    
                 } else {
                     if (sourceTabbedPane.getTabCount() > 1) {
                         tabsPanel.setSelectedIndex(currentTab);
@@ -670,7 +714,7 @@ public class Interface {
         //tabsPanel.setMnemonicAt(0, KeyEvent.VK_1);
         addTabButton.setFocusable(false);
         addTabButton.addActionListener(listener);
-        tabsPanel.addChangeListener(changeListenenr);
+        tabsPanel.addChangeListener(switchTab);
         tabsPanel.setSelectedIndex(1);
 
         tabsPanel.setVisible(true);
@@ -1071,11 +1115,11 @@ public class Interface {
     public void showResult() {
         if (stepByStep.isSelected()) {
             stepBystepBar.setVisible(true);
+            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
             previousStep.setEnabled(false);
             nextStep.setEnabled(d.stepBysStep.getNbStep() > 0);
         } else {
             stepBystepBar.setVisible(false);
         }
     }
-
 }

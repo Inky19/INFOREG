@@ -118,6 +118,16 @@ public class History {
     public void createLog(int action, Node node) {
         this.currentLog.add(new Enregistrement(action, node));
     }
+    
+    public boolean pileZempty() {
+        return previousStates.isEmpty();
+    }
+    
+    public boolean pileYempty() {
+        return nextStates.isEmpty();
+    }
+    
+    
     /**
      * Crée un enregistrement pour les actions de suppression d'un Clou.
      * @param action
@@ -218,7 +228,7 @@ public class History {
         LinkedList<Enregistrement> put = previousStates.put(previousStates.size(), log);
         return put != null;
     }
-
+    
     private void clearNextStates() {
         nextStates.clear(); // On élimine les actions futures
     }

@@ -59,5 +59,9 @@ public class Vector2D {
         return new Vector2D((p1.x+p2.x)/2, (p1.y+p2.y)/2);
     }
     
+    public static double dist(Vector2D a, Vector2D b) {
+        return a.minus(b).getNorm();
+    }
+    
 
 }
