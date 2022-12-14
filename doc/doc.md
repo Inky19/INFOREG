@@ -21,7 +21,7 @@
 Ce logiciel requiert Java 16 ou supérieur.
 Le .jar du logiciel est autonome et ne nécessite pas d'installation particulière.  
 
-Pour lancer Inforeg, double-cliquer sur l'exécutable .jar.  pour lancer Inforeg. Une fenêtre de démarrage doit apparaître.
+Pour lancer Inforeg, double-cliquer sur l'exécutable .jar. Une fenêtre de démarrage doit apparaître.
 
 
 ## 2. Interface
