@@ -74,11 +74,24 @@ public class KruskalMST extends Algorithm implements Processing {
                 // include it in result and increment the index
                 // of result for next edge
                 if (x != y) {
+                    // 
+                    d.stepBysStep.colorArc(G.findLine(next_edge.getFrom(), next_edge.getTo()), Color.YELLOW);
+                    d.stepBysStep.setInfoText("Prochain arc de poids minimal");
+                    d.stepBysStep.nextStep();
+                    d.stepBysStep.colorArc(G.findLine(next_edge.getFrom(), next_edge.getTo()), Color.GREEN);
+                    //
                     arbre[e++] = next_edge;
                     union(subsets, x, y);
+                } else {
+                    d.stepBysStep.colorArc(G.findLine(next_edge.getFrom(), next_edge.getTo()), Color.YELLOW);
+                    d.stepBysStep.setInfoText("Prochain arc de poids minimal : création d'un cycle");
+                    d.stepBysStep.nextStep();
+                    d.stepBysStep.colorArc(G.findLine(next_edge.getFrom(), next_edge.getTo()), Color.GRAY);
                 }
                 // Else discard the next_edge
             }
+            d.stepBysStep.setInfoText("");
+            d.stepBysStep.nextStep();
             int p = 0;
             System.out.println(arbre.length);
             Arc a = null;

@@ -23,62 +23,79 @@ public class Line {
     public final static int DEFAULT_WIDTH = 8;
     public final static Color DEFAULT_COLOR = Color.BLUE;
     public final static int CIRCLE_RADIUS = 15;
-    public Vector2D p1;
-    public Vector2D p2;
+    public Attachable from;
+    public Attachable to;
     public int width;
     public Color color;
     public boolean arrow = false;
+    public boolean circle = false;
 
     public Line(Attachable from, Attachable to) {
-        this.p1 = from.getCenterPos();
-        this.p2 = to.getCenterPos();
+        this.from = from;
+        this.to = to;
         this.width = DEFAULT_WIDTH;
         this.color = DEFAULT_COLOR;
     }
 
     public Line(Attachable from, Attachable to, Color color) {
-        this.p1 = from.getCenterPos();
-        this.p2 = to.getCenterPos();
+        this.from = from;
+        this.to = to;
         this.width = DEFAULT_WIDTH;
         this.color = color;
     }
 
     public Line(Attachable from, Attachable to, int width) {
-        this.p1 = from.getCenterPos();
-        this.p2 = to.getCenterPos();
+        this.from = from;
+        this.to = to;
         this.width = width;
         this.color = DEFAULT_COLOR;
     }
 
     public Line(Attachable from, Attachable to, int width, Color color) {
-        this.p1 = from.getCenterPos();
-        this.p2 = to.getCenterPos();
+        this.from = from;
+        this.to = to;
         this.width = width;
         this.color = color;
     }
 
     public Line(Attachable from) {
-        this.p1 = from.getCenterPos();
-        this.p2 = null;
+        this.from = from;
+        this.to = null;
         this.width = DEFAULT_WIDTH;
         this.color = DEFAULT_COLOR;
     }
 
     public Line(Attachable from, int width) {
-        this.p1 = from.getCenterPos();
-        this.p2 = null;
+        this.from = from;
+        this.to = null;
         this.width = width;
         this.color = DEFAULT_COLOR;
     }
 
     public Line(Attachable from, int width, Color color) {
-        this.p1 = from.getCenterPos();
-        this.p2 = null;
+        this.from = from;
+        this.to = null;
         this.width = width;
         this.color = color;
     }
-
+    
+    public Line(Attachable from, Attachable to, int width, Color color, boolean circle) {
+        this.from = from;
+        this.to = to;
+        this.width = width;
+        this.color = color;
+        this.circle = circle;
+    }
+    /**
+     * Renvoie true si le point de coordonnées x et y touche la hitbox de la ligne
+     * @param x abscisse globale du point
+     * @param y ordonnée globale du point
+     * @return 
+     */
     public boolean contains(double x, double y) {
+        Vector2D p1 = from.getCenterPos();
+        Vector2D p2 = to.getCenterPos();
+        
         if (p1 == null && p2 == null) {
             return false;
         } else if (p1 == null || p2 == null) {
@@ -91,14 +108,18 @@ public class Line {
             }
             return (CIRCLE_RADIUS - width / 2 <= dist && dist <= CIRCLE_RADIUS + width / 2);
         } else {
-            Vector2D v = new Vector2D(p2.x - p1.x, p2.y - p1.y);
-            double l = v.getNorm();
+            Vector2D v = p2.minus(p1);
+            
+            double l = v.getNorm() - from.getRadius() - to.getRadius();
             Vector2D n = new Vector2D(-v.y, v.x);
 
             v.normalize();
             n.normalize();
-
-            Vector2D p = new Vector2D(x - p1.x, y - p1.y);
+            
+            // On prend en compte le rayon des points d'attache
+            Vector2D p1bis = p1.plus(v.multiply(from.getRadius()));
+            
+            Vector2D p = new Vector2D(x - p1bis.x, y - p1bis.y);
 
             double dp1 = p.dotProduct(n);
             double dp2 = p.dotProduct(v);
@@ -110,14 +131,25 @@ public class Line {
     public void paint(Draw d, Graphics2D g) {
         g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
         g.setColor(color);
+        Vector2D p1 = from.getCenterPos();
+        Vector2D p2 = to.getCenterPos();
+        
         if (p1 == null && p2 == null) {
             // nothing to paint
         } else if (p1 == null || p2 == null) {
             paintCircle(d, g, p2==null ? p1 : p2);
         } else {
-            paintLine(d, g, p1, p2);
-            if (arrow) {
-                paintArrow(d, g);
+            if (circle) {
+                paintCircle(d, g, p1, p2);
+            } else { 
+                if (arrow) {
+                    paintArrow(d, g);
+                    Vector2D v = p2.minus(p1);
+                    v.normalize();
+                    // Ajustement de p2 pour une flèche plus jolie
+                    p2 = p2.minus(v.multiply(to.getRadius()+width)); 
+                }
+                paintLine(d, g, p1, p2);
             }
         }
     }
@@ -138,8 +170,19 @@ public class Line {
         double radius = d.toDrawScale(CIRCLE_RADIUS);
         g.draw(new Ellipse2D.Double((aPos.x + bPos.x) / 2 - radius, (aPos.y + bPos.y) / 2 - radius, 2 * radius, 2 * radius));
     }
+    
+    private void paintCircle(Draw d, Graphics2D g, Vector2D a, Vector2D b) {
+        Vector2D aPos = d.toDrawCoordinates(a);
+        Vector2D bPos = d.toDrawCoordinates(b);
+        g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
+        g.setColor(color);
+        double radius = d.toDrawScale(Vector2D.dist(a, b)/2);
+        g.draw(new Ellipse2D.Double((aPos.x + bPos.x) / 2 - radius, (aPos.y + bPos.y) / 2 - radius, 2 * radius, 2 * radius));
+    }
 
     private void paintArrow(Draw d, Graphics2D g) {
+        Vector2D p1 = from.getCenterPos();
+        Vector2D p2 = to.getCenterPos();
         Vector2D v = new Vector2D(p2.x - p1.x, p2.y - p1.y); // Direction vector
         Vector2D n = new Vector2D(-v.y, v.x); // Normal vector
         v.normalize();
@@ -148,11 +191,11 @@ public class Line {
         int h = (int) (10 * Math.sqrt(width));
         int w = (int) (5 * Math.sqrt(width));
 
-        Vector2D middle = Vector2D.middle(p1, p2);
+        //Vector2D middle = Vector2D.middle(p1, p2);
 
-        Vector2D head = middle.plus(v.multiply(w / 2)); // head of the arrow
-        Vector2D a = middle.minus(v.multiply(w / 2)).plus(n.multiply(h / 2));
-        Vector2D b = middle.minus(v.multiply(w / 2)).minus(n.multiply(h / 2));
+        Vector2D head = p2.minus(v.multiply(to.getRadius() + width/2)); // head of the arrow
+        Vector2D a = head.minus(v.multiply(w)).plus(n.multiply(h / 2));
+        Vector2D b = head.minus(v.multiply(w)).minus(n.multiply(h / 2));
 
         paintLine(d, g, head, a);
         paintLine(d, g, head, b);

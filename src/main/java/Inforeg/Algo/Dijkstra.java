@@ -79,7 +79,7 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
             int u = findMin(dist, vu, g.getNbsommets());
             // ##### STEP #####
             node = d.getNode(u);
-            d.stepBysStep.colorNode(node, Color.ORANGE,true);
+            d.stepBysStep.colorNode(node, Color.ORANGE,false);
             d.stepBysStep.setInfoText("Distance la plus petite du noeud "+node.getLabel()+" est "+dist[u] );
             d.stepBysStep.nextStep();
             // ################
@@ -96,7 +96,7 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
                     dist[v] = dist[u] + g.getAdjMatrix()[u][v];
                     // ##### STEP #####
                     node = d.getNode(v);
-                    d.stepBysStep.colorNode(node, Color.GRAY,true);
+                    d.stepBysStep.colorNode(node, Color.GRAY,false);
                     d.stepBysStep.setInfoText("Mise a jour de "+node.getLabel()+" nouvelle distance "+dist[v] );
                     d.stepBysStep.nextStep();
                     // ################

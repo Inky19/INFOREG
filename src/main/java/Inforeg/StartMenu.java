@@ -9,6 +9,7 @@ Date de dernière modification : 18/03/2022
 Commentaires ajoutés
 =============================================*/
 import Inforeg.Draw.Draw;
+import Inforeg.UI.CheckBox;
 import Inforeg.Save.SaveManager;
 import Inforeg.UI.ToolButton;
 import java.awt.Color;
@@ -31,6 +32,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 
+/**
+ * Fenêtre de démarrage de l'application
+ * @author remir
+ */
 public class StartMenu {
     
     public static void main(String[] args) throws IOException {
@@ -68,11 +73,8 @@ public class StartMenu {
         Image bannerImgResized = bannerImg.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
         JLabel banner = new JLabel(new ImageIcon(bannerImgResized));
         
-        JCheckBox graphOriente = new JCheckBox("Orienté");
-        graphOriente.setIcon(AssetLoader.checkBox0);
-        graphOriente.setSelectedIcon(AssetLoader.checkBox1);
-        graphOriente.setFocusPainted(false);
-        JCheckBox graphPond = new JCheckBox("Pondéré");
+        CheckBox graphOriente = new CheckBox("Orienté");
+        CheckBox graphPond = new CheckBox("Pondéré");
         graphPond.setFocusPainted(false);
 
         // Bouton générant un nouveau graphe

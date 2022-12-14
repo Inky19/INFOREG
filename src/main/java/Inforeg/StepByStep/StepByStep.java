@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
- *
+ * Permet l'enregistrement d'une séquence d'action sur le graphe pour visualiser les algorithmes.
  * @author remir
  */
 public class StepByStep {
@@ -20,14 +20,15 @@ public class StepByStep {
     private LinkedList<StepAction> currentStep;
     private int stepIndex;
     
-
     public StepByStep() {
         steps = new ArrayList<>();
         currentStep = new LinkedList<>();
         stepIndex = 0;
     }
-    
-    public void init() {
+    /**
+     * Supprime toutes les étapes enregistrées
+     */
+    public void clear() {
         stepIndex = 0;
         steps = new ArrayList<>();
         currentStep = new LinkedList<>();
@@ -43,13 +44,18 @@ public class StepByStep {
     public void setInfoText(String text) {
         currentStep.add(new SetText(text));
     }
-    //
+    // Fin actions possibles
     /**
      * @return nb le nombre d'étapes enregistrées
      */
     public int getNbStep() {
         return steps.size();
     }
+    
+    public int getCurrentStepIndex() {
+        return stepIndex;
+    }
+    
     /**
      * 
      * @return true si l'étape en cours ne contient pas d'action.

@@ -17,8 +17,8 @@ import java.awt.Point;
  * @author Rémi
  */
 public class Nail extends Ellipse2D.Double implements Attachable {
-    public final static int DEFAULT_RADIUS = 5;
-    public final static int HITBOX_RADIUS = 10;
+    public final static int DEFAULT_RADIUS = 3;
+    public final static int HITBOX_RADIUS = 7;
     
     public Arc arc;
     
@@ -114,7 +114,7 @@ public class Nail extends Ellipse2D.Double implements Attachable {
     }
     
     public void delete() {
-        if (arc != null) {
+        if (arc != null && arc.getFrom() != arc.getTo()) {
             arc.getNails().remove(this);
         }
     }
@@ -127,6 +127,11 @@ public class Nail extends Ellipse2D.Double implements Attachable {
     @Override
     public boolean contains(double x, double y) {
         return (((x - cx)*(x - cx) + (y - cy)*(y - cy)) <= HITBOX_RADIUS*HITBOX_RADIUS);
+    }
+    
+    @Override
+    public double getRadius() {
+        return r;
     }
     
 }

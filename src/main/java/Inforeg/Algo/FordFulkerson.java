@@ -143,7 +143,7 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
             for (int j=0;j<V;j++) {
                 l = d.findLine(i,j);
                 if (l != null) {
-                    l.setFlow(l.getPoids() - rGraph[i][j]);
+                    l.setFlow(Integer.max(0,l.getPoids() - rGraph[i][j]));
                     if (rGraph[i][j] == 0) {
                         l.setColorDisplayed(Color.red);
                     }

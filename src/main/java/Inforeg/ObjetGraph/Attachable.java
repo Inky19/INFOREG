@@ -12,4 +12,6 @@ import Inforeg.UI.Vector2D;
  */
 public interface Attachable {
     public Vector2D getCenterPos();
+    
+    public double getRadius();
 }

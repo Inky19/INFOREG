@@ -38,8 +38,9 @@ public abstract class AssetLoader {
     public static final ImageIcon resetIco = new ImageIcon(getURL("asset/icons/reset.png"));
     public static final ImageIcon checkBox0 = new ImageIcon(getURL("asset/icons/checkbox0.png"));
     public static final ImageIcon checkBox1 = new ImageIcon(getURL("asset/icons/checkbox1.png"));
+    public static final ImageIcon playIco = new ImageIcon(getURL("asset/icons/play.png"));
     // Cursor
-    public static final Cursor pinCursor = tkit.createCustomCursor(pinImg, new Point(3,29), "pinCursor");
+    public static final Cursor pinCursor = tkit.createCustomCursor(pinImg, new Point(3,24), "pinCursor");
     public static final Cursor paintCursor = tkit.createCustomCursor(paintImg, new Point(3,29), "paintCursor");
     
     

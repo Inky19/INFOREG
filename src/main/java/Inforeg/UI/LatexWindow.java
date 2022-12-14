@@ -210,7 +210,7 @@ public class LatexWindow extends JDialog {
         showNails = new JCheckBox("Afficher les clous");
         JPanel wraperArc = new JPanel(new BorderLayout());
         wraperArc.add(showNails, BorderLayout.PAGE_START);
-       
+        
         arcs.add(arcsContainers);
         arcs.add(wraperArc);
         config.add(arcs);
@@ -224,7 +224,7 @@ public class LatexWindow extends JDialog {
         wrapperArea.add(exportScrollPane);
         export.add(wrapperArea);
 
-        JButton exportButton = new JButton("Exporter");
+        JButton exportButton = new ToolButton("Exporter",Color.GRAY,Color.LIGHT_GRAY,null);
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
