@@ -21,6 +21,7 @@ import Inforeg.UI.AlgoWindow;
 import Inforeg.UI.ButtonTabComponent;
 import Inforeg.UI.LatexWindow;
 import Inforeg.UI.CheckBox;
+import Inforeg.UI.CreditsWindow;
 import Inforeg.UI.ToolButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -36,6 +37,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -857,12 +859,21 @@ public class Interface {
         credits.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                /*
                 String creditStr = "Application créée par Béryl CASSEL, Cristobal CARRASCO DE RODT, Jorge QUISPE , Isaías VENEGAS et Samy AMAL \n"
                         + "\n"
                         + "dans le cadre du projet de groupe INFOREG \n"
                         + "\n"
                         + "encadré par Olivier ROUX";
                 JOptionPane.showMessageDialog(frame, creditStr, "Credits", JOptionPane.INFORMATION_MESSAGE);
+                */
+                CreditsWindow credits;
+                try {
+                    credits = new CreditsWindow(frame);
+                     credits.setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
 
