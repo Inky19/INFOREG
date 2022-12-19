@@ -1,4 +1,4 @@
-package Inforeg.Algo;
+ package Inforeg.Algo;
 
 /*=============================================
 Classe PrimMST définissant l'algorithme de PrimMST
