@@ -170,7 +170,7 @@ Si un fichier ne peut pas être chargé car il semble corrompu, il est possible 
 | `bool` | booléen | `true` ou `false` |
 | `int` | entier | ≥ 0 |
 | `double` | décimal |  |
-| `str` | châine de caractères |  |
+| `str` | chaîne de caractères |  |
 | `hex` | couleur hexadécimal | exemple : `123abc` |
 
 
