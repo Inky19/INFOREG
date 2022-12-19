@@ -1,15 +1,17 @@
 package Inforeg.UI;
 
 import Inforeg.AssetLoader;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import static java.awt.Font.BOLD;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /**
  *
@@ -28,7 +31,10 @@ import javax.swing.JPanel;
 public class CreditsWindow extends JDialog {
     
     private static final int WIDTH = 400;
-    private static final int HEIGHT = 700;
+    private static final int HEIGHT = 500;
+    
+    // Gradient de couleur utilisé pour l'animation de la version 2.0
+    private static final Color[] gradient = {new Color(113, 120, 219), new Color(109, 116, 211), new Color(90, 110, 200), new Color(53, 107, 198), new Color(90, 110, 200), new Color(109, 116, 211), new Color(113, 120, 219)};
     
     private JPanel mainPanel;
     private JPanel logoPanel;
@@ -37,11 +43,30 @@ public class CreditsWindow extends JDialog {
     private JPanel panel2;
     private AnimatedArea panel2Draw; 
     
-    public CreditsWindow(JFrame frame) throws IOException{
+    // Taille du cadre de l'animation
+    private Dimension draw2Dim;
+    
+    // Timer pour gérer l'animation de la version 2.0
+    private Timer timer;
+            
+    private boolean frameFinished; // Indique si la frame graphique est terminée.
+    
+    public CreditsWindow(JFrame frame) throws IOException, InterruptedException{
         super(frame, "Crédits");
+        this.addWindowListener(new WindowAdapter(){
+          public void windowClosing(WindowEvent e){
+            if (timer != null){
+                timer.stop(); // Empêche le timer de continuer à tourner en arrière plan, même quand la fenêtre est fermée.
+            }
+          }
+        });
+
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        frameFinished = false;  
         this.setResizable(false);
         this.setSize(WIDTH, HEIGHT);
-        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null); // Centre la fenêtre à son lancement.
+        
         mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         
@@ -73,12 +98,14 @@ public class CreditsWindow extends JDialog {
         panel2Text.setAlignmentX(CENTER_ALIGNMENT);
         panel2Text.setHorizontalAlignment(JLabel.CENTER);
         panel2Draw = new AnimatedArea();
-        Dimension draw2Dim = new Dimension(WIDTH-20, 100);
+        draw2Dim = new Dimension(WIDTH-20, 100);
         panel2Draw.setPreferredSize(draw2Dim);
         panel2Draw.setMaximumSize(draw2Dim);
         panel2Draw.setAlignmentX(CENTER_ALIGNMENT);
         panel2Draw.setBackground(Color.BLUE);
-        panel2Draw.addLine(new AnimatedText("Test"));
+        int order = (int)(Math.random() * 2); // Ordre des noms aléatoire
+        panel2Draw.addLine(new AnimatedText("François MARIE", 30+(order*35)));
+        panel2Draw.addLine(new AnimatedText("Rémi RAVELLI", 30+(1-order)*35));
         
         panel2.add(panel2Text);
         panel2.add(panel2Draw);
@@ -92,10 +119,28 @@ public class CreditsWindow extends JDialog {
         update();
     }
     
-    private void update(){
-        panel2Draw.repaint();
+    /**
+     * Fonction pour gérer l'animation de la version 2.0
+     * @throws InterruptedException 
+     */
+    private void update() throws InterruptedException{
+        int delay = 30; //milliseconds
+        ActionListener taskPerformer = new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                if (frameFinished){
+                    frameFinished = false;
+                    panel2Draw.repaint();
+                }
+            }
+        };
+        timer = new Timer(delay, taskPerformer);
+        timer.setCoalesce(true);
+        timer.start();
     }
     
+    /**
+     * JPanel contenant les différents textes animés.
+     */
     private class AnimatedArea extends JPanel{
         
         private ArrayList<AnimatedText> lines;
@@ -109,18 +154,24 @@ public class CreditsWindow extends JDialog {
             lines.add(text);
         }
         
-        public void paint(Graphics gfx){
-            super.paint(gfx);
-            System.out.println("HERE");
-            Graphics2D gfx2D = (Graphics2D) gfx;
-            gfx2D.setColor(Color.yellow);
-            gfx2D.setFont(new Font("BOLD", BOLD, 25));
-            gfx2D.setColor(Color.black);
-            gfx2D.drawString("TEST TEST TEST", 0, 0);
+        /**
+         * Permet le rafraîchissement de l'animation
+         * @param g Graphics associé au panel
+         */
+        @Override
+        public void paintComponent(Graphics g){
+            // On dessine sur une image en buffer pour éviter les problèmes de performances. (L'animation lag si on dessine directement sur g).
+            BufferedImage img = new BufferedImage(draw2Dim.width, draw2Dim.height, BufferedImage.TYPE_3BYTE_BGR);
+            Graphics gfx = img.getGraphics();
+            Graphics2D gfx2D = (Graphics2D) gfx; // Cast en graphics2D pour pouvoir appliquer des méthodes 2D.
+            
+            gfx2D.setFont(new Font("Monospace", Font.BOLD, 20)); // Police utilisée
             for (AnimatedText text: lines){
-                text.update(1);
-                text.draw(gfx2D);
+                text.update(0.01f);
+                text.draw(gfx);
             }
+            g.drawImage(img, 0, 0, null);
+            frameFinished = true; // La frame est terminée
         }
     }
     
@@ -131,38 +182,85 @@ public class CreditsWindow extends JDialog {
             public char chr;
             public float x;
             public float y;
+            public Color color;
             
             public Letter(char chr){
                 this.chr = chr;
                 x = 0;
-                y = 0;
+                y = 25;
+                color = Color.WHITE;
             }
             
         }
         
         private Letter[] text;
-        private int time;
+        private long time;
+        private float yLine; // Position y de la ligne du texte
+        private int colorIndex;
         
-        public AnimatedText(String text){
+        public AnimatedText(String text, float y){
             char[] chrArray = text.toCharArray();
             this.text = new Letter[text.length()];
+            int kerning = 0; // Permet de gérer l'espacement des lettres
             for (int i=0; i<text.length(); i++){
                 this.text[i] = new Letter(chrArray[i]);
+                this.text[i].x = i*15+kerning;
+                
+                switch (Character.toLowerCase(this.text[i].chr)){
+                    case 'm':
+                        kerning += 5;
+                        break;
+                    case 'i':
+                        kerning += -2;
+                        break;
+                }
             }
-            time = 0;
+            yLine = y;
+            time = System.currentTimeMillis();
+            colorIndex = 0;
         }
         
-        public void update(int time){
-            this.time += time;
-            for (Letter l: text){
-                l.x += 2;
-                l.y = (float) Math.cos(time);
+        public void update(float factor){
+            Letter l = null;
+            
+            // Défilement du gradient de couleur dans le temps
+            if (System.currentTimeMillis() - time > 200){
+                time = System.currentTimeMillis();
+                colorIndex++;
+                if (colorIndex >= gradient.length){
+                    colorIndex = 0;
+                }
+            }
+            
+            int loopColor = colorIndex;
+            for (int i=0; i<text.length; i++){
+                l = text[i];
+                
+                // Changement de la couleur en fonction de la lettre.
+                loopColor++;
+                if (loopColor >= gradient.length){
+                    loopColor = 0;
+                }
+                l.color = gradient[loopColor];
+                l.x += 200*factor;
+                
+                // Retour à gauche du cadre
+                if (l.x >draw2Dim.width){
+                    l.x = 0;
+                }
+                l.y = yLine + (float) (Math.cos(i+0.005*System.currentTimeMillis())*4);
             }
         }
         
-        public void draw(Graphics2D gfx){
+        /**
+         * Affiche les lettres du texte sur la zone graphique.
+         * @param gfx Graphics sur lequel dessiner
+         */
+        public void draw(Graphics gfx){
+            Graphics2D gfx2D = (Graphics2D) gfx;
             for (Letter l: text){
-                gfx.drawString(String.valueOf(l.chr), l.x, l.y);
+                gfx2D.setColor(l.color);
+                gfx2D.drawString(String.valueOf(l.chr), l.x, l.y);
             }
         }
     }
