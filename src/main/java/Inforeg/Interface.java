@@ -25,6 +25,7 @@ import Inforeg.UI.GraphTypeWindow;
 import Inforeg.UI.ToolButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import static java.awt.Color.red;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
@@ -530,13 +531,8 @@ public class Interface {
         algoButton.addActionListener((ActionEvent e) -> {
             AlgoWindow window = new AlgoWindow(frame, d);
             window.setVisible(true);
-            if (d.getAlgo() != null) {
-                algoButton.setText("▼  " + d.getAlgo().getName());
-                autoStart.setVisible(!d.getAlgo().isAutoStart());
-                toolBarButtons.revalidate();
-                toolBarButtons.repaint();
-                
-            }
+            
+            updateAlgoSelector();
         });
         toolBarButtons.add(algoButton);
         JPanel algoPanel = new JPanel();
@@ -544,6 +540,7 @@ public class Interface {
         algoPanel.setPreferredSize(algoPanel.getMaximumSize());
         algoPanel.setAlignmentX(0);
         ToolButton algoGo = new ToolButton(playIco, null , AlgoBox.BUTTON_COLOR, null);
+        algoGo.setToolTipText("Lancer l'algorithme");
         algoGo.addActionListener((ActionEvent e) -> {
             if (d.getAlgo() == null) {
                 JOptionPane.showMessageDialog(null, "Aucun algorithme sélectionné.", "Algorithme", JOptionPane.INFORMATION_MESSAGE);
@@ -571,6 +568,7 @@ public class Interface {
             d.stepBysStep.clear();
             d.repaint();
         }));
+        resetButton.setToolTipText("Réinitialiser le graphe");
         algoPanel.add(resetButton);
 
         JToolBar goAndReset = new JToolBar();
@@ -630,7 +628,16 @@ public class Interface {
 
     }
 
-    ;
+    private void updateAlgoSelector() {
+        if (d.getAlgo() == null) {
+           algoButton.setText("▼"); 
+        } else {
+            algoButton.setText("▼  " + d.getAlgo().getName());
+            autoStart.setVisible(!d.getAlgo().isAutoStart());
+            toolBarButtons.revalidate();
+            toolBarButtons.repaint();
+        }
+    }
     
     public void connexe() {
         mode = TRAITEMENT_MODE;
@@ -650,15 +657,11 @@ public class Interface {
     private void initTabs() {
 
         tabsPanel = new JTabbedPane();
-        FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
+        FlowLayout f = new FlowLayout(FlowLayout.CENTER, 0, 0);
         JPanel pnlTab = new JPanel(f);
         pnlTab.setOpaque(false);
-        JButton addTabButton = new ToolButton("+", null, Color.LIGHT_GRAY, null);
-        addTabButton.setOpaque(false); //
-        //addTabButton.setBorder (null);
-        addTabButton.setContentAreaFilled(false);
-        addTabButton.setFocusPainted(false);
-        addTabButton.setFocusable(false);
+        JButton addTabButton = new ToolButton(plusIco, null, Color.LIGHT_GRAY, null);
+        addTabButton.setPreferredSize(new Dimension(50,30));
 
         tabsPanel.addTab("", null, new JScrollPane());
         pnlTab.add(addTabButton);
@@ -690,6 +693,8 @@ public class Interface {
                     } else {
                         stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
                         stepBystepBar.setVisible(true);
+                        nextStep.setEnabled(!d.stepBysStep.isLastStep());
+                        previousStep.setEnabled(!d.stepBysStep.isFirstStep());
                     }
                     currentTab = index;
                     refreshResult();

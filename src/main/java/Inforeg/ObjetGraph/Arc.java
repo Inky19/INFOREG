@@ -80,7 +80,7 @@ public class Arc implements Comparable<Arc> {
         this.from = fromPoint;
         this.to = toPoint;
         this.poids = pds;
-        this.label = new AttachedLabel(Integer.toString(poids),Vector2D.middle(fromPoint.getCenterPos(), toPoint.getCenterPos()), c);
+        this.label = new AttachedLabel();
         this.color = c;
         this.colorDisplayed = c;
         this.width = DEFAULT_LINE_WIDTH;

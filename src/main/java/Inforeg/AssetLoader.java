@@ -44,6 +44,7 @@ public abstract class AssetLoader {
     public static final ImageIcon norienteIco = new ImageIcon(getURL("asset/icons/noriente.png"));
     public static final ImageIcon pondereIco = new ImageIcon(getURL("asset/icons/pondere.png"));
     public static final ImageIcon npondereIco = new ImageIcon(getURL("asset/icons/npondere.png"));
+    public static final ImageIcon plusIco = new ImageIcon(getURL("asset/icons/plus.png"));
     // Cursor
     public static final Cursor pinCursor = tkit.createCustomCursor(pinImg, new Point(3,24), "pinCursor");
     public static final Cursor paintCursor = tkit.createCustomCursor(paintImg, new Point(3,29), "paintCursor");
