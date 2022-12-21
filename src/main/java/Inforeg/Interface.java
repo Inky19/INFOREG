@@ -870,8 +870,8 @@ public class Interface {
                 CreditsWindow credits;
                 try {
                     credits = new CreditsWindow(frame);
-                     credits.setVisible(true);
-                } catch (IOException ex) {
+                    credits.setVisible(true);
+                } catch (Exception ex) {
                     Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
