@@ -227,6 +227,7 @@ public class Draw extends JPanel implements MouseMotionListener {
         bottomLayout.setFloatable(false);
         bottomLayout.setOpaque(false);
         bottomLayout.setFocusable(false);
+        bottomLayout.setEnabled(false);
         bottomLayout.setBorderPainted(false);
         this.add(bottomLayout, BorderLayout.SOUTH);
         this.add(infoTop, BorderLayout.NORTH);
@@ -501,7 +502,7 @@ public class Draw extends JPanel implements MouseMotionListener {
                             } else if (dest == null) {
                                 dest = findNode(x, y);
                                 if (dest != null) {
-                                    dest.setOutlineColor(Color.RED);
+                                    dest.setOutlineColor(Color.decode("#ba473f"));
                                     repaint();
                                     ((AlgorithmST) algo).process(d, src, dest);
                                     src = null;

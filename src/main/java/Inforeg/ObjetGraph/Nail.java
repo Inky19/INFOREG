@@ -82,15 +82,16 @@ public class Nail extends Ellipse2D.Double implements Attachable {
         this.height = h;
         this.width = h;
 
-        g.setStroke(new BasicStroke((float) d.toDrawScale(7)));
+        g.setStroke(new BasicStroke((float) d.toDrawScale(3)));
+        g.setColor(color);
+        g.fill(this);
         //Outline
         if (selected) {
             g.setPaint(Color.GREEN);
             g.draw(this);
         }
 
-        g.setColor(color);
-        g.fill(this);
+        
     }
 
     public double getCx() {

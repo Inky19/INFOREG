@@ -77,6 +77,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 /**
  * Fenêtre principal de l'application
@@ -522,7 +523,7 @@ public class Interface {
         toolBarButtons.add(connexeButton);
         toolBarButtons.addSeparator();
 
-        algoButton = new ToolButton("▼", null, TOOL_BUTTON_FOCUS_COLOR, null);
+        algoButton = new ToolButton("▼", AlgoBox.BUTTON_COLOR, AlgoBox.BUTTON_SELECTED_COLOR, null);
         Dimension algoButtonSize = new Dimension(buttonSize.width, algoButton.getMaximumSize().height);
         algoButton.setMaximumSize(algoButtonSize);
         algoButton.setPreferredSize(algoButtonSize);
@@ -711,8 +712,7 @@ public class Interface {
         } else {
             tabsPanel.addTab(d.getFileName(), tabIco, d);
         }
-
-        tabsPanel.setTabComponentAt(1, new ButtonTabComponent(tabsPanel, tabIco));
+        tabsPanel.setTabComponentAt(1, new ButtonTabComponent(tabsPanel, d.oriente ? orienteIco : norienteIco, d.pondere ? pondereIco : npondereIco));
         //tabsPanel.setMnemonicAt(0, KeyEvent.VK_1);
         addTabButton.setFocusable(false);
         addTabButton.addActionListener(listener);
@@ -726,10 +726,10 @@ public class Interface {
     public void tabSaved(boolean saved) {
         int ind = tabsPanel.getSelectedIndex();
         if (saved) {
-            tabsPanel.setIconAt(ind, tabIco);
+            ((ButtonTabComponent)tabsPanel.getTabComponentAt(ind)).setTitleColor(Color.BLACK);
             tabsPanel.setTitleAt(ind, d.getFileName());
         } else {
-            tabsPanel.setIconAt(ind, unsavedTabIco);
+            ((ButtonTabComponent)tabsPanel.getTabComponentAt(ind)).setTitleColor(Color.decode("#0c6d96"));
             tabsPanel.setTitleAt(ind, "*" + d.getFileName());
         }
         tabsPanel.revalidate();
@@ -744,14 +744,14 @@ public class Interface {
         newD.setFileName(title);
         newD.setInterface(Interface.this);
         tabsPanel.addTab(title, tabIco, newD);
-        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, tabIco));
+        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, d.oriente ? orienteIco : norienteIco, d.pondere ? pondereIco : npondereIco));
         tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
     }
 
     private void addNewTab(Draw newD) {
         newD.setInterface(Interface.this);
         tabsPanel.addTab(newD.getFileName(), tabIco, newD);
-        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, tabIco));
+        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, d.oriente ? orienteIco : norienteIco, d.pondere ? pondereIco : npondereIco));
         tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
     }
 
@@ -870,7 +870,7 @@ public class Interface {
                 CreditsWindow credits;
                 try {
                     credits = new CreditsWindow(frame);
-                     credits.setVisible(true);
+                    credits.setVisible(true);
                 } catch (IOException ex) {
                     Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (InterruptedException ex) {
