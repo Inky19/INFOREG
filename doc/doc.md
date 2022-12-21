@@ -11,7 +11,9 @@
     4.3 [Affichage](#43-affichage)  
 5. [Traitement algorithmique](#5-traitement-algorithmique)
 6. [Sauvegarde et chargement](#6-sauvegarde-et-chargement)
-7. [Exportation en d'autres formats](#6-exportation-en-dautres-formats)
+7. [Exportation en d'autres formats](#7-exportation-en-dautres-formats)  
+    7.1 [Image PNG](#71-image-png)  
+    7.2 [Format LaTeX](#72-export-latex)  
 8. [Annexes]()
 
 <div class="page"/>
@@ -184,4 +186,45 @@ Arc, <id nœud1:int>, <id nœud2:int>, <pondération:int>, <couleur:hex>, <nombr
 
 ### 6.2 Chargement
 
+Il existe deux manière de charger un fichier `.inforeg` existant :
+- Sélectionner `Charger un graphe` dans la fenêtre de démarrage.
+- Dans le menu `Fichier` de la fenêtre principale, sélectionner `Ouvrir`.
+
+Un explorateur de fichier s'ouvre ensuite pour sélectionner le fichier souhaité.
 ## 7. Exportation en d'autres formats
+
+### 7.1 Image PNG
+
+L'export en PNG enregistre le graphe sur un fond transparent, avec les mêmes dimensions et la même résolution obtenus avec un appui sur le bouton de zoom automatique (voir [Affichage](#43-affichage)).
+
+Pour exporter le graphe en image PNG, cliquer sur `Fichier` puis `Exporter` puis `Image PNG`.  
+Un explorateur de fichier s'ouvre alors pour enregistrer l'image.
+
+### 7.2 Export LaTeX
+
+L'export LaTeX transforme le graphe en code TikZ, en vue d'être inséré dans un document LaTeX existant.
+
+Pour exporter le graphe en image PNG, cliquer sur `Fichier` puis `Exporter` puis `Format LaTeX`.  
+
+Une fenêtre apparaît pour choisir les différentes options des nœuds et des arcs :
+<div align="center">
+    <img src="ressources/latex.png" width="80%"/>
+</div>
+
+
+
+- La case `Adapter la taille des nœuds en fonction de leur label` permet de redimensionner automatiquement le diamètre de chaque nœud dont le texte dépace des bords.
+
+- La case `Afficher les clous` permet d'afficher les clous d'un arc sous forme de petits disques bleus (comme dans le logiciel). Si cette option n'est pas sélectionnée, les arcs sont dessinés comme des lignes brisées.
+
+Une fois le paramétrage terminé, cliquer sur l'onglet `Export` puis sur le bouton `Exporter` en bas. Le code LaTeX apparaît alors dans la zone de texte et peut être modifié et copié.
+
+<div>
+  <font size=3><b>Adapter la taille du graphe dans le document</b></font>
+</div>
+
+Les dimensions du graphe doivent être adaptées en fonction du document. Deux variables peuvent être utilisées directement dans le code :
+
+- `\resizebox{15cm}{!}` : cette ligne gère la taille de la zone de dessin du graphe dans le document. Le premier  paramètre correspond à la largeur (par défaut `15cm`). Le second à la hauteur, qui peut être remplacé par `!` pour générer une zone carrée à partir de la largeur seulement.
+
+- `\begin{tikzpicture}[scale=0.05]` : la valeur `scale` permet de gérer l'échelle du graphe. Ainsi, si les nœuds apparaissent trop petits car trop éloignés lors de la génération, il est possible d'augmenter leur taille en chageant ce paramètre.

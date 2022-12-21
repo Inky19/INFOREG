@@ -13,7 +13,6 @@ import Inforeg.Draw.Draw;
 import static Inforeg.Graph.GraphFunction.connected;
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
-import Inforeg.Save.ExportLatex;
 import Inforeg.Save.ExportPNG;
 import Inforeg.Save.SaveManager;
 import Inforeg.UI.AlgoBox;
@@ -22,6 +21,7 @@ import Inforeg.UI.ButtonTabComponent;
 import Inforeg.UI.LatexWindow;
 import Inforeg.UI.CheckBox;
 import Inforeg.UI.CreditsWindow;
+import Inforeg.UI.GraphTypeWindow;
 import Inforeg.UI.ToolButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -78,7 +78,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 /**
  * Fenêtre principal de l'application
@@ -745,18 +744,22 @@ public class Interface {
     private void addNewTab() {
         String title = "Graphe " + String.valueOf(tabsPanel.getTabCount());
 
-        Draw newD = new Draw(d.getOriente(), d.getPondere());
-        newD.setFileName(title);
-        newD.setInterface(Interface.this);
-        tabsPanel.addTab(title, tabIco, newD);
-        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, d.oriente ? orienteIco : norienteIco, d.pondere ? pondereIco : npondereIco));
-        tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
+        GraphTypeWindow graphWin = new GraphTypeWindow();
+        Draw newD = graphWin.chooseGraph();
+        if (newD != null){
+            newD.setFileName(title);
+            newD.setInterface(Interface.this);
+            tabsPanel.addTab(title, tabIco, newD);
+            tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, newD.oriente ? orienteIco : norienteIco, newD.pondere ? pondereIco : npondereIco));
+            tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
+        }
+        
     }
 
     private void addNewTab(Draw newD) {
         newD.setInterface(Interface.this);
         tabsPanel.addTab(newD.getFileName(), tabIco, newD);
-        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, d.oriente ? orienteIco : norienteIco, d.pondere ? pondereIco : npondereIco));
+        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, newD.oriente ? orienteIco : norienteIco, newD.pondere ? pondereIco : npondereIco));
         tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
     }
 
