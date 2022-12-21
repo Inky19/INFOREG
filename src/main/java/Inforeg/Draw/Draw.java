@@ -953,7 +953,7 @@ public class Draw extends JPanel implements MouseMotionListener {
             camera.x = (int) (currentCameraPosition.x + toGlobalScale(currentMousePosition.x - currentScreenLocation.x));
             camera.y = (int) (currentCameraPosition.y + toGlobalScale(currentMousePosition.y - currentScreenLocation.y));
             Draw.drawZone = false;
-
+            
             repaint();
         }
 
@@ -970,6 +970,7 @@ public class Draw extends JPanel implements MouseMotionListener {
         for (Arc a : G.getLines()) {
             a.reinit();
         }
+        this.setInfoText("");
     }
 
     public void doRedraw() {

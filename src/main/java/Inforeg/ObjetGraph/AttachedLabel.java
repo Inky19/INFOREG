@@ -29,7 +29,12 @@ public class AttachedLabel {
     private Vector2D offset = new Vector2D(0, 0);
     public Color textColor = DEFAULT_FONT_COLOR;
     public Color bgColor = DEFAULT_BACKGROUND_COLOR;
-
+    
+    
+    public AttachedLabel() {
+        this.pos = new Vector2D(0,0);
+    }
+    
     public AttachedLabel(String label, Vector2D pos, Vector2D offset) {
         this.text = label;
         this.pos = pos;
