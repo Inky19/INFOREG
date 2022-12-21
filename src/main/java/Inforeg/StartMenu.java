@@ -98,8 +98,10 @@ public class StartMenu {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 Draw d = SaveManager.load();
-                SwingUtilities.invokeLater(new Interface(d)::createAndShowGui);
-                J.dispatchEvent(new WindowEvent(J, WindowEvent.WINDOW_CLOSING));
+                if (d != null) {
+                    SwingUtilities.invokeLater(new Interface(d)::createAndShowGui);
+                    J.dispatchEvent(new WindowEvent(J, WindowEvent.WINDOW_CLOSING));
+                }
             }
         });
 
