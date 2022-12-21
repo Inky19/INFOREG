@@ -40,6 +40,10 @@ public abstract class AssetLoader {
     public static final ImageIcon checkBox1 = new ImageIcon(getURL("asset/icons/checkbox1.png"));
     public static final ImageIcon playIco = new ImageIcon(getURL("asset/icons/play.png"));
     public static final ImageIcon githubIco = new ImageIcon(getURL("asset/icons/github.png"));
+    public static final ImageIcon orienteIco = new ImageIcon(getURL("asset/icons/oriente.png"));
+    public static final ImageIcon norienteIco = new ImageIcon(getURL("asset/icons/noriente.png"));
+    public static final ImageIcon pondereIco = new ImageIcon(getURL("asset/icons/pondere.png"));
+    public static final ImageIcon npondereIco = new ImageIcon(getURL("asset/icons/npondere.png"));
     // Cursor
     public static final Cursor pinCursor = tkit.createCustomCursor(pinImg, new Point(3,24), "pinCursor");
     public static final Cursor paintCursor = tkit.createCustomCursor(paintImg, new Point(3,29), "paintCursor");
