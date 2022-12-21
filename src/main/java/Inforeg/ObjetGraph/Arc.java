@@ -41,7 +41,8 @@ public class Arc implements Comparable<Arc> {
      */
     private int poids;
     
-    private ArrayList<AttachedLabel> labels;
+    
+    private AttachedLabel label;
     /**
      * Couleur
      */
@@ -79,11 +80,11 @@ public class Arc implements Comparable<Arc> {
         this.from = fromPoint;
         this.to = toPoint;
         this.poids = pds;
+        this.label = new AttachedLabel(Integer.toString(poids),Vector2D.middle(fromPoint.getCenterPos(), toPoint.getCenterPos()), c);
         this.color = c;
         this.colorDisplayed = c;
         this.width = DEFAULT_LINE_WIDTH;
         this.nails = new ArrayList<>();
-        this.labels = new ArrayList<>();
         if (from == to && from != null) {
             nails.add(new Nail(fromPoint.getCx() + 2*Line.CIRCLE_RADIUS,fromPoint.getCy(), this));
         }
@@ -96,30 +97,10 @@ public class Arc implements Comparable<Arc> {
         this.color = c;
         this.colorDisplayed = c;
         this.nails = new ArrayList<>();
+        this.label = new AttachedLabel(Integer.toString(poids),Vector2D.middle(fromPoint.getCenterPos(), toPoint.getCenterPos()), c);
         this.addNail(nail);
         this.width = DEFAULT_LINE_WIDTH;
     }
-
-    protected static void paintLabel(Draw d, Graphics2D g, Vector2D p, String label, Color textColor, Color bgColor, int size) {
-        Point pos = d.toDrawCoordinates(p).toPoint();
-        Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(size));
-        FontMetrics metrics = g.getFontMetrics(font);
-        Rectangle2D bg = metrics.getStringBounds(label, g);
-
-        // Determine the X coordinate for the text
-        int fontX = (int) (pos.x - metrics.stringWidth(label) / 2);
-        int fontY = pos.y;
-        int offset = (int) d.toDrawScale(5);
-        if (bgColor != null) {
-            g.setPaint(bgColor);
-            g.fillRect(fontX - offset, fontY - (int) bg.getHeight() + metrics.getDescent(), (int) (bg.getWidth() + 2 * offset), (int) bg.getHeight());
-        }
-        g.setPaint(textColor);
-        g.setFont(font);
-        g.drawString(label, fontX, fontY);
-    }
-    
-
 
     public void paint(Draw d, Graphics2D g) {
 
@@ -136,35 +117,36 @@ public class Arc implements Comparable<Arc> {
             nail.paint(d, g);
         }
         // Painting of labels
-        if (flow != null) {
-            String label = Integer.toString(flow);
-            Vector2D pos;
-            if (from == to) {
-                pos = from.getCenterPos().plus(new Vector2D(2*Line.CIRCLE_RADIUS,0));
-            } else {
-                if (nails.isEmpty()) {
-                    pos = Vector2D.middle(from.getCenterPos(), to.getCenterPos());
-                } else {
-                    Nail midNail = nails.get(nails.size() / 2);
-                    pos = midNail.getCenterPos();
-                }                
-            }
-            paintLabel(d, g, pos.plus(new Vector2D(0, 22)), label, colorDisplayed, Color.CYAN, 15);
-        }
         if (d.pondere) {
-            String label = Integer.toString(poids);
+            // text
+            String text;
+            if (flow == null) {
+                text = Integer.toString(poids);
+            } else {
+                text = flow + " / " + poids;
+            }
+            label.text = text;
+            // position
             Vector2D pos;
             if (from == to) {
-                pos = from.getCenterPos().plus(new Vector2D(2*Line.CIRCLE_RADIUS,0));
+                pos = nails.get(0).getCenterPos();
             } else {
                 if (nails.isEmpty()) {
+                    // on affiche le label au milieu des deux noeuds
                     pos = Vector2D.middle(from.getCenterPos(), to.getCenterPos());
+                } else if (nails.size() % 2 == 0) {
+                    // on affiche le label au milieu d'une ligne
+                    pos = Vector2D.middle(nails.get(nails.size()/2 - 1).getCenterPos(), nails.get(nails.size()/2).getCenterPos());
                 } else {
-                    Nail midNail = nails.get(nails.size() / 2);
-                    pos = midNail.getCenterPos();
-                }                
+                    // on affiche le label sur le clou du milieu
+                    pos = nails.get(nails.size()/2).getCenterPos().minus(new Vector2D(0,15));
+                }
             }
-            paintLabel(d, g, pos.minus(new Vector2D(0, 12)), label, colorDisplayed, Color.WHITE, 15);
+            label.pos = pos;
+            // Color
+            label.textColor = colorDisplayed;
+            
+            label.paint(d, g);
         }
     }
 
@@ -352,18 +334,6 @@ public class Arc implements Comparable<Arc> {
 
     public Color getColorDisplayed() {
         return colorDisplayed;
-    }
-    
-    @Deprecated
-    /**
-     * Will be deleted once save is supported
-     */
-    public Nail getClou() {
-        if (nails.isEmpty()) {
-            return null;
-        } else {
-            return nails.get(0);
-        }
     }
 
     public void reinit() {

@@ -1,11 +1,14 @@
 package Inforeg.Save;
 
+import Inforeg.AssetLoader;
 import Inforeg.Draw.Draw;
 import Inforeg.Interface;
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Nail;
 import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.HeadlessException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,8 +17,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * Gestion des fichiers de sauvegarde .inforeg
@@ -23,6 +28,8 @@ import javax.swing.JOptionPane;
  * @author inky19
  */
 public abstract class SaveManager {
+    
+    private static File previousDir; // Dernière dossier ouvert par l'utilisateur
 
     public static final String SEP = ", "; // Caractère(s) de séparation dans le fichier de sauvegarde
 
@@ -34,10 +41,21 @@ public abstract class SaveManager {
      * @param d Draw à sauvegarder
      */
     public static boolean save(Draw d) {
-        JFileChooser fileExplorer = new JFileChooser();
+        JFileChooser fileExplorer = new JFileChooser() {
+            @Override
+            protected JDialog createDialog( Component parent ) throws HeadlessException {
+                JDialog dialog = super.createDialog( parent );
+                dialog.setIconImage( AssetLoader.appIco.getImage() ); // Changement de l'icone
+                return dialog;
+            }
+        };
+        fileExplorer.setApproveButtonText("Enregistrer");
+        fileExplorer.setDialogTitle("Enregistrer le graphe");
+        fileExplorer.setFileFilter(new FileNameExtensionFilter("Graphe inforeg (.inforeg)", "inforeg"));
         int res = fileExplorer.showOpenDialog(null);
         if (res == JFileChooser.APPROVE_OPTION) {
             File file = fileExplorer.getSelectedFile();
+            fileExplorer.setCurrentDirectory(previousDir);
             String[] filePath = Utils.formatPath(file, "inforeg");
             String name = filePath[0];
             String path = filePath[1];
@@ -108,11 +126,23 @@ public abstract class SaveManager {
      * @return
      */
     public static Draw load() {
-        JFileChooser fileExplorer = new JFileChooser();
+        JFileChooser fileExplorer = new JFileChooser() {
+            @Override
+            protected JDialog createDialog( Component parent ) throws HeadlessException {
+                JDialog dialog = super.createDialog( parent );
+                dialog.setIconImage( AssetLoader.appIco.getImage() ); // Changement de l'icone
+                return dialog;
+            }
+        };
+        fileExplorer.setApproveButtonText("Ouvrir");
+        fileExplorer.setDialogTitle("Ouvrir un graphe existant");
+        fileExplorer.setCurrentDirectory(previousDir);
+        fileExplorer.setFileFilter(new FileNameExtensionFilter("Graphe inforeg (.inforeg)", "inforeg"));
         int res = fileExplorer.showOpenDialog(null);
 
         if (res == JFileChooser.APPROVE_OPTION) {
             File file = fileExplorer.getSelectedFile();
+            previousDir = file;
             String[] filePath = Utils.formatPath(file, "inforeg");
             String name = filePath[0];
             String path = filePath[1];

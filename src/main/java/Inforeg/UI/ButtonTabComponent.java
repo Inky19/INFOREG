@@ -43,8 +43,9 @@ import java.awt.event.*;
 public class ButtonTabComponent extends JPanel {
 
     private final JTabbedPane pane;
+    private JLabel label1, label2;
 
-    public ButtonTabComponent(final JTabbedPane pane, ImageIcon ico) {
+    public ButtonTabComponent(final JTabbedPane pane, ImageIcon ico1, ImageIcon ico2) {
         //unset default FlowLayout' gaps
         super(new FlowLayout(FlowLayout.LEFT, 0, 0));
         if (pane == null) {
@@ -54,7 +55,8 @@ public class ButtonTabComponent extends JPanel {
         setOpaque(false);
 
         //make JLabel read titles from JTabbedPane
-        JLabel label = new JLabel() {
+        label1 = new JLabel();
+        label2 = new JLabel() {
             @Override
             public String getText() {
                 int i = pane.indexOfTabComponent(ButtonTabComponent.this);
@@ -64,18 +66,34 @@ public class ButtonTabComponent extends JPanel {
                 return null;
             }
         };
-        add(label);
+        add(label1);
+        add(label2);
         //add more space between the label and the button
-        label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
-        if (ico != null) {
-            label.setIcon(ico);
+        label2.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
+        if (ico1 != null) {
+            label1.setIcon(ico1);
         }
-
+        if (ico2 != null) {
+            label2.setIcon(ico2);
+        }
         //tab button
         JButton button = new TabButton();
         add(button);
         //add more space to the top of the component
         setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+    }
+    
+    public void setIcon(ImageIcon ico1, ImageIcon ico2) {
+        if (ico1 != null) {
+            label1.setIcon(ico1);
+        }
+        if (ico2 != null) {
+            label2.setIcon(ico2);
+        }
+    }
+    
+    public void setTitleColor(Color color) {
+        label2.setForeground(color);
     }
 
     private class TabButton extends JButton implements ActionListener {
