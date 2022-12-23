@@ -13,12 +13,13 @@ import Inforeg.ObjetGraph.Node;
 import static java.lang.Integer.max;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 
 public class Graph {
 
     /**
-     * Nombre de Noeuds du Graph
+     * Nombre de Noeuds du Graphe
      */
     protected int nbsommets;
     boolean oriente;
@@ -28,7 +29,8 @@ public class Graph {
     private int nextLabel;
     private int nextId;
     // Structure de données de traitement
-    protected int[][] adj;
+    protected int[][] adjMatrix;
+    private final ArrayList<LinkedList<Integer>> listAdj = new ArrayList<>();
     // Passage de noeud à int
     private final HashMap<Node, Integer> hashNode;
     //private final HashMap<MyLine, Integer> hashArc;
@@ -44,24 +46,28 @@ public class Graph {
     }
 
     public void updateVariable() {
-        //PROVISOIRE
-        hashNode.clear();//
-        int id = 0;//
-        for (Node n : nodes) {//
-            hashNode.put(n, id);//
-            id++;//
-        }//
-        // FIN PROVISOIRE
+        hashNode.clear();
+        listAdj.clear();
+        int id = 0;
+        for (Node n : nodes) {
+            hashNode.put(n, id);
+            listAdj.add(new LinkedList<Integer>());
+            id++;
+        }
+        
         this.nbsommets = nodes.size();
-        this.adj = new int[nbsommets][nbsommets];
+        this.adjMatrix = new int[nbsommets][nbsommets];
         int i = 0;
+        // Matrix ans
         for (Arc l : lines) {
             int p = l.getPoids();
             int src = hashNode.get(l.getFrom());
             int dest = hashNode.get(l.getTo());
-            adj[src][dest] = p;
+            adjMatrix[src][dest] = p;
+            listAdj.get(src).add(dest);
             if (!oriente) {
-                adj[dest][src] = p;
+                adjMatrix[dest][src] = p;
+                listAdj.get(dest).add(src);
             }
             i++;
         }
@@ -72,7 +78,6 @@ public class Graph {
         if (node.getId() >= nextId) {
             nextId = node.getId() + 1;
         }
-        
         nextLabel = getMinAvailableLabel();
     }
    
@@ -91,7 +96,7 @@ public class Graph {
         for (Arc arc : linesCopy) {
             if (arc.getFrom()== node || arc.getTo()== node) {
                 lines.remove(arc);
-                System.out.println(true);
+                
             }
         }
         nodes.remove(node);
@@ -156,10 +161,14 @@ public class Graph {
      *
      * @return un tableau nbmax*nbmax
      */
-    public int[][] getAdj() {
-        return adj;
+    public int[][] getAdjMatrix() {
+        return adjMatrix;
     }
 
+    public ArrayList<LinkedList<Integer>> getListAdj() {
+        return listAdj;
+    }
+    
     public HashMap<Node, Integer> getHashNode() {
         return hashNode;
     }
@@ -167,10 +176,10 @@ public class Graph {
     /**
      * Setter de la matrice d'adjacence du graphe
      *
-     * @param adj tableau nbmax*nbmax
+     * @param adjMatrix tableau nbmax*nbmax
      */
-    public void setAdj(int[][] adj) {
-        this.adj = adj;
+    public void setAdjMatrix(int[][] adjMatrix) {
+        this.adjMatrix = adjMatrix;
     }
 
     /**
@@ -203,7 +212,7 @@ public class Graph {
         for (int i = 0; i < nbsommets; i++) {
             mat += "|";
             for (int j = 0; j < nbsommets; j++) {
-                mat += formatInt(adj[i][j], d) + "|";
+                mat += formatInt(adjMatrix[i][j], d) + "|";
             }
             mat += "\n";
         }
@@ -214,8 +223,8 @@ public class Graph {
         int max = 0;
         for (int i = 0; i < nbsommets; i++) {
             for (int j = 0; j < nbsommets; j++) {
-                if (String.valueOf(adj[i][j]).length() > max) {
-                    max = String.valueOf(adj[i][j]).length();
+                if (String.valueOf(adjMatrix[i][j]).length() > max) {
+                    max = String.valueOf(adjMatrix[i][j]).length();
                 }
             }
         }
@@ -243,10 +252,7 @@ public class Graph {
     }
     
     
-    
-    @Deprecated
     public Arc findLine(int from, int to) {
-        updateVariable(); // PROVISOIRE
         for (Arc l : lines) {
             if (((hashNode.get(l.getFrom()) == from)&&(hashNode.get(l.getTo())== to))||(!oriente && (hashNode.get(l.getFrom()) == to)&&(hashNode.get(l.getTo())== from))) {
                 return l;
@@ -283,6 +289,14 @@ public class Graph {
 
     public boolean isOriente() {
         return oriente;
+    }
+    
+    public int getNextId() {
+        return nextId;
+    }
+
+    public void setNextId(int nextId) {
+        this.nextId = nextId;
     }
     
     

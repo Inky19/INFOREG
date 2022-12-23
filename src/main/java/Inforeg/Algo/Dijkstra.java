@@ -1,4 +1,4 @@
-package Inforeg.Algo;
+ package Inforeg.Algo;
 
 /*=============================================
 Classe PrimMST définissant l'algorithme de PrimMST
@@ -13,8 +13,10 @@ import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 
-import javax.swing.JOptionPane;
-
+/**
+ * Algorithme de djikstra
+ * @author Rémi
+ */
 public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
 
     public Dijkstra(){
@@ -23,9 +25,8 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
     }
     
     @Override
-    public boolean process(Draw d) {
-        d.setSt(true);
-        return true;
+    public void process(Draw d) {
+        d.setStatus(Draw.ALGO_INPUT);
     }
     
     /**
@@ -39,7 +40,7 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
      * @return true si il existe un chemin, false sinon
      */
     @Override
-    public boolean process(Draw d, Node srcNode, Node destNode) {
+    public void process(Draw d, Node srcNode, Node destNode) {
 
         int src = d.getG().getNodeId(srcNode);
         int dest = d.getG().getNodeId(destNode);
@@ -69,14 +70,19 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
         dist[src] = 0;
         // Source has no predecesseur
         predecesseur[src] = -1;
-
+        Node node;
         // Find shortest path for all vertices
         for (int count = 0; count < g.getNbsommets() - 1; count++) {
             // Pick the minimum distance vertex from the set of vertices
             // not yet processed. u is always equal to src in first
             // iteration.
             int u = findMin(dist, vu, g.getNbsommets());
-
+            // ##### STEP #####
+            node = d.getNode(u);
+            d.stepBysStep.colorNode(node, Color.ORANGE,false);
+            d.stepBysStep.setInfoText("Distance la plus petite du noeud "+node.getLabel()+" est "+dist[u] );
+            d.stepBysStep.nextStep();
+            // ################
             // Mark the picked vertex as processed
             vu[u] = true;
 
@@ -86,8 +92,14 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
             // edge from u to v, and total weight of path from src to
             // v through u is smaller than current value of dist[v]
             {
-                if (!vu[v] && g.getAdj()[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + g.getAdj()[u][v] < dist[v]) {
-                    dist[v] = dist[u] + g.getAdj()[u][v];
+                if (!vu[v] && g.getAdjMatrix()[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + g.getAdjMatrix()[u][v] < dist[v]) {
+                    dist[v] = dist[u] + g.getAdjMatrix()[u][v];
+                    // ##### STEP #####
+                    node = d.getNode(v);
+                    d.stepBysStep.colorNode(node, Color.GRAY,false);
+                    d.stepBysStep.setInfoText("Mise a jour de "+node.getLabel()+" nouvelle distance "+dist[v] );
+                    d.stepBysStep.nextStep();
+                    // ################
                     predecesseur[v] = u;
                 }
             }
@@ -100,7 +112,7 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
             System.out.println(src + " " + s + " " + p);
             Arc l = d.findLine(p, s);
             if (l != null) {
-                l.setColor(Color.RED);
+                l.setColorDisplayed(Color.RED);
                 s = p;
                 p = predecesseur[p];
                 count++;
@@ -114,10 +126,10 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
                     + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + ".");
         } else {
             d.repaint();
+            d.algoFinished();
             d.setResultat("Il existe un plus court chemin entre les sommets "
                     + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel()
                     + ", de distance " + dist[dest] + ".");
         }
-        return true;
     }
 }

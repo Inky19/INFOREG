@@ -30,9 +30,10 @@ public class AlgoWindow extends JDialog{
     public AlgoWindow(JFrame frame, Draw d){
         
         super(frame, "Liste des algorithmes");
+        this.setResizable(false);
         this.d = d;
         
-        this.setSize(400, 300);
+        this.setSize(500, 500);
         this.setLocationRelativeTo(null);
         
         
@@ -49,14 +50,17 @@ public class AlgoWindow extends JDialog{
         AlgoBox coloration = new AlgoBox("Coloration", this, colorationIco);
         coloration.addAlgo(new Coloration());
         
-         
+         AlgoBox parcours = new AlgoBox("Parcours", this, scanIco);
+         parcours.addAlgo(new DFS());
+         parcours.addAlgo(new BFS());
         
         JPanel dialPanel = new JPanel();
-        dialPanel.setLayout(new GridLayout(2,2));
+        dialPanel.setLayout(new GridLayout(3,2));
         dialPanel.add(path);
         dialPanel.add(flow);
         dialPanel.add(tree);
         dialPanel.add(coloration);
+        dialPanel.add(parcours);
         dialPanel.setVisible(true);
         
         this.add(dialPanel);

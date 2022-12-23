@@ -21,8 +21,8 @@ public class KruskalMST extends Algorithm implements Processing {
         this.setName("Kruskal");
     }
 
-        @Override
-    public boolean process(Draw d) {
+    @Override
+    public void process(Draw d) {
         
         Arc[] arbre;
         Graph G = d.getG();
@@ -74,11 +74,24 @@ public class KruskalMST extends Algorithm implements Processing {
                 // include it in result and increment the index
                 // of result for next edge
                 if (x != y) {
+                    // 
+                    d.stepBysStep.colorArc(G.findLine(next_edge.getFrom(), next_edge.getTo()), Color.YELLOW);
+                    d.stepBysStep.setInfoText("Prochain arc de poids minimal");
+                    d.stepBysStep.nextStep();
+                    d.stepBysStep.colorArc(G.findLine(next_edge.getFrom(), next_edge.getTo()), Color.GREEN);
+                    //
                     arbre[e++] = next_edge;
                     union(subsets, x, y);
+                } else {
+                    d.stepBysStep.colorArc(G.findLine(next_edge.getFrom(), next_edge.getTo()), Color.YELLOW);
+                    d.stepBysStep.setInfoText("Prochain arc de poids minimal : création d'un cycle");
+                    d.stepBysStep.nextStep();
+                    d.stepBysStep.colorArc(G.findLine(next_edge.getFrom(), next_edge.getTo()), Color.GRAY);
                 }
                 // Else discard the next_edge
             }
+            d.stepBysStep.setInfoText("");
+            d.stepBysStep.nextStep();
             int p = 0;
             System.out.println(arbre.length);
             Arc a = null;
@@ -91,18 +104,20 @@ public class KruskalMST extends Algorithm implements Processing {
                         arc = G.findLine(a.getTo(), a.getFrom());
                     }
                     if (arc != null){
-                        arc.setColor(Color.RED);
+                        arc.setColorDisplayed(Color.RED);
                         p += arc.getPoids();
                     }
 
                 }
             }
             d.setResultat("L'arbre couvrant minimal du graphe a un poids de " + p + ".");
+            d.algoFinished();
         } else {
             JOptionPane.showMessageDialog(null, "Le graphe n'est pas connexe !", "Kruskal MST", JOptionPane.INFORMATION_MESSAGE);
         }
-        return true;
     }
+
+
 
 
 

@@ -6,37 +6,54 @@ Auteur : Samy AMAL
 Date de création : 03/03/2022
 Date de dernière modification : 08/03/2022
 =============================================*/
+import Inforeg.Algo.AlgorithmS;
 import Inforeg.Algo.AlgorithmST;
+import static Inforeg.AssetLoader.*;
 import Inforeg.Draw.Draw;
-import Inforeg.Save.ExportLatex;
+import static Inforeg.Graph.GraphFunction.connected;
+import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
-import Inforeg.Save.saveManager;
+import Inforeg.Save.ExportPNG;
+import Inforeg.Save.SaveManager;
+import Inforeg.UI.AlgoBox;
 import Inforeg.UI.AlgoWindow;
 import Inforeg.UI.ButtonTabComponent;
+import Inforeg.UI.LatexWindow;
+import Inforeg.UI.CheckBox;
+import Inforeg.UI.CreditsWindow;
+import Inforeg.UI.GraphTypeWindow;
+import Inforeg.UI.ToolButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import static java.awt.Color.red;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -55,11 +72,18 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public abstract class Interface {
+/**
+ * Fenêtre principal de l'application
+ * @author Rémi et François
+ */
+public class Interface {
 
     public static final String VERSION = "2.0";
     protected JFrame frame;
@@ -72,6 +96,7 @@ public abstract class Interface {
     protected JPanel paneImage;
     private JPanel resultContainer; // Contient la zone de résultats et la barre avec le bouton pour la réduire
     private JPanel resultPanel; // Zone de résultats
+    private JLabel stepByStepLabel;
     private JScrollPane resultScrollPane; // Contient la zone de résultats (resultPanel) et permet d'utiliser des barres de défilement si cette zone est trop grande.
     protected Draw d;
 
@@ -79,7 +104,6 @@ public abstract class Interface {
     private int currentTab;
     private int resultZoneSize; // Taille du panel (seulement) qui contient les résultats
     private int resultTitleSize; // Taille du panel qui contient le titre "Résultats :" et le bouton pour cacher la zone de résultats
-
     /**
      * Le Menu.
      */
@@ -92,8 +116,17 @@ public abstract class Interface {
     protected JButton save;
     protected JButton load;
     protected JButton clearSelection;
-    protected JButton back;
-    protected JButton forward;
+    private JButton back;
+    private JButton forward;
+    private ToolButton algoButton;
+    private JButton previousStep;
+    private JButton nextStep;
+    private JToolBar stepBystepBar;
+
+    private ToolButton selectedButton;
+
+    private JCheckBox autoStart;
+    private JCheckBox stepByStep;
 
     /**
      * Reference to the original image.
@@ -123,6 +156,8 @@ public abstract class Interface {
     public static final int NOEUD_TOOL = 11;
     public static final int ARC_TOOL = 12;
     public static final int LABEL_TOOL = 13;
+    public static final int COLOR_TOOL = 14;
+    public static final int PIN_TOOL = 15;
     protected static int mode;
     public static final int EDITION_MODE = 1;
     public static final int TRAITEMENT_MODE = 2;
@@ -134,18 +169,6 @@ public abstract class Interface {
     public static final int FORD_FULKERSON_TRAITEMENT = 24;
     public static final int COLORATION_TRAITEMENT = 25;
 
-    private static final ImageIcon appIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icon.png"));
-    private static final ImageIcon tabIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/tab.png"));
-    private static final ImageIcon unsavedTabIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/unsaved_tab.png"));
-    private static final ImageIcon moveCursor = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/move.png"));
-    private static final ImageIcon selectCursor = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/select.png"));
-    private static final ImageIcon arcIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/arc.png"));
-    private static final ImageIcon nodeIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/node.png"));
-    private static final ImageIcon labelIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/label.png"));
-    private static final ImageIcon dropIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/dropdown.png"));
-    private static final ImageIcon backIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/back.png"));
-    private static final ImageIcon forwardIco = new ImageIcon(Interface.class.getClassLoader().getResource("asset/icons/forward.png"));
-
     /**
      * Attribut pour la taille des Noeuds.
      */
@@ -155,7 +178,13 @@ public abstract class Interface {
      */
     protected static int epaisseur;
 
+    private static Dimension buttonSize = new Dimension(92, 44);
+
     private JPopupMenu menuNode;
+
+    private static final Color TOOL_BUTTON_COLOR = Color.decode("#d9d9d9");
+    private static final Color TOOL_BUTTON_FOCUS_COLOR = Color.decode("#d1d1d1");
+    private static final Color TOOL_BUTTON_SELECTED_COLOR = Color.decode("#85b8d4");
     /**
      * Actions
      */
@@ -177,10 +206,10 @@ public abstract class Interface {
             // Si un fichier de sauvegarde existe déjà, on l'écrase et on effectue une nouvelle sauvegarde
             if (d.getPathSauvegarde() != " ") {
                 File f = new File(d.getPathSauvegarde());
-                save_success = saveManager.saveToFile(d, d.getPathSauvegarde());
+                save_success = SaveManager.saveToFile(d, d.getPathSauvegarde());
                 // Sinon, on créé un nouveau fichier de sauvegarde
             } else {
-                save_success = saveManager.save(d);
+                save_success = SaveManager.save(d);
                 if (d != null) {
                     tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
                     tabsPanel.updateUI();
@@ -200,7 +229,7 @@ public abstract class Interface {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            boolean save_success = saveManager.save(d);
+            boolean save_success = SaveManager.save(d);
             if (d != null) {
                 tabsPanel.setTitleAt(tabsPanel.getSelectedIndex(), d.getFileName());
                 tabsPanel.updateUI();
@@ -222,8 +251,9 @@ public abstract class Interface {
         tabs.add(d);
         d.setInterface(this);
         currentTab = 0;
-        resultZoneSize = 200;
+        resultZoneSize = 100;
         resultTitleSize = 30;
+        selectedButton = null;
     }
 
     /**
@@ -232,6 +262,18 @@ public abstract class Interface {
     public void createAndShowGui() {
 
         frame = new JFrame("INFOREG " + d.getPathSauvegarde());
+        try {
+            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        SwingUtilities.updateComponentTreeUI(frame);
         //fermer la fenêtre quand on quitte
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Position de la fenètre
@@ -244,56 +286,61 @@ public abstract class Interface {
         resultContainer = new JPanel(new BorderLayout());
         resultPanel = new JPanel(new BorderLayout());
         resultScrollPane = new JScrollPane(resultPanel);
-        initTabs();
+        
         initToolBar();
+        initTabs();
         initPaneImage();
         initLeftMenuBar();
-        addMenuBar();
         initRightMenuBar();
         initContextMenu();
+
         JPanel contentPanel = new JPanel(new BorderLayout());
         frame.add(toolBarButtons, BorderLayout.WEST);
         frame.setJMenuBar(menuBar);
-
+        initShortcuts(contentPanel);
         //frame.getContentPane().add(this.d);
         Interface.colorBg = paneImage.getBackground();
         contentPanel.add(paneImage, BorderLayout.CENTER);
-        
+        tabsPanel.setPreferredSize(new Dimension(500, 500));
 
         contentPanel.add(tabsPanel);
+
         this.d.repaint();
         // ZONE DES RÉSULTATS
-        
-        resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE,resultZoneSize));
+
+        resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultZoneSize));
         // Titre de la zone :
         JPanel titlePanel = new JPanel(new BorderLayout());
         JLabel titleResult = new JLabel("     Résultats :");
-        JButton showResult = new JButton(dropIco);
-        showResult.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (resultContainer.getPreferredSize().height <= resultTitleSize){
-                    resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultZoneSize));
-                } else {
-                    resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultTitleSize));
-                }
-                resultContainer.revalidate();
-                resultContainer.repaint();
+        ToolButton showResult = new ToolButton(downArrow, null, TOOL_BUTTON_FOCUS_COLOR, null);
+        showResult.setOpaque(false);
+        showResult.addActionListener((ActionEvent e) -> {
+            if (resultContainer.getPreferredSize().height <= resultTitleSize) {
+                resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultZoneSize));
+                showResult.setIcon(downArrow);
+                showResult.unselect();
+            } else {
+                resultContainer.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultTitleSize));
+                showResult.setIcon(upArrow);
+                showResult.unselect();
             }
+            resultContainer.revalidate();
+            resultContainer.repaint();
         });
         titlePanel.add(titleResult, BorderLayout.LINE_START);
         titlePanel.add(showResult, BorderLayout.LINE_END);
-        titlePanel.setBackground(new Color(227,239,247));
-        titlePanel.setPreferredSize(new Dimension(Integer.MAX_VALUE,resultTitleSize));
-        resultContainer.add(titlePanel,BorderLayout.NORTH);
+        titlePanel.setBackground(new Color(227, 239, 247));
+        titlePanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultTitleSize));
+        resultContainer.add(titlePanel, BorderLayout.NORTH);
         // Zone en elle même :
-        
-        resultScrollPane.setPreferredSize(new Dimension(Integer.MAX_VALUE,resultZoneSize-resultTitleSize));
+
+        resultScrollPane.setPreferredSize(new Dimension(Integer.MAX_VALUE, resultZoneSize - resultTitleSize));
         resultContainer.add(resultScrollPane, BorderLayout.SOUTH);
-        
+
         // Ajout de la zone
-        contentPanel.add(resultContainer,BorderLayout.SOUTH);
+        contentPanel.add(resultContainer, BorderLayout.SOUTH);
         frame.add(contentPanel);
-        //frame.pack(); remi : Je pense pas que c'est utile ici
+        //frame.pack();// remi : Je pense pas que c'est utile ici
         frame.setVisible(true);
 
     }
@@ -304,6 +351,7 @@ public abstract class Interface {
      */
     public void initToolBar() {
         toolBarButtons = new JToolBar(null, JToolBar.VERTICAL);
+        //toolBarButtons.setBackground(TOOL_BUTTON_COLOR);
         //Panel le long de l'axe Y
         toolBarButtons.setLayout(new BoxLayout(toolBarButtons, BoxLayout.Y_AXIS));
         toolBarButtons.setFloatable(false);
@@ -311,12 +359,13 @@ public abstract class Interface {
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
 
-        JButton colorButton = new JButton("Color");
+        ToolButton colorButton = new ToolButton("Couleur", null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        colorButton.setMaximumSize(buttonSize);
         colorButton.setMnemonic('o');
-        colorButton.setToolTipText("Choose a Color");
+        colorButton.setToolTipText("Choisir une couleur");
         ActionListener colorListener;
         colorListener = (ActionEvent arg0) -> {
-            Color c = JColorChooser.showDialog(frame, "Choose a color", color);
+            Color c = JColorChooser.showDialog(frame, "Choisir une couleur", color);
             if (c != null) {
                 for (int i = 1; i < colorSample.getHeight(); i++) {
                     for (int j = 1; j < colorSample.getHeight(); j++) {
@@ -329,23 +378,20 @@ public abstract class Interface {
         };
         colorButton.addActionListener(colorListener);
         colorButton.setIcon(new ImageIcon(colorSample));
-        toolBarButtons.add(colorButton);
+
         setColor(this.color);
 
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
 
         //Taille
-        final SpinnerNumberModel spinnerNumTaille = new SpinnerNumberModel(20, 1, 100, 1);
+        final SpinnerNumberModel spinnerNumTaille = new SpinnerNumberModel(Draw.RINIT, 1, 100, 1);
         JSpinner spinnerTaille = new JSpinner(spinnerNumTaille);
-        ChangeListener listenerTaille = new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent arg0) {
-                Object o = spinnerNumTaille.getValue();
-                Integer i = (Integer) o;
-                taille = i;
-                d.tailleCirc();
-            }
+        ChangeListener listenerTaille = (ChangeEvent arg0) -> {
+            Object o = spinnerNumTaille.getValue();
+            Integer i = (Integer) o;
+            taille = i;
+            d.tailleCirc();
         };
         spinnerTaille.addChangeListener(listenerTaille);
         spinnerTaille.setMaximumSize(spinnerTaille.getPreferredSize());
@@ -360,14 +406,11 @@ public abstract class Interface {
         //Epaisseur
         final SpinnerNumberModel spinnerNumEpaisseur = new SpinnerNumberModel(20, 1, 100, 1);
         JSpinner spinnerEpaisseur = new JSpinner(spinnerNumEpaisseur);
-        ChangeListener strokeListener = new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent arg0) {
-                Object o = spinnerNumEpaisseur.getValue();
-                Integer i = (Integer) o;
-                epaisseur = i;
-                d.epaisseurLines();
-            }
+        ChangeListener strokeListener = (ChangeEvent arg0) -> {
+            Object o = spinnerNumEpaisseur.getValue();
+            Integer i = (Integer) o;
+            epaisseur = i;
+            d.epaisseurLines();
         };
         spinnerEpaisseur.addChangeListener(strokeListener);
         spinnerEpaisseur.setMaximumSize(spinnerEpaisseur.getPreferredSize());
@@ -380,138 +423,245 @@ public abstract class Interface {
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
 
-        JToolBar moveAndSelect = new JToolBar(null, JToolBar.HORIZONTAL);
-        moveAndSelect.setFloatable(false);
-        moveAndSelect.setBorderPainted(true);
-        moveAndSelect.setAlignmentX(FlowLayout.LEFT);
-        JButton move = new JButton(moveCursor);
-        move.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                mode = DEPLACEMENT_MODE;
-            }
+        JToolBar tools = new JToolBar(null, JToolBar.HORIZONTAL);
+        tools.setFloatable(false);
+        tools.setBorderPainted(false);
+        tools.setOpaque(false);
+        tools.setAlignmentX(FlowLayout.LEFT);
+        tools.setLayout(new GridLayout(2, 2));
+        // Move Button
+        ToolButton moveButton = new ToolButton(moveCursor, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        moveButton.setToolTipText("Déplacement");
+        moveButton.addActionListener((ActionEvent e) -> {
+            mode = DEPLACEMENT_MODE;
+            selectButton(moveButton);
         });
-        moveAndSelect.add(move);
+        tools.add(moveButton);
+        // Select Button
+        ToolButton selectButton = new ToolButton(selectCursor, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        selectButton.setToolTipText("Sélection");
+        selectButton.setBackground(TOOL_BUTTON_COLOR);
+        selectButton.addActionListener((ActionEvent e) -> {
+            mode = EDITION_MODE;
+            activeTool = SELECT_TOOL;
+            selectButton(selectButton);
+        });
+        tools.add(selectButton);
+        toolBarButtons.add(tools);
+        // Brush Button
+        ToolButton brushButton = new ToolButton(colorIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        brushButton.setToolTipText("Pinceau");
+        brushButton.addActionListener((ActionEvent e) -> {
+            mode = EDITION_MODE;
+            activeTool = COLOR_TOOL;
+            selectButton(brushButton);
+        });
+        tools.add(brushButton);
+        // Pin Button
+        ToolButton labelButton = new ToolButton(labelIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        labelButton.setToolTipText("Label");
+        labelButton.addActionListener((ActionEvent e) -> {
+            mode = EDITION_MODE;
+            activeTool = LABEL_TOOL;
+            selectButton(labelButton);
+        });
+        tools.add(labelButton);
 
-        JButton select = new JButton(selectCursor);
-        select.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                mode = EDITION_MODE;
-                activeTool = SELECT_TOOL;
-            }
-        });
-        moveAndSelect.add(select);
-        toolBarButtons.add(moveAndSelect);
+        toolBarButtons.add(colorButton);
         toolBarButtons.addSeparator();
         JLabel l1 = new JLabel("  Ajouter :");
         toolBarButtons.add(l1);
         toolBarButtons.addSeparator();
-        JButton nodeButton = new JButton("Nœud", nodeIco);
-        nodeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                mode = EDITION_MODE;
-                activeTool = NOEUD_TOOL;
-            }
+        // Node Button
+        ToolButton nodeButton = new ToolButton("Noeud", nodeIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        nodeButton.setFocusPainted(false);
+        nodeButton.setBackground(TOOL_BUTTON_COLOR);
+        nodeButton.addActionListener((ActionEvent e) -> {
+            mode = EDITION_MODE;
+            activeTool = NOEUD_TOOL;
+            selectButton(nodeButton);
         });
         toolBarButtons.add(nodeButton);
-        Dimension buttonSize = nodeButton.getMaximumSize();
-
-        JButton arcButton = new JButton("Arc", arcIco);
+        nodeButton.setMaximumSize(buttonSize);
+        // Arc Button
+        ToolButton arcButton = new ToolButton("Arc", arcIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        arcButton.setFocusPainted(false);
+        arcButton.setBackground(TOOL_BUTTON_COLOR);
         arcButton.setHorizontalAlignment(SwingConstants.LEFT);
         arcButton.setMaximumSize(buttonSize);
-        arcButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                mode = EDITION_MODE;
-                activeTool = ARC_TOOL;
-            }
+        arcButton.addActionListener((ActionEvent e) -> {
+            mode = EDITION_MODE;
+            activeTool = ARC_TOOL;
+            selectButton(arcButton);
         });
         toolBarButtons.add(arcButton);
-
-        JButton labelButton = new JButton("Label", labelIco);
-        labelButton.setMaximumSize(buttonSize);
-        labelButton.setHorizontalAlignment(SwingConstants.LEFT);
-        labelButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                mode = EDITION_MODE;
-                activeTool = LABEL_TOOL;
-            }
+        // Label Button
+        ToolButton pinButton = new ToolButton("Clou", pinIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        pinButton.setFocusPainted(false);
+        pinButton.setBackground(TOOL_BUTTON_COLOR);
+        pinButton.setMaximumSize(buttonSize);
+        pinButton.setHorizontalAlignment(SwingConstants.LEFT);
+        pinButton.addActionListener((ActionEvent e) -> {
+            mode = EDITION_MODE;
+            activeTool = PIN_TOOL;
+            selectButton(pinButton);
         });
-        toolBarButtons.add(labelButton);
+        toolBarButtons.add(pinButton);
 
         toolBarButtons.addSeparator();
         JLabel l2 = new JLabel("  Traitement :");
         toolBarButtons.add(l2);
         toolBarButtons.addSeparator();
 
-        JButton connexeButton = new JButton("Connexe");
+        ToolButton connexeButton = new ToolButton("Connexe", AlgoBox.BUTTON_COLOR, AlgoBox.BUTTON_SELECTED_COLOR, null);
         connexeButton.setHorizontalAlignment(SwingConstants.CENTER);
         connexeButton.setMaximumSize(new Dimension(buttonSize.width, connexeButton.getMaximumSize().height));
-        connexeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                mode = TRAITEMENT_MODE;
-                connexe();
-            }
+        connexeButton.addActionListener((ActionEvent e) -> {
+            mode = TRAITEMENT_MODE;
+            connexe();
         });
         toolBarButtons.add(connexeButton);
         toolBarButtons.addSeparator();
 
-        JButton algoButton = new JButton("▼");
+        algoButton = new ToolButton("▼", AlgoBox.BUTTON_COLOR, AlgoBox.BUTTON_SELECTED_COLOR, null);
         Dimension algoButtonSize = new Dimension(buttonSize.width, algoButton.getMaximumSize().height);
         algoButton.setMaximumSize(algoButtonSize);
         algoButton.setPreferredSize(algoButtonSize);
         algoButton.setHorizontalAlignment(SwingConstants.LEFT);
-        algoButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                AlgoWindow window = new AlgoWindow(frame, d);
-                window.setVisible(true);
-                if (d.getAlgo() != null) {
-                    algoButton.setText("▼ " + d.getAlgo().getName());
-                }
-
-            }
+        algoButton.addActionListener((ActionEvent e) -> {
+            AlgoWindow window = new AlgoWindow(frame, d);
+            window.setVisible(true);
+            
+            updateAlgoSelector();
         });
         toolBarButtons.add(algoButton);
         JPanel algoPanel = new JPanel();
-        algoPanel.setMaximumSize(buttonSize);
+        algoPanel.setMaximumSize(new Dimension(buttonSize.width, Integer.MAX_VALUE));
+        algoPanel.setPreferredSize(algoPanel.getMaximumSize());
         algoPanel.setAlignmentX(0);
-        JButton algoGo = new JButton("GO");
-        algoGo.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (d.getAlgo() == null) {
-                    JOptionPane.showMessageDialog(null, "Aucun algorithme sélectionné.", "Algorithme", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    mode = Interface.TRAITEMENT_MODE;
-                    d.exportGraphe();
-                    d.reinit();
-                    d.setSt(d.getAlgo() instanceof AlgorithmST);
-                    if (d.getAlgo() instanceof AlgorithmST){
-                        d.getInfoTop().setText("Sélectionner le nœud source");
-                    }
-                    d.getAlgo().process(d);
-                    d.repaint();
+        ToolButton algoGo = new ToolButton(playIco, null , AlgoBox.BUTTON_COLOR, null);
+        algoGo.setToolTipText("Lancer l'algorithme");
+        algoGo.addActionListener((ActionEvent e) -> {
+            if (d.getAlgo() == null) {
+                JOptionPane.showMessageDialog(null, "Aucun algorithme sélectionné.", "Algorithme", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                mode = Interface.TRAITEMENT_MODE;
+                d.exportGraphe();
+                d.reinit();
+                selectButton(null);
+                stepBystepBar.setVisible(false);
+                d.stepBysStep.clear();
+                if (d.getAlgo() instanceof AlgorithmST) {
+                    d.setStatus(Draw.ALGO_INPUT);
                 }
-
+                if (d.getAlgo() instanceof AlgorithmST || (d.getAlgo() instanceof AlgorithmS && !isAuto())) {
+                    d.getInfoTop().setText("Sélectionner le nœud source");
+                }
+                d.getAlgo().process(d);
+                d.repaint();
             }
         });
-        algoPanel.add(algoGo);
+        ToolButton resetButton = new ToolButton(resetIco, null, AlgoBox.BUTTON_COLOR, null);
+        resetButton.addActionListener(((ActionEvent e) -> {
+            d.reinit();
+            stepBystepBar.setVisible(false);
+            d.stepBysStep.clear();
+            d.repaint();
+        }));
+        resetButton.setToolTipText("Réinitialiser le graphe");
+        algoPanel.add(resetButton);
+
+        JToolBar goAndReset = new JToolBar();
+        goAndReset.setBorderPainted(false);
+        goAndReset.setFloatable(false);
+        goAndReset.setOpaque(false);
+        
+        algoPanel.add(goAndReset);
+        goAndReset.add(algoGo);
+        goAndReset.add(resetButton);
+        
+        stepByStep = new CheckBox("Pas à pas");
+        algoPanel.add(stepByStep);
+        autoStart = new CheckBox("<html><body>Départ auto</body></html>");
+        autoStart.setVisible(false);
+        algoPanel.add(autoStart);
+        
+        stepBystepBar = new JToolBar();
+        stepBystepBar.setLayout(new BorderLayout());
+        stepBystepBar.setFloatable(false);
+        stepBystepBar.setBorderPainted(false);
+        
+        previousStep = new ToolButton(previousIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
+        previousStep.setFocusPainted(false);
+        nextStep = new ToolButton(nextIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
+        previousStep.addActionListener((ActionEvent e) -> {
+            if (d.stepBysStep.isLastStep()) {
+                nextStep.setEnabled(true);
+            }
+            d.stepBysStep.executePreviousStep(d);
+            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
+            if (d.stepBysStep.isFirstStep()) {
+                previousStep.setEnabled(false);
+            }
+        });
+        nextStep.addActionListener((ActionEvent e) -> {
+            if (d.stepBysStep.isFirstStep()) {
+                previousStep.setEnabled(true);
+            }
+            d.stepBysStep.executeNextStep(d);
+            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
+            if (d.stepBysStep.isLastStep()) {
+                nextStep.setEnabled(false);
+            }
+        });
+        stepBystepBar.setVisible(false);
+        stepBystepBar.setOpaque(false);
+        
+        stepByStepLabel = new JLabel("");
+        stepBystepBar.add(stepByStepLabel,BorderLayout.NORTH);
+
+        stepBystepBar.add(previousStep, BorderLayout.WEST);
+        stepBystepBar.add(nextStep,BorderLayout.EAST);
+        algoPanel.add(stepBystepBar);
+
         toolBarButtons.add(algoPanel);
 
     }
 
-    ;
+    private void updateAlgoSelector() {
+        if (d.getAlgo() == null) {
+           algoButton.setText("▼"); 
+        } else {
+            algoButton.setText("▼  " + d.getAlgo().getName());
+            autoStart.setVisible(!d.getAlgo().isAutoStart());
+            toolBarButtons.revalidate();
+            toolBarButtons.repaint();
+        }
+    }
     
-    public abstract void connexe();
+    public void connexe() {
+        mode = TRAITEMENT_MODE;
+        d.getG().updateVariable();
+        String ori = "";
+        if (d.oriente) {
+            ori = " fortement";
+        }
+        if (connected(d.getG())) {
+            JOptionPane.showMessageDialog(d, "Le graphe est" + ori + " connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(d, "Le graphe n'est pas" + ori + " connexe.", "Connexité", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+    }
 
     private void initTabs() {
+
         tabsPanel = new JTabbedPane();
-        FlowLayout f = new FlowLayout(FlowLayout.CENTER, 5, 0);
+        FlowLayout f = new FlowLayout(FlowLayout.CENTER, 0, 0);
         JPanel pnlTab = new JPanel(f);
         pnlTab.setOpaque(false);
-        JButton addTabButton = new JButton("+");
-        addTabButton.setOpaque(false); //
-        //addTabButton.setBorder (null);
-        addTabButton.setContentAreaFilled(false);
-        addTabButton.setFocusPainted(false);
-        addTabButton.setFocusable(false);
+        JButton addTabButton = new ToolButton(plusIco, null, Color.LIGHT_GRAY, null);
+        addTabButton.setPreferredSize(new Dimension(50,30));
 
         tabsPanel.addTab("", null, new JScrollPane());
         pnlTab.add(addTabButton);
@@ -524,15 +674,31 @@ public abstract class Interface {
             }
         };
 
-        ChangeListener changeListenenr = new ChangeListener() {
+        ChangeListener switchTab = new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent ce) {
                 JTabbedPane sourceTabbedPane = (JTabbedPane) ce.getSource();
                 int index = sourceTabbedPane.getSelectedIndex();
                 if (index > 0) {
                     d = (Draw) tabsPanel.getSelectedComponent();
+                    if (d.getAlgo() != null) {
+                        algoButton.setText("▼  " + d.getAlgo().getName());
+                        autoStart.setVisible(d.getAlgo() instanceof AlgorithmS);
+                    } else {
+                        algoButton.setText("▼");
+                        autoStart.setVisible(false);
+                    }
+                    if (d.stepBysStep.getNbStep() == 0) {
+                        stepBystepBar.setVisible(false);
+                    } else {
+                        stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
+                        stepBystepBar.setVisible(true);
+                        nextStep.setEnabled(!d.stepBysStep.isLastStep());
+                        previousStep.setEnabled(!d.stepBysStep.isFirstStep());
+                    }
                     currentTab = index;
                     refreshResult();
+                    
                 } else {
                     if (sourceTabbedPane.getTabCount() > 1) {
                         tabsPanel.setSelectedIndex(currentTab);
@@ -550,12 +716,11 @@ public abstract class Interface {
         } else {
             tabsPanel.addTab(d.getFileName(), tabIco, d);
         }
-
-        tabsPanel.setTabComponentAt(1, new ButtonTabComponent(tabsPanel, tabIco));
+        tabsPanel.setTabComponentAt(1, new ButtonTabComponent(tabsPanel, d.oriente ? orienteIco : norienteIco, d.pondere ? pondereIco : npondereIco));
         //tabsPanel.setMnemonicAt(0, KeyEvent.VK_1);
         addTabButton.setFocusable(false);
         addTabButton.addActionListener(listener);
-        tabsPanel.addChangeListener(changeListenenr);
+        tabsPanel.addChangeListener(switchTab);
         tabsPanel.setSelectedIndex(1);
 
         tabsPanel.setVisible(true);
@@ -565,10 +730,10 @@ public abstract class Interface {
     public void tabSaved(boolean saved) {
         int ind = tabsPanel.getSelectedIndex();
         if (saved) {
-            tabsPanel.setIconAt(ind, tabIco);
+            ((ButtonTabComponent)tabsPanel.getTabComponentAt(ind)).setTitleColor(Color.BLACK);
             tabsPanel.setTitleAt(ind, d.getFileName());
         } else {
-            tabsPanel.setIconAt(ind, unsavedTabIco);
+            ((ButtonTabComponent)tabsPanel.getTabComponentAt(ind)).setTitleColor(Color.decode("#0c6d96"));
             tabsPanel.setTitleAt(ind, "*" + d.getFileName());
         }
         tabsPanel.revalidate();
@@ -579,18 +744,22 @@ public abstract class Interface {
     private void addNewTab() {
         String title = "Graphe " + String.valueOf(tabsPanel.getTabCount());
 
-        Draw newD = new Draw(d.getOriente(), d.getPondere());
-        newD.setFileName(title);
-        newD.setInterface(Interface.this);
-        tabsPanel.addTab(title, tabIco, newD);
-        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, tabIco));
-        tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
+        GraphTypeWindow graphWin = new GraphTypeWindow();
+        Draw newD = graphWin.chooseGraph();
+        if (newD != null){
+            newD.setFileName(title);
+            newD.setInterface(Interface.this);
+            tabsPanel.addTab(title, tabIco, newD);
+            tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, newD.oriente ? orienteIco : norienteIco, newD.pondere ? pondereIco : npondereIco));
+            tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
+        }
+        
     }
 
     private void addNewTab(Draw newD) {
         newD.setInterface(Interface.this);
         tabsPanel.addTab(newD.getFileName(), tabIco, newD);
-        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, tabIco));
+        tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, newD.oriente ? orienteIco : norienteIco, newD.pondere ? pondereIco : npondereIco));
         tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
     }
 
@@ -602,7 +771,7 @@ public abstract class Interface {
         ouvrir.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                Draw newD = saveManager.load();
+                Draw newD = SaveManager.load();
                 if (newD != null) {
                     newD.repaint();
                     d = newD;
@@ -614,15 +783,25 @@ public abstract class Interface {
 
         exporter = new JMenu("Exporter");
 
-        JMenuItem exportLatex = new JMenuItem("Exporter au format LaTeX");
+        JMenuItem exportLatex = new JMenuItem("Format LaTeX");
         exportLatex.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                ExportLatex frameLatex = new ExportLatex();
-                frameLatex.frameLatex(d);
+                LatexWindow latexWin = new LatexWindow(frame, d);
+                latexWin.setVisible(true);
             }
         });
+        JMenuItem exportPNG = new JMenuItem("Image PNG");
+        exportPNG.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ExportPNG.export(d);
+            }
+        });
+
         exporter.add(exportLatex);
+        exporter.add(exportPNG);
+        exporter.add(ExportMatrix);
         fileMenu.add(ouvrir);
         fileMenu.addSeparator();
         fileMenu.add(Save);
@@ -630,9 +809,30 @@ public abstract class Interface {
         fileMenu.addSeparator();
         fileMenu.add(exporter);
         menuBar.add(fileMenu);
+
+        JMenu traitMenu = new JMenu("Traitement");
+        menuBar.add(traitMenu);
     }
 
-    public abstract void addMenuBar();
+    public final AbstractAction ExportMatrix = new AbstractAction() {
+        {
+            putValue(Action.NAME, "Export Matrice d'Adjacence");
+            putValue(Action.MNEMONIC_KEY, KeyEvent.VK_A);
+            putValue(Action.SHORT_DESCRIPTION, "Affiche la matrice d'adjacence du graphe (CTRL+A)");
+            putValue(Action.ACCELERATOR_KEY,
+                    KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent ea) {
+            String non = "";
+            if (!d.oriente) {
+                non = "non ";
+            }
+            d.exportGraphe();
+            JOptionPane.showMessageDialog(d, "La matrice d'adjacence du graphe (" + non + "orienté) est :\n\n" + d.getG().afficher(), "Matrice d'adjacence", JOptionPane.INFORMATION_MESSAGE);
+        }
+    };
 
     public void initRightMenuBar() {
         JMenu helpMenu = new JMenu("Aide");
@@ -667,12 +867,23 @@ public abstract class Interface {
         credits.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                /*
                 String creditStr = "Application créée par Béryl CASSEL, Cristobal CARRASCO DE RODT, Jorge QUISPE , Isaías VENEGAS et Samy AMAL \n"
                         + "\n"
                         + "dans le cadre du projet de groupe INFOREG \n"
                         + "\n"
                         + "encadré par Olivier ROUX";
                 JOptionPane.showMessageDialog(frame, creditStr, "Credits", JOptionPane.INFORMATION_MESSAGE);
+                */
+                CreditsWindow credits;
+                try {
+                    credits = new CreditsWindow(frame);
+                    credits.setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
 
@@ -680,26 +891,17 @@ public abstract class Interface {
         menuBar.add(aboutMenu);
 
         //CTRL Z / CTRL Y
-        back = new JButton(backIco);
+        back = new ToolButton(backIco, null, TOOL_BUTTON_COLOR, null);
         back.setPreferredSize(new Dimension(50, 32));
-        back.setFocusPainted(false);
-        back.addActionListener(new ActionListener() {
-            
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                History piles = d.getTransitions();
-                piles.back(d);
-            }
+        back.addActionListener((ActionEvent ae) -> {
+            History piles = d.getTransitions();
+            piles.back(d);
         });
-        forward = new JButton(forwardIco);
+        forward = new ToolButton(forwardIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
         forward.setPreferredSize(new Dimension(50, 32));
-        forward.setFocusPainted(false);
-        forward.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                History piles = d.getTransitions();
-                piles.forward(d);
-            }
+        forward.addActionListener((ActionEvent ae) -> {
+            History piles = d.getTransitions();
+            piles.forward(d);
         });
         //placer les back/forward à droite 
         menuBar.add(Box.createHorizontalGlue());
@@ -750,6 +952,22 @@ public abstract class Interface {
 
     }
 
+    private void initShortcuts(JPanel contentPanel) {
+
+        Action actionListener = new AbstractAction() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                d.deleteSelected();
+            }
+        };
+        KeyStroke del = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true);
+        InputMap inputMap = contentPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        String DEL_KEY = "delAction";
+        inputMap.put(del, DEL_KEY);
+        ActionMap actionMap = contentPanel.getActionMap();
+        actionMap.put(DEL_KEY, actionListener);
+        contentPanel.setActionMap(actionMap);
+    }
+
     public void initContextMenu() {
         menuNode = new JPopupMenu();
 
@@ -775,18 +993,56 @@ public abstract class Interface {
                 }
             }
         });
-        
+
         JMenuItem deleteNode = new JMenuItem("Supprimer");
         deleteNode.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 ActionMenu.deleteNode(d, n);
+                d.getTransitions().push();
             }
 
         });
         menuNode.add(renameNode);
         menuNode.add(colorNode);
         menuNode.add(deleteNode);
+        menuNode.show(d, x, y);
+    }
+
+    public void rightClickArc(Arc a, int x, int y) {
+        menuNode = new JPopupMenu();
+        JMenuItem renameArc = new JMenuItem("Changer poids");
+        renameArc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ActionMenu.setPoids(d, a);
+            }
+
+        });
+        JMenuItem colorArc = new JMenuItem("Couleur");
+        colorArc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Color c = JColorChooser.showDialog(frame, "Choose a color", color);
+                if (c != null) {
+                    ActionMenu.colorArc(d, a, c);
+                }
+            }
+        });
+
+        JMenuItem deleteArc = new JMenuItem("Supprimer");
+        deleteArc.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                ActionMenu.deleteArc(d, a);
+            }
+
+        });
+        if (d.pondere) {
+            menuNode.add(renameArc);
+        }
+        menuNode.add(colorArc);
+        menuNode.add(deleteArc);
         menuNode.show(d, x, y);
     }
 
@@ -829,8 +1085,8 @@ public abstract class Interface {
         g.dispose();
         imageLabel.repaint();
     }
-    
-    public void refreshResult(){
+
+    public void refreshResult() {
         resultPanel.removeAll();
         JTextField text = new JTextField(d.getResultat());
         text.setEditable(false);
@@ -859,4 +1115,32 @@ public abstract class Interface {
         return epaisseur;
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public boolean isAuto() {
+        return autoStart.isSelected();
+    }
+
+    public void selectButton(ToolButton button) {
+        if (selectedButton != null) {
+            selectedButton.unselect();
+        }
+        selectedButton = button;
+        if (button != null) {
+            button.select();
+        }
+    }
+
+    public void showResult() {
+        if (stepByStep.isSelected()) {
+            stepBystepBar.setVisible(true);
+            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
+            previousStep.setEnabled(false);
+            nextStep.setEnabled(d.stepBysStep.getNbStep() > 0);
+        } else {
+            stepBystepBar.setVisible(false);
+        }
+    }
 }

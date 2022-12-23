@@ -16,15 +16,19 @@ import Inforeg.UI.Vector2D;
  *
  * @author inky19
  */
-public class Node extends Ellipse2D.Double {
+public class Node extends Ellipse2D.Double implements Attachable {
     // Global coordinate of the node
-    public double cx;
-    public double cy;
+    private double cx;
+    private double cy;
+    public Vector2D prevPos;
     // Global radius
     private double r;
     // Color of the node
     private Color color;
+    private Color colorDisplayed;
     private Color outlineColor;
+    private static int OUTLINE_WIDTH = 7;
+    // Default color
     private final static Color MULTISELECTED_COLOR = Color.GREEN;
     private final static Color SELECTED_COLOR = Color.decode("#ddb9ff");
     private final static Color DEFAULT_COLOR = Color.WHITE;
@@ -36,8 +40,7 @@ public class Node extends Ellipse2D.Double {
     // Whether or not the node is selected
     private boolean multiSelected;
     private boolean selected;
-    // Color displayed by the node
-    private Color colorDisplayed;
+
     
     public Node(){
         super();
@@ -95,7 +98,7 @@ public class Node extends Ellipse2D.Double {
         this.height = h;
         this.width = h;
         
-        g.setStroke(new BasicStroke((float)d.toDrawScale(7)));
+        g.setStroke(new BasicStroke((float)d.toDrawScale(OUTLINE_WIDTH)));
         //Outline
         if(multiSelected){
             g.setPaint(MULTISELECTED_COLOR); 
@@ -165,7 +168,7 @@ public class Node extends Ellipse2D.Double {
     }
     
     public void setColor(Color color) {
-        this.color = color;
+        this.color = new Color(color.getRGB());
         this.colorDisplayed = color;
     }
 
@@ -196,6 +199,10 @@ public class Node extends Ellipse2D.Double {
     public void setOutlineColor(Color color) {
         this.outlineColor= color;
     }
+
+    public Color getOutlineColor() {
+        return outlineColor;
+    }
     
     public void reinit() {
         this.colorDisplayed = color;
@@ -203,9 +210,19 @@ public class Node extends Ellipse2D.Double {
         this.selected = false;
         this.multiSelected = false;
     }
-    
+      
     @Override
     public String toString() {
         return "Noeud | label: " + label +", x: " + cx + ", y: " + cy + " |";
+    }
+    
+    @Override
+    public Vector2D getCenterPos() {
+        return new Vector2D(cx, cy);
+    }
+    
+    @Override
+    public double getRadius() {
+        return r + OUTLINE_WIDTH/2;
     }
 }
