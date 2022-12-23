@@ -580,7 +580,7 @@ public class Interface {
         goAndReset.add(algoGo);
         goAndReset.add(resetButton);
         
-        stepByStep = new CheckBox("Step by step");
+        stepByStep = new CheckBox("Pas à pas");
         algoPanel.add(stepByStep);
         autoStart = new CheckBox("<html><body>Départ auto</body></html>");
         autoStart.setVisible(false);

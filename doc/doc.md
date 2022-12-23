@@ -9,13 +9,13 @@
     4.1 [Ajout d'éléments](#41-ajout-déléments)  
     4.2 [Modification](#42-modification)  
     4.3 [Affichage](#43-affichage)  
+    4.4 [Historique](#44-historique)  
 5. [Traitement algorithmique](#5-traitement-algorithmique)
 6. [Sauvegarde et chargement](#6-sauvegarde-et-chargement)
 7. [Exportation en d'autres formats](#7-exportation-en-dautres-formats)  
     7.1 [Image PNG](#71-image-png)  
     7.2 [Format LaTeX](#72-export-latex)  
-8. [Annexes]()
-
+    
 <div class="page"/>
 
 ## 1. Prérequis et exécution
@@ -29,12 +29,13 @@ Pour lancer Inforeg, double-cliquer sur l'exécutable .jar. Une fenêtre de dém
 ## 2. Interface
 
 <div align="center">
+    <div>Fenêtre de démarrage :</div>
     <img src="ressources/startup%20window.png" width="80%"/>
 </div>
 
 <div align="center">
+    <div>Fenêtre principale :</div>
     <img src="ressources/main%20window.png" width="80%"/>
-    <div>Fenêtre principale</div>
 </div>
 
 <div class="page"/>
@@ -87,6 +88,8 @@ Les clous permettent de modifier le chemin d'un arc en le découpant en segments
 
 L'ajout d'un clou nécessite de cliquer sur un arc existant. Il n'y a pas de limite de clous par arc, sauf pour les boucles qui sont limitées à un seul clou.  
 Lorsque ce bouton est sélectionné, un clou peut être déplacé en maintenant clic gauche et peut être supprimé en avec un double-clic gauche.
+
+<div class="page"/>
 
 ### 4.2 Modification
 
@@ -146,7 +149,45 @@ Un slider en bas à droite permet de régler le niveau de zoom. Lorsqu'il est mo
 
 Le bouton <img style="vertical-align:middle" src="../src/main/resources/asset/icons/fit.png" width="25px"> à gauche du slider permet de faire un zoom automatique centré sur le graphe.
 
+### 4.4 Historique
+
+Les boutons <img style="vertical-align:middle" src="../src/main/resources/asset/icons/back.png" width="25px"> et <img style="vertical-align:middle" src="../src/main/resources/asset/icons/forward.png" width="25px"> situés en haut à droite de la fenêtre permettent de respectivement revenir en arrière ou en avant d'une étape de modification du graphe.
+
 ## 5. Traitement algorithmique
+
+### 5.1 Choix d'un algorithme
+
+Dans la barre d'outils à gauche, cliquer sur la zone
+<img style="vertical-align:middle" src="./ressources/algo%20picker.png" width="50px"> (juste en dessous de `Connexe`). Une fenêtre contenant la liste des algorithmes disponibles classés par catégorie s'ouvre :
+
+<div align="center">
+    <img src="ressources/algos.png" width="80%"/>
+</div>
+
+Cliquer sur l'algorithme souhaité. La fenêtre se ferme et le nom de l'algorithme sélectionné apparaît dans la zone cliquée précédemment.
+
+
+<div class="page"/>
+
+### 5.2 Traitement
+
+Pour lancer l'algorithme sélectionné, cliquer sur le bouton <img style="vertical-align:middle" src="../src/main/resources/asset/icons/play.png" width="20px">
+en dessous de la zone avec le nom de l'algorithme.
+
+En fonction de l'algorithme, il est possible de devoir suivre des instructions supplémentaire juste après le lancement (par exemple, choisir un nœud de départ et un nœud d'arrivée). Ces instructions s'affichent en haut de la zone de dessin.
+
+Plusieurs options sont disponibles avant le lancement de l'algorithme :
+- La case `Pas à pas` permet (si cochée) de visualiser le fonctionnement de l'algorithme et de parcourir les différentes étapes avec les boutons <img style="vertical-align:middle;margin-right:5px" src="../src/main/resources/asset/icons/previous.png" width="17px"><img style="vertical-align:middle" src="../src/main/resources/asset/icons/next.png" width="17px"> (ces boutons s'affichent après avoir lancé l'algorithme).
+- La case `Départ auto` peut apparaître en fonction de l'algorithme sélectionner. Si elle est cochée, le premier nœud placé sera sélectionné automatiquement comme nœud de départ.
+
+<div>
+  <font size=3><b>Reinitialisation des couleurs d'un graphe</b></font>
+  <img style="vertical-align:middle; padding-left:10px" src="../src/main/resources/asset/icons/reset.png">
+</div>
+
+
+Le bouton <img style="vertical-align:middle" src="../src/main/resources/asset/icons/reset.png" width="20px">
+permet d'effacer les modifications visuelles générées pendant le traitement (couleur des nœuds et des arcs). Il n'est pas nécessaire de cliquer sur ce bouton après chaque traitement pour pouvoir en relancer un suivant (la reinitilisation est automatique au lancement d'un algorithme).
 
 ## 6. Sauvegarde et chargement
 
@@ -227,4 +268,4 @@ Les dimensions du graphe doivent être adaptées en fonction du document. Deux v
 
 - `\resizebox{15cm}{!}` : cette ligne gère la taille de la zone de dessin du graphe dans le document. Le premier  paramètre correspond à la largeur (par défaut `15cm`). Le second à la hauteur, qui peut être remplacé par `!` pour générer une zone carrée à partir de la largeur seulement.
 
-- `\begin{tikzpicture}[scale=0.05]` : la valeur `scale` permet de gérer l'échelle du graphe. Ainsi, si les nœuds apparaissent trop petits car trop éloignés lors de la génération, il est possible d'augmenter leur taille en chageant ce paramètre.
+- `\begin{tikzpicture}[scale=0.05]` : la valeur `scale` permet de gérer l'échelle du graphe. Ainsi, si les nœuds apparaissent trop petits car trop éloignés lors de la génération, il est possible d'augmenter leur taille en changeant ce paramètre.
