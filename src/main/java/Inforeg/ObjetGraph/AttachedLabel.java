@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg.ObjetGraph;
 
 import Inforeg.Draw.Draw;
@@ -17,7 +13,7 @@ import java.awt.geom.Rectangle2D;
  *
  * @author remir
  */
-public class AttachedLabel {
+public class AttachedLabel implements GraphObject {
     
     private static final Color DEFAULT_FONT_COLOR = Color.BLACK;
     private static final Color DEFAULT_BACKGROUND_COLOR = Color.WHITE;
@@ -60,6 +56,7 @@ public class AttachedLabel {
         this.bgColor = backgroundColor;
     }
     
+    @Override
     public void paint(Draw d, Graphics2D g) {
         Point dPos = d.toDrawCoordinates(pos.plus(offset)).toPoint();
         Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(size));
@@ -68,10 +65,10 @@ public class AttachedLabel {
 
         int fontX = (int) (dPos.x - metrics.stringWidth(text) / 2);
         int fontY = dPos.y;
-        int offset = (int) d.toDrawScale(4); // padding à gauche et à droite
+        int paddingHorizontal = (int) d.toDrawScale(4); // padding à gauche et à droite
         if (bgColor != null) {
             g.setPaint(bgColor);
-            g.fillRect(fontX - offset, fontY - (int) bg.getHeight()/2, (int) (bg.getWidth() + 2 * offset), (int) bg.getHeight());
+            g.fillRect(fontX - paddingHorizontal, fontY - (int) bg.getHeight()/2, (int) (bg.getWidth() + 2 * paddingHorizontal), (int) bg.getHeight());
         }
         g.setPaint(textColor);
         g.setFont(font);

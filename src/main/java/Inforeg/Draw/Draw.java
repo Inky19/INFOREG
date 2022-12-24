@@ -405,8 +405,7 @@ public class Draw extends JPanel implements MouseMotionListener {
                         if (inter.getActiveTool() == inter.SELECT_TOOL) {
                             for (Node n : G.getNodes()) {
                                 if (multiselected && n.isSelected() && n.prevPos != null) {
-                                    transitions.createLog(History.MOVE_NODE, n, n.getCx(), n.getCy(), n.prevPos.x, n.prevPos.y);
-                                    System.out.println(n);
+                                    //transitions.createLog(History.MOVE_NODE, n, n.getCx(), n.getCy(), n.prevPos.x, n.prevPos.y);
                                     n.prevPos = null;
                                 } else if (zoneR.contains(n.getCenterX(), n.getCenterY())) {
                                     n.setMultiSelected(true);
@@ -428,8 +427,7 @@ public class Draw extends JPanel implements MouseMotionListener {
                                 }
                             }
                             if (multiselected == true && drawZone == false) {
-                                System.out.println("oui");
-                                transitions.push();
+                                //transitions.push();
                             }
                             drawZone = false;
                             repaint();

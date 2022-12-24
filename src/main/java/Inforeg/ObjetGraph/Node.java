@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Other/File.java to edit this template
- */
 package Inforeg.ObjetGraph;
 
 import Inforeg.Draw.Draw;
@@ -16,7 +12,7 @@ import Inforeg.UI.Vector2D;
  *
  * @author inky19
  */
-public class Node extends Ellipse2D.Double implements Attachable {
+public class Node extends Ellipse2D.Double implements Attachable, Clickable, GraphObject {
     // Global coordinate of the node
     private double cx;
     private double cy;
@@ -89,6 +85,7 @@ public class Node extends Ellipse2D.Double implements Attachable {
         cy = y;
     }
     
+    @Override
     public void paint(Draw d, Graphics2D g) {
         // Update position and scale
         Vector2D v = d.toDrawCoordinates(cx-r, cy-r);
