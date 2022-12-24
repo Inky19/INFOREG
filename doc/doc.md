@@ -2,19 +2,25 @@
 
 ## Sommaire
 
-1. [Prérequis et exécution](#1-prérequis-et-exécution)
-2. [Interface](#2-interface)
-3. [Choix du type de graphe](#3-choix-du-type-de-graphe)
-4. [Création de graphe](#4-création-du-graphe)  
-    4.1 [Ajout d'éléments](#41-ajout-déléments)  
-    4.2 [Modification](#42-modification)  
-    4.3 [Affichage](#43-affichage)  
-    4.4 [Historique](#44-historique)  
-5. [Traitement algorithmique](#5-traitement-algorithmique)
-6. [Sauvegarde et chargement](#6-sauvegarde-et-chargement)
-7. [Exportation en d'autres formats](#7-exportation-en-dautres-formats)  
-    7.1 [Image PNG](#71-image-png)  
-    7.2 [Format LaTeX](#72-export-latex)  
+- [Documentation utilisateur INFOREG](#documentation-utilisateur-inforeg)
+  - [Sommaire](#sommaire)
+  - [1. Prérequis et exécution](#1-prérequis-et-exécution)
+  - [2. Interface](#2-interface)
+  - [3. Choix du type de graphe](#3-choix-du-type-de-graphe)
+  - [4. Création du graphe](#4-création-du-graphe)
+    - [4.1 Ajout d'éléments](#41-ajout-déléments)
+    - [4.2 Modification](#42-modification)
+    - [4.3 Affichage](#43-affichage)
+    - [4.4 Historique](#44-historique)
+  - [5. Traitement algorithmique](#5-traitement-algorithmique)
+    - [5.1 Choix d'un algorithme](#51-choix-dun-algorithme)
+    - [5.2 Traitement](#52-traitement)
+  - [6. Sauvegarde et chargement](#6-sauvegarde-et-chargement)
+    - [6.1 Sauvegarde](#61-sauvegarde)
+    - [6.2 Chargement](#62-chargement)
+  - [7. Exportation en d'autres formats](#7-exportation-en-dautres-formats)
+    - [7.1 Image PNG](#71-image-png)
+    - [7.2 Export LaTeX](#72-export-latex)
     
 <div class="page"/>
 
@@ -88,6 +94,8 @@ Les clous permettent de modifier le chemin d'un arc en le découpant en segments
 
 L'ajout d'un clou nécessite de cliquer sur un arc existant. Il n'y a pas de limite de clous par arc, sauf pour les boucles qui sont limitées à un seul clou.  
 Lorsque ce bouton est sélectionné, un clou peut être déplacé en maintenant clic gauche et peut être supprimé en avec un double-clic gauche.
+> **Remarque**
+> Les boucles contiennent un clou lors de leur création. Ce dernier ne peut pas être supprimé.
 
 <div class="page"/>
 

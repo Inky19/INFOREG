@@ -125,7 +125,7 @@ public class Draw extends JPanel implements MouseMotionListener {
     /**
      * Line width.
      */
-    private float lineWidth = Draw.LINIT;
+    private float lineWidth = LINIT;
     /**
      * Définit si le graphe est pondéré ou non
      */

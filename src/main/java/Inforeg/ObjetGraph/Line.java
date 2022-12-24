@@ -1,21 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg.ObjetGraph;
 
 import Inforeg.Draw.Draw;
 import Inforeg.UI.Vector2D;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 
 /**
- *
+ * Classe utilisée pour définir l'apparence des lignes qui constituent un arc. 
  * @author remir
  */
 public class Line {
@@ -108,6 +101,13 @@ public class Line {
             }
             return (CIRCLE_RADIUS - width / 2 <= dist && dist <= CIRCLE_RADIUS + width / 2);
         } else {
+            if (circle) {
+                double radius = Vector2D.dist(p1, p2)/2;
+                Vector2D center = Vector2D.middle(p1, p2);
+                double d = Vector2D.dist(center, new Vector2D(x, y));
+
+                return (Math.abs(d - radius) <= width/2);
+            }
             Vector2D v = p2.minus(p1);
             
             double l = v.getNorm() - from.getRadius() - to.getRadius();
