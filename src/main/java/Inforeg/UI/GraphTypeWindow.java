@@ -101,10 +101,10 @@ public class GraphTypeWindow extends JDialog{
         charge.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                Draw d = SaveManager.load();
+                d = SaveManager.load();
+                buttonPressed = true;
                 if (d != null) {
                     dispatchEvent(new WindowEvent(J, WindowEvent.WINDOW_CLOSING));
-                    buttonPressed = true;
                     setVisible(false);
                 }
             }

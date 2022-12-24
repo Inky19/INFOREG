@@ -261,7 +261,7 @@ public class Interface {
      */
     public void createAndShowGui() {
 
-        frame = new JFrame("INFOREG " + d.getPathSauvegarde());
+        frame = new JFrame("INFOREG " + VERSION);
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
         } catch (ClassNotFoundException ex) {
