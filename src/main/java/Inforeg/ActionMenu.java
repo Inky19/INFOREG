@@ -2,6 +2,7 @@ package Inforeg;
 
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.Arc;
+import Inforeg.ObjetGraph.Nail;
 import Inforeg.ObjetGraph.Node;
 import Inforeg.Save.SaveManager;
 import java.awt.Color;
@@ -75,7 +76,13 @@ public abstract class ActionMenu {
         t.createLog(History.REMOVE_ARC, a);
         t.push();
     }
-
+    
+    public static void deleteNail(Draw d, Nail nail) {
+        System.out.println(nail.arc);
+        d.getTransitions().createLog(History.REMOVE_NAIL, nail, nail.arc, nail.getArcIndex());
+        nail.delete();
+        d.repaint();
+    }
     
     /**
      * Change la couleur d'un nœud.

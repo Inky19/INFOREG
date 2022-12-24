@@ -278,7 +278,7 @@ public class Interface {
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         // Position de la fenètre
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setSize(1000, 600);
+        frame.setSize(1000, 700);
         frame.setLocationRelativeTo(null);
         // Icone de l'application
         ImageIcon icon = appIco;

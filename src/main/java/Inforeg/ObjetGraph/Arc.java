@@ -98,7 +98,7 @@ public class Arc implements Comparable<Arc>, Clickable, GraphObject {
         this.colorDisplayed = c;
         this.nails = new ArrayList<>();
         this.label = new AttachedLabel(Integer.toString(poids),Vector2D.middle(fromPoint.getCenterPos(), toPoint.getCenterPos()), c);
-        this.addNail(nail);
+        this.addNailWhereSelected(nail);
         this.width = DEFAULT_LINE_WIDTH;
     }
 
@@ -273,17 +273,32 @@ public class Arc implements Comparable<Arc>, Clickable, GraphObject {
      * Permet l'ajout des clous lors du chargement d'un fichier
      * @param nail Clou à ajouter
      */
-    public void loadNail(Nail nail){
+    public void addNail(Nail nail){
+        nail.arc = this;
         if (from == to){
             nails.set(0, nail);
         } else {
             nails.add(nail);
         }
     }
-
-    public void addNail(Nail nail) {
+    
+    public void addNail(Nail nail, int index){
+        nail.arc = this;
+        if (from == to){
+            nails.set(0, nail);
+        } else {
+            nails.add(index, nail);
+        }
+    }
+    
+    /**
+     * Permet d'ajouter un clou sur l'arc.
+     * Attention ! Ne fonctionne pas si le clou ne se trouve pas sur l'arc. Utiliser loadNail à la place.
+     * @param nail Clou à ajouter
+     */
+    public void addNailWhereSelected(Nail nail) {
         if (from == to) {
-            return; // Can't add nail to self arc
+            return; // Can't add nail to loop
         }
         List<Line> hitbox = getNailLines(width + 5, Color.RED);
         int i = 0;
@@ -291,6 +306,7 @@ public class Arc implements Comparable<Arc>, Clickable, GraphObject {
             i++;
         }
         nails.add(i, nail);
+        nail.color = color;
         nail.arc = this;
     }
 
