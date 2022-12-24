@@ -23,7 +23,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Arc implements Comparable<Arc> {
+public class Arc implements Comparable<Arc>, Clickable, GraphObject {
     /**
      * Epaisseur de l'arc
      */
@@ -102,6 +102,7 @@ public class Arc implements Comparable<Arc> {
         this.width = DEFAULT_LINE_WIDTH;
     }
 
+    @Override
     public void paint(Draw d, Graphics2D g) {
 
         // Painting of lines
@@ -322,7 +323,8 @@ public class Arc implements Comparable<Arc> {
      * @param d
      * @return true if the point (x ,y) touches this arc
      */
-    public boolean contains(int x, int y) {
+    @Override
+    public boolean contains(double x, double y) {
         List<Line> hitbox = getNailLines(width + 5, Color.RED);
         for (Line line : hitbox) {
             if (line.contains(x, y)) {

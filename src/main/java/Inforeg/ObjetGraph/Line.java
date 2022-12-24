@@ -11,7 +11,7 @@ import java.awt.geom.Ellipse2D;
  * Classe utilisée pour définir l'apparence des lignes qui constituent un arc. 
  * @author remir
  */
-public class Line {
+public class Line implements Clickable, GraphObject {
 
     public final static int DEFAULT_WIDTH = 8;
     public final static Color DEFAULT_COLOR = Color.BLUE;
@@ -85,6 +85,7 @@ public class Line {
      * @param y ordonnée globale du point
      * @return 
      */
+    @Override
     public boolean contains(double x, double y) {
         Vector2D p1 = from.getCenterPos();
         Vector2D p2 = to.getCenterPos();
@@ -128,6 +129,7 @@ public class Line {
         }
     }
 
+    @Override
     public void paint(Draw d, Graphics2D g) {
         g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
         g.setColor(color);
@@ -193,7 +195,7 @@ public class Line {
 
         //Vector2D middle = Vector2D.middle(p1, p2);
 
-        Vector2D head = p2.minus(v.multiply(to.getRadius() + width/2)); // head of the arrow
+        Vector2D head = p2.minus(v.multiply(to.getRadius() + width/2 + 1)); // head of the arrow
         Vector2D a = head.minus(v.multiply(w)).plus(n.multiply(h / 2));
         Vector2D b = head.minus(v.multiply(w)).minus(n.multiply(h / 2));
 

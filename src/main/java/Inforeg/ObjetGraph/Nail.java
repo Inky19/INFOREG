@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg.ObjetGraph;
 
 import Inforeg.Draw.Draw;
@@ -16,7 +12,7 @@ import java.awt.Point;
  *
  * @author Rémi
  */
-public class Nail extends Ellipse2D.Double implements Attachable {
+public class Nail extends Ellipse2D.Double implements Attachable, Clickable, GraphObject {
     public final static int DEFAULT_RADIUS = 3;
     public final static int HITBOX_RADIUS = 7;
     
@@ -74,6 +70,7 @@ public class Nail extends Ellipse2D.Double implements Attachable {
         this.arc = arc;
     }
 
+    @Override
     public void paint(Draw d, Graphics2D g) {
         Vector2D v = d.toDrawCoordinates(cx - r, cy - r);
         this.x = v.x;
