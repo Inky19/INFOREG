@@ -15,7 +15,8 @@ import Inforeg.UI.Vector2D;
  * @author François MARIE
  * @author Rémi RAVELLI
  */
-public class Node extends Ellipse2D.Double implements Attachable {
+
+public class Node extends Ellipse2D.Double implements Attachable, Clickable, GraphObject {
 
     // Global coordinate of the node
     private double cx;
@@ -87,7 +88,8 @@ public class Node extends Ellipse2D.Double implements Attachable {
         cx = x;
         cy = y;
     }
-
+    
+    @Override
     public void paint(Draw d, Graphics2D g) {
         // Update position and scale
         Vector2D v = d.toDrawCoordinates(cx - r, cy - r);

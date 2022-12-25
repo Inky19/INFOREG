@@ -13,7 +13,8 @@ import Inforeg.UI.Vector2D;
  * @author François MARIE
  * @author Rémi RAVELLI
  */
-public class Nail extends Ellipse2D.Double implements Attachable {
+
+public class Nail extends Ellipse2D.Double implements Attachable, Clickable, GraphObject {
 
     public final static int DEFAULT_RADIUS = 3;
     public final static int HITBOX_RADIUS = 7;
@@ -71,6 +72,7 @@ public class Nail extends Ellipse2D.Double implements Attachable {
         this.arc = arc;
     }
 
+    @Override
     public void paint(Draw d, Graphics2D g) {
         Vector2D v = d.toDrawCoordinates(cx - r, cy - r);
         this.x = v.x;
