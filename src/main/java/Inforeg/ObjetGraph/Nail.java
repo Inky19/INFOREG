@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg.ObjetGraph;
 
 import Inforeg.Draw.Draw;
@@ -10,18 +6,21 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 import Inforeg.UI.Vector2D;
-import java.awt.Point;
 
 /**
+ * Clou sur un arc
  *
- * @author Rémi
+ * @author François MARIE
+ * @author Rémi RAVELLI
  */
-public class Nail extends Ellipse2D.Double implements Attachable {
+
+public class Nail extends Ellipse2D.Double implements Attachable, Clickable, GraphObject {
+
     public final static int DEFAULT_RADIUS = 3;
     public final static int HITBOX_RADIUS = 7;
-    
+
     public Arc arc;
-    
+
     public double cx;
     public double cy;
     public Vector2D prevPos;
@@ -35,8 +34,7 @@ public class Nail extends Ellipse2D.Double implements Attachable {
         this.r = DEFAULT_RADIUS;
         this.color = null;
     }
-    
-    
+
     public Nail(double cx, double cy, double r) {
         this.cx = cx;
         this.cy = cy;
@@ -50,14 +48,14 @@ public class Nail extends Ellipse2D.Double implements Attachable {
         this.r = r;
         this.color = color;
     }
-    
+
     public Nail(double cx, double cy, Color color) {
         this.cx = cx;
         this.cy = cy;
         this.r = DEFAULT_RADIUS;
         this.color = color;
     }
-    
+
     public Nail(double cx, double cy, Arc arc) {
         this.cx = cx;
         this.cy = cy;
@@ -74,6 +72,7 @@ public class Nail extends Ellipse2D.Double implements Attachable {
         this.arc = arc;
     }
 
+    @Override
     public void paint(Draw d, Graphics2D g) {
         Vector2D v = d.toDrawCoordinates(cx - r, cy - r);
         this.x = v.x;
@@ -91,7 +90,6 @@ public class Nail extends Ellipse2D.Double implements Attachable {
             g.draw(this);
         }
 
-        
     }
 
     public double getCx() {
@@ -113,7 +111,7 @@ public class Nail extends Ellipse2D.Double implements Attachable {
     public void setCy(double cy) {
         this.cy = cy;
     }
-    
+
     public void delete() {
         if (arc != null && arc.getFrom() != arc.getTo()) {
             arc.getNails().remove(this);
@@ -124,15 +122,15 @@ public class Nail extends Ellipse2D.Double implements Attachable {
     public Vector2D getCenterPos() {
         return new Vector2D(cx, cy);
     }
-    
+
     @Override
     public boolean contains(double x, double y) {
-        return (((x - cx)*(x - cx) + (y - cy)*(y - cy)) <= HITBOX_RADIUS*HITBOX_RADIUS);
+        return (((x - cx) * (x - cx) + (y - cy) * (y - cy)) <= HITBOX_RADIUS * HITBOX_RADIUS);
     }
-    
+
     @Override
     public double getRadius() {
         return r;
     }
-    
+
 }

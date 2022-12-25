@@ -1,16 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg.StepByStep;
 
 import Inforeg.Draw.Draw;
 
 /**
+ * Action de modifier du texte
  *
- * @author remir
+ * @author Rémi RAVELLI
+ * @author François MARIE
  */
 public class SetText implements StepAction {
+
     String nextText;
     String previousText;
 
@@ -28,5 +27,5 @@ public class SetText implements StepAction {
     public void reverse(Draw d) {
         d.setInfoText(previousText);
     }
-    
+
 }

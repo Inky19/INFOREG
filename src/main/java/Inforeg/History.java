@@ -1,13 +1,5 @@
 package Inforeg;
 
-/*=============================================
-Classe History permettant de sauvegarder 
-les modifications et de les rétablir à l'aide 
-des boutons
-Auteur : Isaias VENEGAS
-Date de création : 24/03/2022
-Date de dernière modification : 30/03/2022
-=============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Nail;
@@ -16,7 +8,16 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Classe History permettant de sauvegarder les modifications et de les rétablir
+ * à l'aide des boutons
+ *
+ * @author Rémi RAVELLI
+ * @author François MARIE
+ * @author Isaias VENEGAS
+ */
 class Enregistrement {
+
     int action; // ajouter/supprimer des noeud/arc, modifier l'étiquette
     Node noeud; // noeud
     double x; // position
@@ -41,13 +42,12 @@ class Enregistrement {
         this.action = action;
         this.arc = line;
     }
-    
+
     // Constructeur pour les actions sur les clous
     public Enregistrement(int action, Nail clou) {
         this.action = action;
         this.clou = clou;
     }
-
 
     // Constructor pour les actions de modification des étiquettes
     public Enregistrement(int action, Node circ, String currentLbl, String newLbl) {
@@ -87,6 +87,7 @@ class Enregistrement {
 }
 
 public class History {
+
     // actions possibles
     public static final int MOVE_NAIL = 0;
     public static final int MOVE_NODE = 1;
@@ -98,7 +99,7 @@ public class History {
     public static final int LABEL_NODE = 7;
     public static final int REMOVE_NAIL = 8;
     public static final int ADD_NAIL = 9;
-    
+
     // piles Ctrl+Z et Ctrl+Y
     private final ConcurrentHashMap<Integer, LinkedList<Enregistrement>> previousStates;
     private final ConcurrentHashMap<Integer, LinkedList<Enregistrement>> nextStates;
@@ -109,85 +110,97 @@ public class History {
         this.nextStates = new ConcurrentHashMap<>();
         this.currentLog = new LinkedList<>();
     }
-    
+
     /**
      * Crée un enregistrement pour les actions de suppression d'un Noeud.
+     *
      * @param action
-     * @param node 
+     * @param node
      */
     public void createLog(int action, Node node) {
         this.currentLog.add(new Enregistrement(action, node));
     }
-    
+
     public boolean pileZempty() {
         return previousStates.isEmpty();
     }
-    
+
     public boolean pileYempty() {
         return nextStates.isEmpty();
     }
-    
-    
+
     /**
      * Crée un enregistrement pour les actions de suppression d'un Clou.
+     *
      * @param action
-     * @param clou 
+     * @param clou
      */
     public void createLog(int action, Nail clou) {
         this.currentLog.add(new Enregistrement(action, clou));
     }
+
     /**
      * Crée un enregistrement pour les actions de suppression d'un arc.
+     *
      * @param action
-     * @param line 
+     * @param line
      */
     public void createLog(int action, Arc line) {
         this.currentLog.add(new Enregistrement(action, line));
     }
+
     /**
      * Crée un enregistrement pour les actions de renommage d'un noeud.
+     *
      * @param action
      * @param circ
      * @param currentLbl
-     * @param newLbl 
+     * @param newLbl
      */
     public void createLog(int action, Node circ, String currentLbl, String newLbl) {
         this.currentLog.add(new Enregistrement(action, circ, currentLbl, newLbl));
     }
+
     /**
      * Crée un enregistrement pour les actions de renommage d'un arc.
+     *
      * @param action
      * @param line
      * @param currentLbl
-     * @param newLbl 
+     * @param newLbl
      */
     public void createLog(int action, Arc line, String currentLbl, String newLbl) {
         this.currentLog.add(new Enregistrement(action, line, currentLbl, newLbl));
     }
+
     /**
      * Crée un enregistrement pour les actions de déplacement d'un noeud.
+     *
      * @param action
      * @param circ
      * @param x
      * @param y
      * @param x2
-     * @param y2 
+     * @param y2
      */
     public void createLog(int action, Node circ, double x, double y, double x2, double y2) {
         this.currentLog.add(new Enregistrement(action, circ, x, y, x2, y2));
     }
+
     /**
      * Crée un enregistrement pour les actions de déplacement d'un clou.
+     *
      * @param action
      * @param clou
      * @param x
      * @param y
      * @param x2
-     * @param y2 
+     * @param y2
      */
     public void createLog(int action, Nail clou, double x, double y, double x2, double y2) {
         this.currentLog.add(new Enregistrement(action, clou, x, y, x2, y2));
     }
+
     /**
      * Ajoute les actions créés sur la pile Y
      */
@@ -196,13 +209,13 @@ public class History {
         this.clearNextStates();
         this.currentLog = new LinkedList<>();
     }
+
     /**
      * Efface les actions créées.
      */
     public void clear() {
         this.currentLog = new LinkedList<>();
     }
-    
 
     private LinkedList<Enregistrement> getPreviousState() {
         LinkedList<Enregistrement> pS = previousStates.get(previousStates.size() - 1);
@@ -228,7 +241,7 @@ public class History {
         LinkedList<Enregistrement> put = previousStates.put(previousStates.size(), log);
         return put != null;
     }
-    
+
     private void clearNextStates() {
         nextStates.clear(); // On élimine les actions futures
     }
@@ -237,9 +250,11 @@ public class History {
         LinkedList<Enregistrement> put = nextStates.put(nextStates.size(), log);
         return put != null;
     }
+
     /**
      * Retour en arrière (CTRL+Z)
-     * @param d 
+     *
+     * @param d
      */
     public void back(Draw d) {
         Collection<LinkedList<Enregistrement>> pileZ = getPreviousStates();
@@ -251,36 +266,36 @@ public class History {
         // Ensuite, on déplace l'action sur l'autre pile
         for (Enregistrement lastReg : lastRegs) {
             switch (lastReg.action) {
-                case History.ADD_NODE :
+                case History.ADD_NODE:
                     d.getNodes().remove(lastReg.noeud);
                     break;
-                case History.MOVE_NODE :
+                case History.MOVE_NODE:
                     lastReg.noeud.setCx(lastReg.x);
                     lastReg.noeud.setCy(lastReg.y);
                     break;
-                case History.REMOVE_NODE :
+                case History.REMOVE_NODE:
                     d.getG().addNode(lastReg.noeud);
                     break;
-                case History.ADD_ARC :
+                case History.ADD_ARC:
                     d.getG().removeLine(lastReg.arc);
                     break;
-                case History.MOVE_NAIL :
+                case History.MOVE_NAIL:
                     lastReg.clou.setCx(lastReg.x);
                     lastReg.clou.setCy(lastReg.y);
                     break;
-                case History.REMOVE_NAIL :
+                case History.REMOVE_NAIL:
                     // TO DO
                     break;
-                case History.ADD_NAIL :
+                case History.ADD_NAIL:
                     lastReg.clou.delete();
                     break;
-                case History.REMOVE_ARC :
+                case History.REMOVE_ARC:
                     d.addLine(lastReg.arc);
                     break;
-                case History.LABEL_NODE :
+                case History.LABEL_NODE:
                     lastReg.noeud.setLabel(lastReg.lastLbl);
                     break;
-                case History.LABEL_ARC :
+                case History.LABEL_ARC:
                     lastReg.arc.setPoids(Integer.parseInt(lastReg.lastLbl));
                     break;
                 default:
@@ -290,58 +305,60 @@ public class History {
         d.repaint();
         addNextState(lastRegs);
     }
+
     /**
      * Annule le retour en arrière (CTRL+Y)
+     *
      * @param d La zone de dessin
      */
     public void forward(Draw d) {
         Collection<LinkedList<Enregistrement>> pileY = getNextStates();
-            if (pileY.isEmpty()) {
-                return;
+        if (pileY.isEmpty()) {
+            return;
+        }
+        LinkedList<Enregistrement> nextRegs = getNextState();
+        // Pour chaque action, on l'exécute
+        // Ensuite, on déplace l'action sur l'autre pile
+        for (Enregistrement nextReg : nextRegs) {
+            switch (nextReg.action) {
+                case History.ADD_NODE:
+                    d.getG().addNode(nextReg.noeud);
+                    break;
+                case History.MOVE_NODE:
+                    nextReg.noeud.setCx(nextReg.x2);
+                    nextReg.noeud.setCy(nextReg.y2);
+                    break;
+                case History.REMOVE_NODE:
+                    d.getG().getNodes().remove(nextReg.noeud);
+                    break;
+                case History.ADD_ARC:
+                    d.addLine(nextReg.arc);
+                    break;
+                case History.MOVE_NAIL:
+                    nextReg.clou.setCx(nextReg.x2);
+                    nextReg.clou.setCy(nextReg.y2);
+                    break;
+                case History.REMOVE_NAIL:
+                    nextReg.clou.delete();
+                    break;
+                case History.ADD_NAIL:
+                    // TO DO
+                    break;
+                case History.REMOVE_ARC:
+                    d.getG().removeLine(nextReg.arc);
+                    break;
+                case History.LABEL_NODE:
+                    nextReg.noeud.setLabel(nextReg.newLbl);
+                    break;
+                case History.LABEL_ARC:
+                    nextReg.arc.setPoids(Integer.parseInt(nextReg.newLbl));
+                    break;
+                default:
+                    break;
             }
-            LinkedList<Enregistrement> nextRegs = getNextState();
-            // Pour chaque action, on l'exécute
-            // Ensuite, on déplace l'action sur l'autre pile
-            for (Enregistrement nextReg : nextRegs) {
-                switch (nextReg.action) {
-                    case History.ADD_NODE :
-                        d.getG().addNode(nextReg.noeud);
-                        break;
-                    case History.MOVE_NODE :
-                        nextReg.noeud.setCx(nextReg.x2);
-                        nextReg.noeud.setCy(nextReg.y2);
-                        break;
-                    case History.REMOVE_NODE :
-                        d.getG().getNodes().remove(nextReg.noeud);
-                        break;
-                    case History.ADD_ARC :
-                        d.addLine(nextReg.arc);
-                        break;
-                    case History.MOVE_NAIL :
-                        nextReg.clou.setCx(nextReg.x2);
-                        nextReg.clou.setCy(nextReg.y2);
-                        break;
-                    case History.REMOVE_NAIL :
-                        nextReg.clou.delete();
-                        break;
-                    case History.ADD_NAIL :
-                        // TO DO
-                        break;
-                    case History.REMOVE_ARC :
-                        d.getG().removeLine(nextReg.arc);
-                        break;
-                    case History.LABEL_NODE :
-                        nextReg.noeud.setLabel(nextReg.newLbl);
-                        break;
-                    case History.LABEL_ARC :
-                        nextReg.arc.setPoids(Integer.parseInt(nextReg.newLbl));
-                        break;
-                    default:
-                        break;
-                }
-            }
-            d.repaint();
-            addPreviousState(nextRegs);
+        }
+        d.repaint();
+        addPreviousState(nextRegs);
     }
-    
+
 }

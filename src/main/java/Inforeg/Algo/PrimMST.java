@@ -1,12 +1,5 @@
 package Inforeg.Algo;
 
-/*=============================================
-Classe PrimMST définissant l'algorithme de PrimMST
-Sous classe de la classe Processing
-Auteur : Samy AMAL
-Date de création : 04/02/2022
-Date de dernière modification : 24/03/2022
-=============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
 import static Inforeg.Graph.GraphFunction.connected;
@@ -15,6 +8,13 @@ import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 
+/**
+ * Algorithme de Prim
+ *
+ * @author François MARIE
+ * @author Rémi RAVELLI
+ * @author Samy AMAL
+ */
 public class PrimMST extends Algorithm implements AlgorithmS, Processing {
 
     public PrimMST() {
