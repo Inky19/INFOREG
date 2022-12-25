@@ -11,12 +11,14 @@ import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 
 /**
+ * Export en image PNG
  *
- * @author inky19
+ * @author François MARIE
+ * @author Rémi RAVELLI
  */
 public abstract class ExportPNG {
-    
-    public static void export(Draw d){
+
+    public static void export(Draw d) {
         JFileChooser fileExplorer = new JFileChooser();
         int res = fileExplorer.showOpenDialog(null);
         if (res == JFileChooser.APPROVE_OPTION) {

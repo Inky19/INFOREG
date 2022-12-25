@@ -1,11 +1,10 @@
 package Inforeg.Algo;
 
-/*=============================================
-Classe Processing
-Auteur : Samy AMAL
-Date de création : 02/02/2022
-Date de dernière modification : 02/02/2022
-=============================================*/
+/**
+ * Fonctions utilitaires
+ *
+ * @author Samy AMAL
+ */
 public interface Processing {
 
     // A utility function to find the vertex with minimum distance value,

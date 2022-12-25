@@ -31,7 +31,6 @@
 package Inforeg.UI;
 
 import javax.swing.*;
-import javax.swing.*;
 import javax.swing.plaf.basic.BasicButtonUI;
 import java.awt.*;
 import java.awt.event.*;
@@ -39,6 +38,14 @@ import java.awt.event.*;
 /**
  * Component to be used as tabComponent; Contains a JLabel to show the text and
  * a JButton to close the tab it belongs to
+ */
+/**
+ * Classe importée du site d'Oracle pour intégrer un bouton de fermeture d'un
+ * onglet. Légèrement modifiée pour implémenter les icônes de type.
+ *
+ * @author ORACLE
+ * @author François MARIE
+ * @author Rémi RAVELLI
  */
 public class ButtonTabComponent extends JPanel {
 
@@ -82,7 +89,7 @@ public class ButtonTabComponent extends JPanel {
         //add more space to the top of the component
         setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
     }
-    
+
     public void setIcon(ImageIcon ico1, ImageIcon ico2) {
         if (ico1 != null) {
             label1.setIcon(ico1);
@@ -91,7 +98,7 @@ public class ButtonTabComponent extends JPanel {
             label2.setIcon(ico2);
         }
     }
-    
+
     public void setTitleColor(Color color) {
         label2.setForeground(color);
     }

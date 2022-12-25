@@ -3,14 +3,15 @@ package Inforeg.Algo;
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
 import Inforeg.ObjetGraph.Node;
-import Inforeg.StepByStep.StepByStep;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
  * Breadth first search algorithm
- * @author inky19
+ *
+ * @author François MARIE
+ * @author Rémi RAVELLI
  */
 public class BFS extends Algorithm implements AlgorithmS {
 
@@ -51,12 +52,12 @@ public class BFS extends Algorithm implements AlgorithmS {
                 }
                 if (neighbour) {
                     d.stepBysStep.setInfoText("Ajout des voisins à la file");
-                    d.stepBysStep.nextStep();                    
+                    d.stepBysStep.nextStep();
                 }
             }
         }
         d.stepBysStep.setInfoText("");
-        d.stepBysStep.nextStep();   
+        d.stepBysStep.nextStep();
         String res = "Chemin du BFS : ";
         for (String s : order) {
             res += s + " | ";

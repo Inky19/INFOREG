@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg.StepByStep;
 
 import Inforeg.Draw.Draw;
@@ -9,16 +5,19 @@ import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 
 /**
+ * Couleur d'un nœud
  *
- * @author remir
+ * @author Rémi RAVELLI
+ * @author François MARIE
  */
 public class ColorNode implements StepAction {
+
     Node n;
     Color previousColor;
     Color nextColor;
     Boolean outline;
 
-    public ColorNode(Node n, Color nextColor,Boolean outline) {
+    public ColorNode(Node n, Color nextColor, Boolean outline) {
         this.n = n;
         this.nextColor = nextColor;
         this.outline = outline;

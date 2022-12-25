@@ -1,29 +1,23 @@
 package Inforeg.ObjetGraph;
 
-/*=============================================
-Classe Arc permettant de stocker les informations
-d'une ligne à tracer
-Auteur : Samy AMAL
-Date de création : 03/03/2022
-Date de dernière modification : 11/03/2022
-=============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.UI.Vector2D;
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.font.GlyphVector;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Classe Arc
+ *
+ * @author François MARIE
+ * @author Rémi RAVELLI
+ * @author Samy AMAL
+ */
 public class Arc implements Comparable<Arc>, Clickable, GraphObject {
+
     /**
      * Epaisseur de l'arc
      */
@@ -40,8 +34,7 @@ public class Arc implements Comparable<Arc>, Clickable, GraphObject {
      * Poids de l'Arc
      */
     private int poids;
-    
-    
+
     private AttachedLabel label;
     /**
      * Couleur
@@ -86,7 +79,7 @@ public class Arc implements Comparable<Arc>, Clickable, GraphObject {
         this.width = DEFAULT_LINE_WIDTH;
         this.nails = new ArrayList<>();
         if (from == to && from != null) {
-            nails.add(new Nail(fromPoint.getCx() + 2*Line.CIRCLE_RADIUS,fromPoint.getCy(), this));
+            nails.add(new Nail(fromPoint.getCx() + 2 * Line.CIRCLE_RADIUS, fromPoint.getCy(), this));
         }
     }
 
@@ -97,7 +90,7 @@ public class Arc implements Comparable<Arc>, Clickable, GraphObject {
         this.color = c;
         this.colorDisplayed = c;
         this.nails = new ArrayList<>();
-        this.label = new AttachedLabel(Integer.toString(poids),Vector2D.middle(fromPoint.getCenterPos(), toPoint.getCenterPos()), c);
+        this.label = new AttachedLabel(Integer.toString(poids), Vector2D.middle(fromPoint.getCenterPos(), toPoint.getCenterPos()), c);
         this.addNail(nail);
         this.width = DEFAULT_LINE_WIDTH;
     }
@@ -137,16 +130,16 @@ public class Arc implements Comparable<Arc>, Clickable, GraphObject {
                     pos = Vector2D.middle(from.getCenterPos(), to.getCenterPos());
                 } else if (nails.size() % 2 == 0) {
                     // on affiche le label au milieu d'une ligne
-                    pos = Vector2D.middle(nails.get(nails.size()/2 - 1).getCenterPos(), nails.get(nails.size()/2).getCenterPos());
+                    pos = Vector2D.middle(nails.get(nails.size() / 2 - 1).getCenterPos(), nails.get(nails.size() / 2).getCenterPos());
                 } else {
                     // on affiche le label sur le clou du milieu
-                    pos = nails.get(nails.size()/2).getCenterPos().minus(new Vector2D(0,15));
+                    pos = nails.get(nails.size() / 2).getCenterPos().minus(new Vector2D(0, 15));
                 }
             }
             label.pos = pos;
             // Color
             label.textColor = colorDisplayed;
-            
+
             label.paint(d, g);
         }
     }
@@ -268,13 +261,14 @@ public class Arc implements Comparable<Arc>, Clickable, GraphObject {
     public ArrayList<Nail> getNails() {
         return nails;
     }
-    
+
     /**
      * Permet l'ajout des clous lors du chargement d'un fichier
+     *
      * @param nail Clou à ajouter
      */
-    public void loadNail(Nail nail){
-        if (from == to){
+    public void loadNail(Nail nail) {
+        if (from == to) {
             nails.set(0, nail);
         } else {
             nails.add(nail);
@@ -297,7 +291,7 @@ public class Arc implements Comparable<Arc>, Clickable, GraphObject {
     private List<Line> getNailLines(int width, Color color) {
         List<Line> lines = new ArrayList<>();
         if (from == to) {
-            lines.add(new Line(from,nails.get(0), width, color, true));
+            lines.add(new Line(from, nails.get(0), width, color, true));
         } else {
             if (nails.isEmpty()) {
                 lines.add(new Line(from, to, width, color));

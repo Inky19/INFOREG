@@ -1,14 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg.StepByStep;
 
 import Inforeg.Draw.Draw;
 
 /**
+ * Interface pour le mode pas à pas
  *
- * @author remir
+ * @author Rémi RAVELLI
+ * @author François MARIE
  */
 interface StepAction {
     /**

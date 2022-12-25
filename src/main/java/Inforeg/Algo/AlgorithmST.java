@@ -4,8 +4,11 @@ import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.Node;
 
 /**
-  Algorithmes qui demandent un noeud de départ et d'arrivée
- * @author inky19
+ * Classe abstraitre pour les algorithmes nécessitant de choisir un nœud de
+ * départ et d'arrivée (source & target).
+ *
+ * @author François MARIE
+ * @author Rémi RAVELLI
  */
 public interface AlgorithmST {
 

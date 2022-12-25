@@ -1,12 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg.Algo;
 
 import Inforeg.Draw.Draw;
-import Inforeg.Graph.Graph;
-import Inforeg.ObjetGraph.Arc;
 import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -16,43 +10,47 @@ import java.util.LinkedList;
 
 /**
  * Coloration gloutonne de graphe.
- * @author Rémi
- * 
+ *
+ * @author Rémi RAVELLI
+ * @author François MARIE
+ *
  */
-public class Coloration extends Algorithm{  
+public class Coloration extends Algorithm {
+
     private ArrayList<LinkedList<Integer>> listAdj;
-    private HashMap<Node,Integer> hashNode;
+    private HashMap<Node, Integer> hashNode;
     private Draw d;
-    private static final String[] COLORS = new String[]{"#e6194B","#f58231","#ffe119","#bfef45","#3cb44b","#42d4f4","#4363d8","#911eb4","#f032e6","#800000"}; 
-    
-    public Coloration(){
+    private static final String[] COLORS = new String[]{"#e6194B", "#f58231", "#ffe119", "#bfef45", "#3cb44b", "#42d4f4", "#4363d8", "#911eb4", "#f032e6", "#800000"};
+
+    public Coloration() {
         this.setName("Glouton");
         hashNode = new HashMap<>();
         listAdj = new ArrayList<>();
         d = null;
     }
-    
+
     @Override
     public void process(Draw d) {
         this.d = d;
         hashNode = new HashMap<>();
         listAdj = new ArrayList<>();
         colorationGlouton();
-    }    
-    
+    }
+
     private int availableColor(HashSet<Integer> colors) {
         int minColor = 0;
         for (int e : colors) {
-            if (!colors.contains(minColor))
+            if (!colors.contains(minColor)) {
                 return minColor;
+            }
             minColor++;
         }
         return minColor;
     }
-    
+
     /**
-     * Effectue la coloration d'un graphe avec un algorithme glouton
-     * Attention, rien ne garantie que cette coloration est optimale. 
+     * Effectue la coloration d'un graphe avec un algorithme glouton Attention,
+     * rien ne garantie que cette coloration est optimale.
      */
     public void colorationGlouton() {
         hashNode = d.getG().getHashNode();
@@ -60,7 +58,9 @@ public class Coloration extends Algorithm{
         int max = listAdj.size();
         // Tableau des couleurs à l'issue de la coloration
         int[] color = new int[max];
-        for (int i=0; i < max; i++) { color[i] = -1; }
+        for (int i = 0; i < max; i++) {
+            color[i] = -1;
+        }
         // Ensemble des couleurs des voisins d'un noeud
         HashSet<Integer> neighboursColors = new HashSet<>();
         for (int node = 0; node < max; node++) {
@@ -72,19 +72,16 @@ public class Coloration extends Algorithm{
                 }
             }
             // Recherche de la plus petite couleur disponible
-            color[node] = availableColor(neighboursColors);           
+            color[node] = availableColor(neighboursColors);
         }
         d.algoFinished();
         // Coloration effective du graphe
-        
-        for (HashMap.Entry<Node,Integer> m : hashNode.entrySet()) {
+
+        for (HashMap.Entry<Node, Integer> m : hashNode.entrySet()) {
             int id = m.getValue();
-            Color newColor = Color.decode(COLORS[color[id]%COLORS.length]); // % pour éviter un out of bounds -> à mieux gérer
+            Color newColor = Color.decode(COLORS[color[id] % COLORS.length]); // % pour éviter un out of bounds -> à mieux gérer
             m.getKey().setColorDisplayed(newColor);
         }
     }
 
-
-
-    
 }
