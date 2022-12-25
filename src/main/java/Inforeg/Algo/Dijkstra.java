@@ -1,12 +1,5 @@
- package Inforeg.Algo;
+package Inforeg.Algo;
 
-/*=============================================
-Classe PrimMST définissant l'algorithme de PrimMST
-Sous classe de la classe Processing
-Auteur : Samy AMAL
-Date de création : 04/02/2022
-Date de dernière modification : 08/03/2022
-=============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
 import Inforeg.ObjetGraph.Arc;
@@ -15,20 +8,23 @@ import java.awt.Color;
 
 /**
  * Algorithme de djikstra
- * @author Rémi
+ *
+ * @author François MARIE
+ * @author Rémi RAVELLI
+ * @author Samy AMAL
  */
 public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
 
-    public Dijkstra(){
+    public Dijkstra() {
         super();
         this.setName("Dijkstra");
     }
-    
+
     @Override
     public void process(Draw d) {
         d.setStatus(Draw.ALGO_INPUT);
     }
-    
+
     /**
      * Méthode appliquant l'algorithme de Dijkstra sur le graphe orienté
      * représenté par le Draw d afin de déterminer (si existence) le plus court
@@ -49,7 +45,7 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
 
         Graph g = d.getG();
         g.updateVariable();
-        
+
         dist = new int[g.getNbsommets()];
         // The output array. dist[i] will hold
         // the shortest distance from src to i
@@ -79,8 +75,8 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
             int u = findMin(dist, vu, g.getNbsommets());
             // ##### STEP #####
             node = d.getNode(u);
-            d.stepBysStep.colorNode(node, Color.ORANGE,false);
-            d.stepBysStep.setInfoText("Distance la plus petite du noeud "+node.getLabel()+" est "+dist[u] );
+            d.stepBysStep.colorNode(node, Color.ORANGE, false);
+            d.stepBysStep.setInfoText("Distance la plus petite du noeud " + node.getLabel() + " est " + dist[u]);
             d.stepBysStep.nextStep();
             // ################
             // Mark the picked vertex as processed
@@ -96,8 +92,8 @@ public class Dijkstra extends Algorithm implements AlgorithmST, Processing {
                     dist[v] = dist[u] + g.getAdjMatrix()[u][v];
                     // ##### STEP #####
                     node = d.getNode(v);
-                    d.stepBysStep.colorNode(node, Color.GRAY,false);
-                    d.stepBysStep.setInfoText("Mise a jour de "+node.getLabel()+" nouvelle distance "+dist[v] );
+                    d.stepBysStep.colorNode(node, Color.GRAY, false);
+                    d.stepBysStep.setInfoText("Mise a jour de " + node.getLabel() + " nouvelle distance " + dist[v]);
                     d.stepBysStep.nextStep();
                     // ################
                     predecesseur[v] = u;

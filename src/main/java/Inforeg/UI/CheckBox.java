@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg.UI;
 
 import Inforeg.AssetLoader;
@@ -9,16 +5,17 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JCheckBox;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 /**
+ * Checkbox
  *
- * @author remir
+ * @author Rémi RAVELLI
+ * @author François MARIE
  */
 public class CheckBox extends JCheckBox {
+
     boolean checked = false;
-    
+
     public CheckBox(String s) {
         super(s);
         this.setIcon(AssetLoader.checkBox0);
@@ -34,8 +31,7 @@ public class CheckBox extends JCheckBox {
                 } else {
                     CheckBox.this.setForeground(Color.GRAY);
                 }
-                
-                
+
             }
         });
         this.setForeground(Color.GRAY);

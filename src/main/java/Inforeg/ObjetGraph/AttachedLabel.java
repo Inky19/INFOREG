@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg.ObjetGraph;
 
 import Inforeg.Draw.Draw;
@@ -14,11 +10,13 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
 /**
+ * Label sur un objet
  *
- * @author remir
+ * @author Rémi RAVELLI
+ * @author François MARIE
  */
 public class AttachedLabel {
-    
+
     private static final Color DEFAULT_FONT_COLOR = Color.BLACK;
     private static final Color DEFAULT_BACKGROUND_COLOR = Color.WHITE;
     private static final int DEFAULT_SIZE = 15;
@@ -29,18 +27,17 @@ public class AttachedLabel {
     private Vector2D offset = new Vector2D(0, 0);
     public Color textColor = DEFAULT_FONT_COLOR;
     public Color bgColor = DEFAULT_BACKGROUND_COLOR;
-    
-    
+
     public AttachedLabel() {
-        this.pos = new Vector2D(0,0);
+        this.pos = new Vector2D(0, 0);
     }
-    
+
     public AttachedLabel(String label, Vector2D pos, Vector2D offset) {
         this.text = label;
         this.pos = pos;
         this.offset = offset;
     }
-    
+
     public AttachedLabel(String label, Vector2D pos) {
         this.text = label;
         this.pos = pos;
@@ -52,14 +49,14 @@ public class AttachedLabel {
         this.pos = pos;
     }
 
-    public AttachedLabel(String label,Vector2D pos,  Vector2D offset, Color textColor, Color backgroundColor) {
+    public AttachedLabel(String label, Vector2D pos, Vector2D offset, Color textColor, Color backgroundColor) {
         this.text = label;
         this.offset = offset;
         this.pos = pos;
         this.textColor = textColor;
         this.bgColor = backgroundColor;
     }
-    
+
     public void paint(Draw d, Graphics2D g) {
         Point dPos = d.toDrawCoordinates(pos.plus(offset)).toPoint();
         Font font = new Font("Arial", Font.BOLD, (int) d.toDrawScale(size));
@@ -71,13 +68,13 @@ public class AttachedLabel {
         int offset = (int) d.toDrawScale(4); // padding à gauche et à droite
         if (bgColor != null) {
             g.setPaint(bgColor);
-            g.fillRect(fontX - offset, fontY - (int) bg.getHeight()/2, (int) (bg.getWidth() + 2 * offset), (int) bg.getHeight());
+            g.fillRect(fontX - offset, fontY - (int) bg.getHeight() / 2, (int) (bg.getWidth() + 2 * offset), (int) bg.getHeight());
         }
         g.setPaint(textColor);
         g.setFont(font);
-        g.drawString(text,fontX, (int)(fontY - metrics.getHeight() / 2 + metrics.getAscent()));
+        g.drawString(text, fontX, (int) (fontY - metrics.getHeight() / 2 + metrics.getAscent()));
     }
-    
+
     public boolean contains(int x, int y) {
         return false;
     }

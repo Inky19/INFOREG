@@ -1,22 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg.ObjetGraph;
 
 import Inforeg.Draw.Draw;
 import Inforeg.UI.Vector2D;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
 
 /**
+ * Ligne visuelle sur la zone de dessin
  *
- * @author remir
+ * @author Rémi RAVELLI
+ * @author François MARIE
  */
 public class Line {
 
@@ -78,7 +73,7 @@ public class Line {
         this.width = width;
         this.color = color;
     }
-    
+
     public Line(Attachable from, Attachable to, int width, Color color, boolean circle) {
         this.from = from;
         this.to = to;
@@ -86,16 +81,19 @@ public class Line {
         this.color = color;
         this.circle = circle;
     }
+
     /**
-     * Renvoie true si le point de coordonnées x et y touche la hitbox de la ligne
+     * Renvoie true si le point de coordonnées x et y touche la hitbox de la
+     * ligne
+     *
      * @param x abscisse globale du point
      * @param y ordonnée globale du point
-     * @return 
+     * @return
      */
     public boolean contains(double x, double y) {
         Vector2D p1 = from.getCenterPos();
         Vector2D p2 = to.getCenterPos();
-        
+
         if (p1 == null && p2 == null) {
             return false;
         } else if (p1 == null || p2 == null) {
@@ -109,16 +107,16 @@ public class Line {
             return (CIRCLE_RADIUS - width / 2 <= dist && dist <= CIRCLE_RADIUS + width / 2);
         } else {
             Vector2D v = p2.minus(p1);
-            
+
             double l = v.getNorm() - from.getRadius() - to.getRadius();
             Vector2D n = new Vector2D(-v.y, v.x);
 
             v.normalize();
             n.normalize();
-            
+
             // On prend en compte le rayon des points d'attache
             Vector2D p1bis = p1.plus(v.multiply(from.getRadius()));
-            
+
             Vector2D p = new Vector2D(x - p1bis.x, y - p1bis.y);
 
             double dp1 = p.dotProduct(n);
@@ -133,21 +131,21 @@ public class Line {
         g.setColor(color);
         Vector2D p1 = from.getCenterPos();
         Vector2D p2 = to.getCenterPos();
-        
+
         if (p1 == null && p2 == null) {
             // nothing to paint
         } else if (p1 == null || p2 == null) {
-            paintCircle(d, g, p2==null ? p1 : p2);
+            paintCircle(d, g, p2 == null ? p1 : p2);
         } else {
             if (circle) {
                 paintCircle(d, g, p1, p2);
-            } else { 
+            } else {
                 if (arrow) {
                     paintArrow(d, g);
                     Vector2D v = p2.minus(p1);
                     v.normalize();
                     // Ajustement de p2 pour une flèche plus jolie
-                    p2 = p2.minus(v.multiply(to.getRadius()+width)); 
+                    p2 = p2.minus(v.multiply(to.getRadius() + width));
                 }
                 paintLine(d, g, p1, p2);
             }
@@ -170,13 +168,13 @@ public class Line {
         double radius = d.toDrawScale(CIRCLE_RADIUS);
         g.draw(new Ellipse2D.Double((aPos.x + bPos.x) / 2 - radius, (aPos.y + bPos.y) / 2 - radius, 2 * radius, 2 * radius));
     }
-    
+
     private void paintCircle(Draw d, Graphics2D g, Vector2D a, Vector2D b) {
         Vector2D aPos = d.toDrawCoordinates(a);
         Vector2D bPos = d.toDrawCoordinates(b);
         g.setStroke(new BasicStroke((float) d.toDrawScale(width)));
         g.setColor(color);
-        double radius = d.toDrawScale(Vector2D.dist(a, b)/2);
+        double radius = d.toDrawScale(Vector2D.dist(a, b) / 2);
         g.draw(new Ellipse2D.Double((aPos.x + bPos.x) / 2 - radius, (aPos.y + bPos.y) / 2 - radius, 2 * radius, 2 * radius));
     }
 
@@ -192,8 +190,7 @@ public class Line {
         int w = (int) (5 * Math.sqrt(width));
 
         //Vector2D middle = Vector2D.middle(p1, p2);
-
-        Vector2D head = p2.minus(v.multiply(to.getRadius() + width/2)); // head of the arrow
+        Vector2D head = p2.minus(v.multiply(to.getRadius() + width / 2)); // head of the arrow
         Vector2D a = head.minus(v.multiply(w)).plus(n.multiply(h / 2));
         Vector2D b = head.minus(v.multiply(w)).minus(n.multiply(h / 2));
 

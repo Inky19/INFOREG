@@ -1,17 +1,16 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package Inforeg.ObjetGraph;
 
 import Inforeg.UI.Vector2D;
 
 /**
+ * Interface pour les objets attachables
  *
- * @author remir
+ * @author Rémi RAVELLI
+ * @author François MARIE
  */
 public interface Attachable {
+
     public Vector2D getCenterPos();
-    
+
     public double getRadius();
 }

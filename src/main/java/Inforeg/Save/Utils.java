@@ -4,20 +4,24 @@ import java.awt.Color;
 import java.io.File;
 
 /**
+ * Fonctions utilitaires pour la sauvegarde et le chargement
  *
- * @author inky19
+ * @author François MARIE
+ * @author Rémi RAVELLI
  */
 public abstract class Utils {
 
     /**
-     * Formate le chemin du fichier et son nom avec l'extension si elle n'existe pas.
+     * Formate le chemin du fichier et son nom avec l'extension si elle n'existe
+     * pas.
+     *
      * @param file Fichier cible
      * @return [name, path] : nom et chemin du fichier sous forme de String dans
      * une array de taille 2.
      */
     public static String[] formatPath(File file, String ext) {
         String extFormat = ext.toLowerCase();
-        if (ext.substring(0, 0) != "."){
+        if (ext.substring(0, 0) != ".") {
             extFormat = "." + extFormat;
         }
         String name = file.getName();
@@ -30,7 +34,7 @@ public abstract class Utils {
         }
         return new String[]{name, path};
     }
-    
+
     /**
      * Fonction pour convertir une couleur de Color en format hexadécimal
      *

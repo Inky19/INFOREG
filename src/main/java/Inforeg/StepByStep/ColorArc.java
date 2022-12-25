@@ -1,19 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Inforeg.StepByStep;
 
 import Inforeg.Draw.Draw;
 import Inforeg.ObjetGraph.Arc;
-import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 
 /**
+ * Couleur d'un arc
  *
- * @author remir
+ * @author Rémi RAVELLI
+ * @author François MARIE
  */
 public class ColorArc implements StepAction {
+
     Arc a;
     Color previousColor;
     Color nextColor;

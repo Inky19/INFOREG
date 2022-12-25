@@ -1,14 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Other/File.java to edit this template
- */
 package Inforeg.Graph;
 
 import java.util.PriorityQueue;
 
 /**
+ * Fonctions utilitaires pour un graphe
  *
- * @author inky19
+ * @author François MARIE
+ * @author Rémi RAVELLI
+ * @author Béryl CASSEL
  */
 public abstract class GraphFunction {
 
@@ -50,13 +49,13 @@ public abstract class GraphFunction {
                 }
             }
         }
-        
+
         /*Tous les sommets atteignables depuis u on t été rencontrés
         sans que l'on rencontre le sommet de destination v*/
         return false;
     }
-    
-        /**
+
+    /**
      * Méthode permettant de vérifier si un graphe non orienté est connexe
      *
      * @param g : Graph à étudier
