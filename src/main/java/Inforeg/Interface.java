@@ -678,7 +678,6 @@ public class Interface {
                 int index = sourceTabbedPane.getSelectedIndex();
                 if (index > 0) {
                     d = (Draw) tabsPanel.getSelectedComponent();
-                    Interface.this.frame.setTitle("INFOREG " + d.getPathSauvegarde());
                     if (d.getAlgo() != null) {
                         algoButton.setText("▼  " + d.getAlgo().getName());
                         autoStart.setVisible(d.getAlgo() instanceof AlgorithmS);
@@ -744,10 +743,10 @@ public class Interface {
         Draw newD = graphWin.chooseGraph();
         if (newD != null){
             String title;
-            if (d.getName() == null) {
+            if (newD.getFileName() == null || newD.getFileName() == "") {
                 title = "Graphe " + String.valueOf(tabsPanel.getTabCount());
             } else {
-                title = d.getName();
+                title = newD.getFileName();
             }
             newD.setFileName(title);
             newD.setInterface(Interface.this);
