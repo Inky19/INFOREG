@@ -50,31 +50,40 @@ public class MatrixWindow extends JDialog {
         this.setSize(600, 500);
         this.setLocationRelativeTo(null);
         
+        int[][] matrix = d.getG().getAdjMatrix();
         JPanel panel = new JPanel();
         BoxLayout bl = new BoxLayout(panel, BoxLayout.Y_AXIS);
         panel.setLayout(bl);
         panel.setBorder(new EmptyBorder(10,10,10,10));
-        var text = new JLabel("La matrice d'adjacence du graphe est :\n");
-        text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        text.setBorder(new EmptyBorder(0,0,10,0));
-        panel.add(text);
+        JLabel text;
+        if (matrix==null || matrix.length == 0) {
+            text = new JLabel("Le graphe est vide. Ajouter des noeuds pour créer le graphe.");
+            text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+            panel.add(text);
+        } else {
+            text = new JLabel("La matrice d'adjacence du graphe est :");
+            text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+            text.setBorder(new EmptyBorder(0,0,10,0));
+            panel.add(text);
 
-        JScrollPane scroll = new JScrollPane (showMatrix(d));
-        scroll.setBorder(new EmptyBorder(0,0,10,0));
-        copy = new CustomButton("Copier",AssetLoader.copyIco, AlgoBox.BUTTON_COLOR, AlgoBox.BUTTON_COLOR, Color.decode("#94bc63"));
-        copy.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        copy.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                copy.setText("Copié dans le presse papier");
-                copy.select();
-                copy.setIcon(AssetLoader.checkIco);
-                copyToClipboard(d.getG().afficher());
-            }
-        });
-        
-        panel.add(scroll);
-        panel.add(copy);
+            JScrollPane scroll = new JScrollPane (showMatrix(d));
+            scroll.setBorder(new EmptyBorder(0,0,10,0));
+            copy = new CustomButton("Copier",AssetLoader.copyIco, AlgoBox.BUTTON_COLOR, AlgoBox.BUTTON_COLOR, Color.decode("#94bc63"));
+            copy.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+            copy.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    copy.setText("Copié dans le presse papier");
+                    copy.select();
+                    copy.setIcon(AssetLoader.checkIco);
+                    copyToClipboard(d.getG().afficher());
+                }
+            });
+
+            panel.add(scroll);
+            panel.add(copy);
+        }
+
 
         this.add(panel);
         

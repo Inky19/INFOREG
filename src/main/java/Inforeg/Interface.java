@@ -34,6 +34,10 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -835,7 +839,6 @@ public class Interface {
             d.exportGraphe();
             MatrixWindow matrixWindow = new MatrixWindow(frame , d);
             matrixWindow.setVisible(true);
-            JOptionPane.showMessageDialog(d, "La matrice d'adjacence du graphe (" + non + "orienté) est :\n\n" + d.getG().afficher(), "Matrice d'adjacence", JOptionPane.INFORMATION_MESSAGE);
         }
     };
 
@@ -844,21 +847,29 @@ public class Interface {
         JMenu aboutMenu = new JMenu("A propos");
 
         //Sub Menus de Aide
-        JMenuItem userDocMenu = new JMenuItem("Documentation utilisateur");
-        helpMenu.add(userDocMenu);
-        userDocMenu.addActionListener(new ActionListener() {
+        JMenuItem helpSubMenu = new JMenuItem("Documentation");
+        helpSubMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                File file = new File("doc/doc.pdf");
-                Desktop desktop = Desktop.getDesktop();
+                String inputPdf = "asset/doc.pdf";
+                InputStream manualAsStream = getClass().getClassLoader().getResourceAsStream(inputPdf);
+
+                Path tempOutput = null;
                 try {
-                    desktop.open(file);
+                    tempOutput = Files.createTempFile("TempManual", ".pdf");
+                    tempOutput.toFile().deleteOnExit();
+                    Files.copy(manualAsStream, tempOutput, StandardCopyOption.REPLACE_EXISTING);
+                    File userManual = new File (tempOutput.toFile().getPath());
+                    if (userManual.exists()){
+                        Desktop.getDesktop().open(userManual);
+                    }
                 } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(frame, "Erreur lors de l'ouverture de la documentation utilisateur", "Erreur", JOptionPane.INFORMATION_MESSAGE);
+                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
-        
+        helpMenu.add(helpSubMenu);
+
         JMenuItem credits = new JMenuItem("Crédits");
         aboutMenu.add(credits);
 
