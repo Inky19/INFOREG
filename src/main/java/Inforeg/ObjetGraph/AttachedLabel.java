@@ -10,9 +10,12 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
 /**
+ * Label sur un objet
  *
- * @author remir
+ * @author Rémi RAVELLI
+ * @author François MARIE
  */
+
 public class AttachedLabel implements GraphObject {
     
     private static final Color DEFAULT_FONT_COLOR = Color.BLACK;
@@ -25,18 +28,17 @@ public class AttachedLabel implements GraphObject {
     private Vector2D offset = new Vector2D(0, 0);
     public Color textColor = DEFAULT_FONT_COLOR;
     public Color bgColor = DEFAULT_BACKGROUND_COLOR;
-    
-    
+
     public AttachedLabel() {
-        this.pos = new Vector2D(0,0);
+        this.pos = new Vector2D(0, 0);
     }
-    
+
     public AttachedLabel(String label, Vector2D pos, Vector2D offset) {
         this.text = label;
         this.pos = pos;
         this.offset = offset;
     }
-    
+
     public AttachedLabel(String label, Vector2D pos) {
         this.text = label;
         this.pos = pos;
@@ -48,7 +50,7 @@ public class AttachedLabel implements GraphObject {
         this.pos = pos;
     }
 
-    public AttachedLabel(String label,Vector2D pos,  Vector2D offset, Color textColor, Color backgroundColor) {
+    public AttachedLabel(String label, Vector2D pos, Vector2D offset, Color textColor, Color backgroundColor) {
         this.text = label;
         this.offset = offset;
         this.pos = pos;
@@ -72,9 +74,9 @@ public class AttachedLabel implements GraphObject {
         }
         g.setPaint(textColor);
         g.setFont(font);
-        g.drawString(text,fontX, (int)(fontY - metrics.getHeight() / 2 + metrics.getAscent()));
+        g.drawString(text, fontX, (int) (fontY - metrics.getHeight() / 2 + metrics.getAscent()));
     }
-    
+
     public boolean contains(int x, int y) {
         return false;
     }

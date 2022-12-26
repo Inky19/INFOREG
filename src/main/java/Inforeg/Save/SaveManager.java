@@ -23,12 +23,13 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- * Gestion des fichiers de sauvegarde .inforeg
+ * Système de sauvegarde et de chargement des fichiers .inforeg
  *
- * @author inky19
+ * @author François MARIE
+ * @author Rémi RAVELLI
  */
 public abstract class SaveManager {
-    
+
     private static File previousDir; // Dernière dossier ouvert par l'utilisateur
 
     public static final String SEP = ", "; // Caractère(s) de séparation dans le fichier de sauvegarde
@@ -43,9 +44,9 @@ public abstract class SaveManager {
     public static boolean save(Draw d) {
         JFileChooser fileExplorer = new JFileChooser() {
             @Override
-            protected JDialog createDialog( Component parent ) throws HeadlessException {
-                JDialog dialog = super.createDialog( parent );
-                dialog.setIconImage( AssetLoader.appIco.getImage() ); // Changement de l'icone
+            protected JDialog createDialog(Component parent) throws HeadlessException {
+                JDialog dialog = super.createDialog(parent);
+                dialog.setIconImage(AssetLoader.appIco.getImage()); // Changement de l'icone
                 return dialog;
             }
         };
@@ -128,9 +129,9 @@ public abstract class SaveManager {
     public static Draw load() {
         JFileChooser fileExplorer = new JFileChooser() {
             @Override
-            protected JDialog createDialog( Component parent ) throws HeadlessException {
-                JDialog dialog = super.createDialog( parent );
-                dialog.setIconImage( AssetLoader.appIco.getImage() ); // Changement de l'icone
+            protected JDialog createDialog(Component parent) throws HeadlessException {
+                JDialog dialog = super.createDialog(parent);
+                dialog.setIconImage(AssetLoader.appIco.getImage()); // Changement de l'icone
                 return dialog;
             }
         };

@@ -9,10 +9,12 @@ import javax.swing.ImageIcon;
 
 /**
  * Classe qui charge l'ensemble des ressources du logiciel.
- * @author Rémi
+ *
+ * @author Rémi RAVELLI
+ * @author François MARIE
  */
 public abstract class AssetLoader {
-    
+
     private static final Toolkit tkit = Toolkit.getDefaultToolkit();
     // Images
     private static final Image pinImg = tkit.createImage(getURL("asset/icons/cursor/pinCursor.png"));
@@ -45,11 +47,12 @@ public abstract class AssetLoader {
     public static final ImageIcon pondereIco = new ImageIcon(getURL("asset/icons/pondere.png"));
     public static final ImageIcon npondereIco = new ImageIcon(getURL("asset/icons/npondere.png"));
     public static final ImageIcon plusIco = new ImageIcon(getURL("asset/icons/plus.png"));
+    public static final ImageIcon copyIco = new ImageIcon(getURL("asset/icons/copy.png"));
+    public static final ImageIcon checkIco = new ImageIcon(getURL("asset/icons/check.png"));
     // Cursor
-    public static final Cursor pinCursor = tkit.createCustomCursor(pinImg, new Point(3,24), "pinCursor");
-    public static final Cursor paintCursor = tkit.createCustomCursor(paintImg, new Point(3,29), "paintCursor");
-    
-    
+    public static final Cursor pinCursor = tkit.createCustomCursor(pinImg, new Point(3, 24), "pinCursor");
+    public static final Cursor paintCursor = tkit.createCustomCursor(paintImg, new Point(3, 29), "paintCursor");
+
     public static URL getURL(String path) {
         return AssetLoader.class.getClassLoader().getResource(path);
     }

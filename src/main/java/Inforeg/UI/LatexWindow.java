@@ -3,7 +3,6 @@ package Inforeg.UI;
 import Inforeg.Draw.Draw;
 import Inforeg.Save.ExportLatex;
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -30,8 +29,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
+ * Fenêtre de l'export LaTeX
  *
- * @author inky19
+ * @author François MARIE
+ * @auhtor Rémi RAVELLI
  */
 public class LatexWindow extends JDialog {
 
@@ -47,19 +48,18 @@ public class LatexWindow extends JDialog {
     private Color aColor;
     private int nSize;
     private int aSize;
-    
+
     private Color nButtonColor;
     private Color aButtonColor;
-    
+
     // Couleurs temporaires pour stocker les valeurs personnalisées des boutons même s'ils ne sont pas sélectionnés.
     private JRadioButton nodeColCust;
     private JRadioButton arcColCust;
-    
+
     private JCheckBox showNails;
     private JCheckBox adaptSize;
-    
+
     private JTextArea exportArea;
-    
 
     public LatexWindow(JFrame frame, Draw d) {
         super(frame, "Exporter en format LaTeX");
@@ -67,15 +67,15 @@ public class LatexWindow extends JDialog {
         nButtonColor = Color.BLACK;
         nColor = null;
         aColor = null;
-        nSize = (int)d.getNodeRadius();
-        aSize = (int)d.getLineWidth();
+        nSize = (int) d.getNodeRadius();
+        aSize = (int) d.getLineWidth();
         exportArea = null;
-        
+
         // Paramètres de la fenêtre
         this.setResizable(false);
         this.setSize(500, 500);
         this.setLocationRelativeTo(null);
-        
+
         // Création des onglets
         JTabbedPane tabs = new JTabbedPane();
         JPanel config = new JPanel();
@@ -84,7 +84,7 @@ public class LatexWindow extends JDialog {
         tabs.addTab("Export", export);
 
         Dimension containerSize = new Dimension(400, 170);
-        
+
         // ONGLET DE CONFIGURATION
         JPanel nodes = new JPanel();
         nodes.setMaximumSize(containerSize);
@@ -94,14 +94,20 @@ public class LatexWindow extends JDialog {
         JPanel nodesContainer = new JPanel();
         JRadioButton nodeSizeGraph = new JRadioButton("Taille du graphe");
         nodeSizeGraph.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {nSize = (int)d.getNodeRadius();}});
-        
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nSize = (int) d.getNodeRadius();
+            }
+        });
+
         JRadioButton nodeSizeCust = new JRadioButton("Personnalisée (mm) : ");
         JTextField nodeSizeEntry = new JTextField();
         nodeSizeCust.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {nSize = Integer.valueOf(nodeSizeEntry.getText());}});
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nSize = Integer.valueOf(nodeSizeEntry.getText());
+            }
+        });
 
         ButtonGroup nodeSizeGroup = new ButtonGroup();
         nodeSizeGroup.add(nodeSizeGraph);
@@ -114,8 +120,12 @@ public class LatexWindow extends JDialog {
         // Menu de sélection des couleurs
         JRadioButton nodeColGraph = new JRadioButton("Couleur du graphe");
         nodeColGraph.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {nColor = null;System.out.println(aColor.getRGB());}});
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nColor = null;
+                System.out.println(aColor.getRGB());
+            }
+        });
 
         JRadioButton nodeColWhite = new JRadioButton("Blanc");
         nodeColCust = new JRadioButton("Personnalisée");
@@ -154,16 +164,20 @@ public class LatexWindow extends JDialog {
         arcs.setBorder(BorderFactory.createTitledBorder("Arcs"));
         JRadioButton arcSizeGraph = new JRadioButton("Épaisseur du graphe");
         arcSizeGraph.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {aSize = (int)d.getLineWidth();}});
-        
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                aSize = (int) d.getLineWidth();
+            }
+        });
+
         JRadioButton arcSizeCust = new JRadioButton("Personnalisée (mm) : ");
         JTextField arcSizeEntry = new JTextField();
         arcSizeCust.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {aSize = Integer.valueOf(arcSizeEntry.getText());}});
-        
-        
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                aSize = Integer.valueOf(arcSizeEntry.getText());
+            }
+        });
 
         ButtonGroup arcSizeGroup = new ButtonGroup();
         arcSizeGroup.add(arcSizeGraph);
@@ -172,22 +186,31 @@ public class LatexWindow extends JDialog {
 
         JPanel arcsSize = createContainer("Épaisseur", new JComponent[]{arcSizeGraph, arcSizeCust, arcSizeEntry});
         arcsContainers.add(arcsSize);
-        
+
         // Menu de sélection des couleurs
         JRadioButton arcColGraph = new JRadioButton("Couleur du graphe");
         arcColGraph.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {aColor = null;}});
-        
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                aColor = null;
+            }
+        });
+
         JRadioButton arcColWhite = new JRadioButton("Noir");
         arcColWhite.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {aColor = Color.BLACK;}});
-        
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                aColor = Color.BLACK;
+            }
+        });
+
         arcColCust = new JRadioButton("Personnalisée");
         arcColCust.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {aColor = aButtonColor;}});
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                aColor = aButtonColor;
+            }
+        });
 
         // Groupement des boutons
         ButtonGroup arcColGroup = new ButtonGroup();
@@ -210,7 +233,7 @@ public class LatexWindow extends JDialog {
         showNails = new JCheckBox("Afficher les clous");
         JPanel wraperArc = new JPanel(new BorderLayout());
         wraperArc.add(showNails, BorderLayout.PAGE_START);
-        
+
         arcs.add(arcsContainers);
         arcs.add(wraperArc);
         config.add(arcs);
@@ -233,10 +256,9 @@ public class LatexWindow extends JDialog {
             }
         });
 
-        
         exportButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         export.add(exportButton);
-        
+
         this.add(tabs);
         this.setModal(true);
     }
@@ -268,13 +290,13 @@ public class LatexWindow extends JDialog {
                         switch (targetColor) {
                             case NODE_COLOR_BUTTON:
                                 nButtonColor = c;
-                                if (nodeColCust.isSelected()){ // Si la case est déjà sélectionnée, on actualise la valeur de la couleur.
+                                if (nodeColCust.isSelected()) { // Si la case est déjà sélectionnée, on actualise la valeur de la couleur.
                                     nColor = nButtonColor;
                                 }
                                 break;
                             case ARC_COLOR_BUTTON:
                                 aButtonColor = c;
-                                if (arcColCust.isSelected()){ // Si la case est déjà sélectionnée, on actualise la valeur de la couleur.
+                                if (arcColCust.isSelected()) { // Si la case est déjà sélectionnée, on actualise la valeur de la couleur.
                                     aColor = aButtonColor;
                                 }
                                 break;
@@ -289,8 +311,8 @@ public class LatexWindow extends JDialog {
         colorButton.setIcon(new ImageIcon(colorSample));
         return colorButton;
     }
-    
-    public void setExport(String string){
+
+    public void setExport(String string) {
         exportArea.setText(string);
         exportArea.revalidate();
         exportArea.repaint();

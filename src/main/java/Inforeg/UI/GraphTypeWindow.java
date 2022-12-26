@@ -28,22 +28,24 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
+ * Fenêtre du choix du type de graphe
  *
- * @author inky19
+ * @author François MARIE
+ * @auhtor Rémi RAVELLI
  */
-public class GraphTypeWindow extends JDialog{
-    
+public class GraphTypeWindow extends JDialog {
+
     private Draw d;
     private boolean buttonPressed;
-    
-    public GraphTypeWindow(){
+
+    public GraphTypeWindow() {
         super();
         setTitle("INFOREG");
         d = null;
         buttonPressed = false;
     }
-    
-    public Draw chooseGraph(){
+
+    public Draw chooseGraph() {
         setModal(true);
         Color selectedColor = Color.decode("#c2c1be");
         Color buttonColor = Color.decode("#dbdbdb");
@@ -56,7 +58,6 @@ public class GraphTypeWindow extends JDialog{
         JPanel logoPanel = new JPanel();
         JPanel buttonsPanel = new JPanel();
 
-        
         buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.PAGE_AXIS));
         JPanel create = new JPanel();
         mainPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
@@ -74,21 +75,21 @@ public class GraphTypeWindow extends JDialog{
         }
         Image bannerImgResized = bannerImg.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
         JLabel banner = new JLabel(new ImageIcon(bannerImgResized));
-        
+
         CheckBox graphOriente = new CheckBox("Orienté");
         CheckBox graphPond = new CheckBox("Pondéré");
         graphPond.setFocusPainted(false);
-        
+
         JDialog J = this;
         // Bouton générant un nouveau graphe
         CustomButton nouveau = new CustomButton("Créer",buttonColor,selectedColor, null);
         nouveau.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                d = new Draw(graphOriente.isSelected(),graphPond.isSelected());
+                d = new Draw(graphOriente.isSelected(), graphPond.isSelected());
                 if (!graphPond.isSelected()) {
                     d.setPondere(false);
-                }     
+                }
                 dispatchEvent(new WindowEvent(J, WindowEvent.WINDOW_CLOSING));
                 buttonPressed = true;
                 setVisible(false);
@@ -102,9 +103,9 @@ public class GraphTypeWindow extends JDialog{
             @Override
             public void actionPerformed(ActionEvent ae) {
                 d = SaveManager.load();
+                buttonPressed = true;
                 if (d != null) {
                     dispatchEvent(new WindowEvent(J, WindowEvent.WINDOW_CLOSING));
-                    buttonPressed = true;
                     setVisible(false);
                 }
             }
@@ -119,7 +120,7 @@ public class GraphTypeWindow extends JDialog{
         mainPanel.add(logoPanel);
         mainPanel.add(buttonsPanel);
         setVisible(true);
-        if (d == null && buttonPressed){
+        if (d == null && buttonPressed) {
             JOptionPane.showMessageDialog(null, "Une erreur s'est produite lors de la création du graphe (Draw is null).", "Erreur critique", JOptionPane.ERROR_MESSAGE);
             throw new Error("Draw is null");
         }

@@ -1,11 +1,5 @@
 package Inforeg;
 
-/*=============================================
-Classe Interface
-Auteur : Samy AMAL
-Date de création : 03/03/2022
-Date de dernière modification : 08/03/2022
-=============================================*/
 import Inforeg.Algo.AlgorithmS;
 import Inforeg.Algo.AlgorithmST;
 import static Inforeg.AssetLoader.*;
@@ -23,9 +17,10 @@ import Inforeg.UI.CheckBox;
 import Inforeg.UI.CreditsWindow;
 import Inforeg.UI.GraphTypeWindow;
 import Inforeg.UI.CustomButton;
+import Inforeg.UI.MatrixWindow;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import static java.awt.Color.red;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
@@ -80,9 +75,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
- * Fenêtre principal de l'application
- * @author Rémi et François
+ * Interface de la fenêtre principale
+ *
+ * @author François MARIE
+ * @author Rémi RAVELLI
+ * @author Samy AMAL
  */
+
 public class Interface {
 
     public static final String VERSION = "2.0";
@@ -261,7 +260,7 @@ public class Interface {
      */
     public void createAndShowGui() {
 
-        frame = new JFrame("INFOREG " + d.getPathSauvegarde());
+        frame = new JFrame("INFOREG " + VERSION);
         try {
             UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
         } catch (ClassNotFoundException ex) {
@@ -286,7 +285,7 @@ public class Interface {
         resultContainer = new JPanel(new BorderLayout());
         resultPanel = new JPanel(new BorderLayout());
         resultScrollPane = new JScrollPane(resultPanel);
-        
+
         initToolBar();
         initTabs();
         initPaneImage();
@@ -531,7 +530,7 @@ public class Interface {
         algoButton.addActionListener((ActionEvent e) -> {
             AlgoWindow window = new AlgoWindow(frame, d);
             window.setVisible(true);
-            
+
             updateAlgoSelector();
         });
         toolBarButtons.add(algoButton);
@@ -575,17 +574,17 @@ public class Interface {
         goAndReset.setBorderPainted(false);
         goAndReset.setFloatable(false);
         goAndReset.setOpaque(false);
-        
+
         algoPanel.add(goAndReset);
         goAndReset.add(algoGo);
         goAndReset.add(resetButton);
-        
+
         stepByStep = new CheckBox("Pas à pas");
         algoPanel.add(stepByStep);
         autoStart = new CheckBox("<html><body>Départ auto</body></html>");
         autoStart.setVisible(false);
         algoPanel.add(autoStart);
-        
+
         stepBystepBar = new JToolBar();
         stepBystepBar.setLayout(new BorderLayout());
         stepBystepBar.setFloatable(false);
@@ -599,7 +598,7 @@ public class Interface {
                 nextStep.setEnabled(true);
             }
             d.stepBysStep.executePreviousStep(d);
-            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
+            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex() + " / " + d.stepBysStep.getNbStep());
             if (d.stepBysStep.isFirstStep()) {
                 previousStep.setEnabled(false);
             }
@@ -609,19 +608,19 @@ public class Interface {
                 previousStep.setEnabled(true);
             }
             d.stepBysStep.executeNextStep(d);
-            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
+            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex() + " / " + d.stepBysStep.getNbStep());
             if (d.stepBysStep.isLastStep()) {
                 nextStep.setEnabled(false);
             }
         });
         stepBystepBar.setVisible(false);
         stepBystepBar.setOpaque(false);
-        
+
         stepByStepLabel = new JLabel("");
-        stepBystepBar.add(stepByStepLabel,BorderLayout.NORTH);
+        stepBystepBar.add(stepByStepLabel, BorderLayout.NORTH);
 
         stepBystepBar.add(previousStep, BorderLayout.WEST);
-        stepBystepBar.add(nextStep,BorderLayout.EAST);
+        stepBystepBar.add(nextStep, BorderLayout.EAST);
         algoPanel.add(stepBystepBar);
 
         toolBarButtons.add(algoPanel);
@@ -630,7 +629,7 @@ public class Interface {
 
     private void updateAlgoSelector() {
         if (d.getAlgo() == null) {
-           algoButton.setText("▼"); 
+            algoButton.setText("▼");
         } else {
             algoButton.setText("▼  " + d.getAlgo().getName());
             autoStart.setVisible(!d.getAlgo().isAutoStart());
@@ -638,7 +637,7 @@ public class Interface {
             toolBarButtons.repaint();
         }
     }
-    
+
     public void connexe() {
         mode = TRAITEMENT_MODE;
         d.getG().updateVariable();
@@ -681,7 +680,6 @@ public class Interface {
                 int index = sourceTabbedPane.getSelectedIndex();
                 if (index > 0) {
                     d = (Draw) tabsPanel.getSelectedComponent();
-                    Interface.this.frame.setTitle("INFOREG " + d.getPathSauvegarde());
                     if (d.getAlgo() != null) {
                         algoButton.setText("▼  " + d.getAlgo().getName());
                         autoStart.setVisible(d.getAlgo() instanceof AlgorithmS);
@@ -692,14 +690,14 @@ public class Interface {
                     if (d.stepBysStep.getNbStep() == 0) {
                         stepBystepBar.setVisible(false);
                     } else {
-                        stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
+                        stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex() + " / " + d.stepBysStep.getNbStep());
                         stepBystepBar.setVisible(true);
                         nextStep.setEnabled(!d.stepBysStep.isLastStep());
                         previousStep.setEnabled(!d.stepBysStep.isFirstStep());
                     }
                     currentTab = index;
                     refreshResult();
-                    
+
                 } else {
                     if (sourceTabbedPane.getTabCount() > 1) {
                         tabsPanel.setSelectedIndex(currentTab);
@@ -731,10 +729,10 @@ public class Interface {
     public void tabSaved(boolean saved) {
         int ind = tabsPanel.getSelectedIndex();
         if (saved) {
-            ((ButtonTabComponent)tabsPanel.getTabComponentAt(ind)).setTitleColor(Color.BLACK);
+            ((ButtonTabComponent) tabsPanel.getTabComponentAt(ind)).setTitleColor(Color.BLACK);
             tabsPanel.setTitleAt(ind, d.getFileName());
         } else {
-            ((ButtonTabComponent)tabsPanel.getTabComponentAt(ind)).setTitleColor(Color.decode("#0c6d96"));
+            ((ButtonTabComponent) tabsPanel.getTabComponentAt(ind)).setTitleColor(Color.decode("#0c6d96"));
             tabsPanel.setTitleAt(ind, "*" + d.getFileName());
         }
         tabsPanel.revalidate();
@@ -747,10 +745,10 @@ public class Interface {
         Draw newD = graphWin.chooseGraph();
         if (newD != null){
             String title;
-            if (d.getName() == null) {
+            if (newD.getFileName() == null || newD.getFileName() == "") {
                 title = "Graphe " + String.valueOf(tabsPanel.getTabCount());
             } else {
-                title = d.getName();
+                title = newD.getFileName();
             }
             newD.setFileName(title);
             newD.setInterface(Interface.this);
@@ -758,7 +756,7 @@ public class Interface {
             tabsPanel.setTabComponentAt(tabsPanel.getTabCount() - 1, new ButtonTabComponent(tabsPanel, newD.oriente ? orienteIco : norienteIco, newD.pondere ? pondereIco : npondereIco));
             tabsPanel.setSelectedIndex(tabsPanel.getTabCount() - 1);
         }
-        
+
     }
 
     private void addNewTab(Draw newD) {
@@ -815,8 +813,8 @@ public class Interface {
         fileMenu.add(exporter);
         menuBar.add(fileMenu);
 
-        JMenu traitMenu = new JMenu("Traitement");
-        menuBar.add(traitMenu);
+        //JMenu traitMenu = new JMenu("Traitement");
+        //menuBar.add(traitMenu);
     }
 
     public final AbstractAction ExportMatrix = new AbstractAction() {
@@ -835,6 +833,8 @@ public class Interface {
                 non = "non ";
             }
             d.exportGraphe();
+            MatrixWindow matrixWindow = new MatrixWindow(frame , d);
+            matrixWindow.setVisible(true);
             JOptionPane.showMessageDialog(d, "La matrice d'adjacence du graphe (" + non + "orienté) est :\n\n" + d.getG().afficher(), "Matrice d'adjacence", JOptionPane.INFORMATION_MESSAGE);
         }
     };
@@ -844,42 +844,27 @@ public class Interface {
         JMenu aboutMenu = new JMenu("A propos");
 
         //Sub Menus de Aide
-        JMenu helpSubMenu = new JMenu("Utilisation des boutons");
-        JMenuItem helpSubMenuItem1 = new JMenuItem("Création de noeud");
-        helpSubMenuItem1.addActionListener(new ActionListener() {
+        JMenuItem userDocMenu = new JMenuItem("Documentation utilisateur");
+        helpMenu.add(userDocMenu);
+        userDocMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                String str = "Pour créer des noeuds : \n"
-                        + "\n"
-                        + "    - veillez à ce que le bouton 'Noeud' soit activé \n"
-                        + "\n"
-                        + "    - puis, déplacer votre souris sur une zone et cliquer pour créer un noeud \n"
-                        + "\n"
-                        + "    - pour déplacer un noeud : maintenez le clique gauche sur un noeud, déplacez vers une zone de l'écran et relâchez\n"
-                        + "\n"
-                        + "    - pour supprimer un noeud : double-cliquez sur un noeud\n";
-                JOptionPane.showMessageDialog(frame, str, "Bouton Noeud", JOptionPane.INFORMATION_MESSAGE);
+                File file = new File("doc/doc.pdf");
+                Desktop desktop = Desktop.getDesktop();
+                try {
+                    desktop.open(file);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(frame, "Erreur lors de l'ouverture de la documentation utilisateur", "Erreur", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
-        //JMenuItem helpSubMenuItem2 = new JMenuItem("Help Sub menu item 2");
-        helpMenu.add(helpSubMenu);
-        helpSubMenu.add(helpSubMenuItem1);
-        //helpSubMenu.add(helpSubMenuItem2);
-
+        
         JMenuItem credits = new JMenuItem("Crédits");
         aboutMenu.add(credits);
 
         credits.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                /*
-                String creditStr = "Application créée par Béryl CASSEL, Cristobal CARRASCO DE RODT, Jorge QUISPE , Isaías VENEGAS et Samy AMAL \n"
-                        + "\n"
-                        + "dans le cadre du projet de groupe INFOREG \n"
-                        + "\n"
-                        + "encadré par Olivier ROUX";
-                JOptionPane.showMessageDialog(frame, creditStr, "Credits", JOptionPane.INFORMATION_MESSAGE);
-                */
                 CreditsWindow credits;
                 try {
                     credits = new CreditsWindow(frame);
@@ -1141,7 +1126,7 @@ public class Interface {
     public void showResult() {
         if (stepByStep.isSelected()) {
             stepBystepBar.setVisible(true);
-            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex()+" / "+d.stepBysStep.getNbStep());
+            stepByStepLabel.setText("Etape " + d.stepBysStep.getCurrentStepIndex() + " / " + d.stepBysStep.getNbStep());
             previousStep.setEnabled(false);
             nextStep.setEnabled(d.stepBysStep.getNbStep() > 0);
         } else {

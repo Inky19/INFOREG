@@ -10,7 +10,9 @@ import javax.swing.JOptionPane;
 
 /**
  * Regroupe les actions exécutables sur un arc. Ajoute l'action à l'historique.
- * @author inky19
+ *
+ * @author François MARIE
+ * @author Rémi RAVELLI
  */
 public abstract class ActionMenu {
 
@@ -62,7 +64,7 @@ public abstract class ActionMenu {
         History t = d.getTransitions();
         t.createLog(History.REMOVE_NODE, n);
     }
-    
+
     /**
      * Supprime un arc.
      *
@@ -95,7 +97,7 @@ public abstract class ActionMenu {
         n.setColor(c);
         d.repaint();
     }
-    
+
     /**
      * Change la couleur d'un arc.
      *
@@ -107,7 +109,7 @@ public abstract class ActionMenu {
         a.setColor(c);
         d.repaint();
     }
-    
+
     /**
      * Ouvrir une fenêtre de dialogue pour changer le poids d'un arc.
      *
@@ -126,7 +128,7 @@ public abstract class ActionMenu {
             History t = d.getTransitions();
             t.createLog(History.LABEL_ARC, line, Integer.toString(currentPds), text);
             t.push();
-            
+
         } catch (Exception e) {
             System.out.println("Pas un entier !");
         }

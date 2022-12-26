@@ -1,11 +1,5 @@
 package Inforeg.Algo;
 
-/*=============================================
-Classe FordFurkenson
-Auteur : Jorge QUISPE CCAMA
-Date de création : 04/02/2022
-Date de dernière modification : 28/03/2022
-=============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
 import Inforeg.ObjetGraph.Arc;
@@ -13,11 +7,16 @@ import Inforeg.ObjetGraph.Node;
 import java.awt.Color;
 import java.util.LinkedList;
 
-import javax.swing.JOptionPane;
-
+/**
+ * Algorithme de Ford-Fulkerson
+ *
+ * @author François MARIE
+ * @author Rémi RAVELLI
+ * @author Jorge QUISPE CCAMA
+ */
 public class FordFulkerson extends Algorithm implements AlgorithmST, Processing {
-    
-    public FordFulkerson(){
+
+    public FordFulkerson() {
         super();
         this.setName("Ford-Fulkerson");
     }
@@ -74,7 +73,7 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
     public void process(Draw d) {
         d.setStatus(1);
     }
-    
+
     @Override
     public void process(Draw d, Node srcNode, Node destNode) {
 
@@ -84,7 +83,7 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
         g.updateVariable();
         int V = g.getNbsommets();
 
-        int u, v, pred=0;
+        int u, v, pred = 0;
 
         // Create a residual graph and fill the residual
         // graph with given capacities in the original graph
@@ -139,11 +138,11 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
             max_flow += path_flow;
         }
         Arc l;
-        for (int i = 0 ; i<V; i++) {
-            for (int j=0;j<V;j++) {
-                l = d.findLine(i,j);
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                l = d.findLine(i, j);
                 if (l != null) {
-                    l.setFlow(Integer.max(0,l.getPoids() - rGraph[i][j]));
+                    l.setFlow(Integer.max(0, l.getPoids() - rGraph[i][j]));
                     if (rGraph[i][j] == 0) {
                         l.setColorDisplayed(Color.red);
                     }
@@ -153,6 +152,5 @@ public class FordFulkerson extends Algorithm implements AlgorithmST, Processing 
         d.setResultat("Le flot maximal du graphe entre les sommets " + d.getNodes().get(src).getLabel() + " et " + d.getNodes().get(dest).getLabel() + " est de " + max_flow + ".");
         d.algoFinished();
     }
-
 
 }

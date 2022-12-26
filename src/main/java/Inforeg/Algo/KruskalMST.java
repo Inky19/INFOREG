@@ -1,11 +1,5 @@
 package Inforeg.Algo;
 
-/*=============================================
-Classe KruskalMST
-Auteur : Jorge QUISPE CCAMA
-Date de création : 04/02/2022
-Date de dernière modification : 25/03/2022
-=============================================*/
 import Inforeg.Draw.Draw;
 import Inforeg.Graph.Graph;
 import static Inforeg.Graph.GraphFunction.connected;
@@ -15,15 +9,22 @@ import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
+/**
+ * Algorithme de Kruskal
+ *
+ * @author François MARIE
+ * @author Rémi RAVELLI
+ * @author Jorge QUISPE CCAMA
+ */
 public class KruskalMST extends Algorithm implements Processing {
-    
-    public KruskalMST(){
+
+    public KruskalMST() {
         this.setName("Kruskal");
     }
 
     @Override
     public void process(Draw d) {
-        
+
         Arc[] arbre;
         Graph G = d.getG();
         G.updateVariable();
@@ -100,10 +101,10 @@ public class KruskalMST extends Algorithm implements Processing {
                 a = arbre[j];
                 if (a != null) {
                     arc = G.findLine(a.getFrom(), a.getTo());
-                    if (arc == null && !G.isOriente()){
+                    if (arc == null && !G.isOriente()) {
                         arc = G.findLine(a.getTo(), a.getFrom());
                     }
-                    if (arc != null){
+                    if (arc != null) {
                         arc.setColorDisplayed(Color.RED);
                         p += arc.getPoids();
                     }
@@ -116,9 +117,5 @@ public class KruskalMST extends Algorithm implements Processing {
             JOptionPane.showMessageDialog(null, "Le graphe n'est pas connexe !", "Kruskal MST", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
-
-
-
 
 }

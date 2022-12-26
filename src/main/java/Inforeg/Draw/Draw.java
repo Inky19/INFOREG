@@ -1,11 +1,5 @@
 package Inforeg.Draw;
 
-/*=============================================
-Classe Draw permettant de dessiner les noeuds et arcs
-Auteur : Samy AMAL
-Date de création : 03/03/2022
-Date de dernière modification : 08/03/2022
-=============================================*/
 import Inforeg.ActionMenu;
 import Inforeg.Algo.Algorithm;
 import Inforeg.Algo.AlgorithmS;
@@ -49,6 +43,13 @@ import java.awt.event.ActionEvent;
 import javax.swing.JButton;
 import javax.swing.SwingConstants;
 
+/**
+ * Zone de dessin
+ *
+ * @author François MARIE
+ * @author Rémi RAVELLI
+ * @author Samy AMAL
+ */
 public class Draw extends JPanel implements MouseMotionListener {
 
     private Interface inter;
@@ -130,7 +131,7 @@ public class Draw extends JPanel implements MouseMotionListener {
     /**
      * Définit si le graphe est pondéré ou non
      */
-    public boolean pondere = true; 
+    public boolean pondere = true;
 
     /**
      * Graph représenté par le Draw
@@ -149,7 +150,7 @@ public class Draw extends JPanel implements MouseMotionListener {
      * rectangle de selection
      */
     private Rectangle zoneR;
-    /** 
+    /**
      *
      */
     private static boolean drawZone = false;
@@ -160,7 +161,7 @@ public class Draw extends JPanel implements MouseMotionListener {
     //Camera
     private Point currentMousePosition;
     private Point currentCameraPosition;
-    private Point savedCameraPosition = new Point(0, 0);;
+    private Point savedCameraPosition = new Point(0, 0);
     private Point camera = new Point(0, 0);
     private float zoom = 100f;
     private static final int MAX_ZOOM = 400;
@@ -400,10 +401,9 @@ public class Draw extends JPanel implements MouseMotionListener {
                                 if (multiselected && n.isSelected() && n.prevPos != null) {
                                     transitions.createLog(History.MOVE_NODE, n, n.prevPos.x, n.prevPos.y, n.getCx(), n.getCy());
                                     n.prevPos = null;
-                                } else if (zoneR.contains(n.getCenterX(), n.getCenterY())) {
+                                } else if (zoneR != null && zoneR.contains(n.getCenterX(), n.getCenterY())) {
                                     n.setMultiSelected(true);
-                                    multiselected = true;
-                                    
+                                    multiselected = true;    
                                 }
                             }
                             for (Arc a : G.getLines()) {
@@ -412,7 +412,7 @@ public class Draw extends JPanel implements MouseMotionListener {
                                         transitions.createLog(History.MOVE_NAIL, nail, nail.prevPos.x, nail.prevPos.y, nail.cx, nail.cy);
                                         nail.prevPos = null;
                                     }
-                                    if (zoneR.contains(nail.getCenterX(), nail.getCenterY())) {
+                                    if (zoneR != null && zoneR.contains(nail.getCenterX(), nail.getCenterY())) {
                                         nail.selected = true;
                                         multiselected = true;
                                     }
@@ -714,34 +714,37 @@ public class Draw extends JPanel implements MouseMotionListener {
     }
 
     /**
-     * Prépare la zone de dessin à être exporter en image (cache l'interface, ajouste la position).
+     * Prépare la zone de dessin à être exporter en image (cache l'interface,
+     * ajouste la position).
      */
-    public void prepareExport(){
+    public void prepareExport() {
         showUI(false);
         setOpaque(false);
         savedColor = getBackground();
-        setBackground(new Color(0,0,0,0));
+        setBackground(new Color(0, 0, 0, 0));
         savedZoom = zoom;
         savedCameraPosition = camera;
         fitScreen();
     }
-    
+
     /**
      * Restaure l'interface, la caméra et le zoom après un export.
      */
-    public void restoreAfterExport(){
+    public void restoreAfterExport() {
         showUI(true);
         setOpaque(true);
         setBackground(savedColor);
         zoom = savedZoom;
         camera = savedCameraPosition;
     }
-    
+
     /**
-     * Afficher ou cacher les éléments d'interface sur la zone de dessin (zoom, bouton fit to screen...)
-     * @param show 
+     * Afficher ou cacher les éléments d'interface sur la zone de dessin (zoom,
+     * bouton fit to screen...)
+     *
+     * @param show
      */
-    public void showUI(boolean show){
+    public void showUI(boolean show) {
         zoomSlider.setVisible(show);
         fitToScreen.setVisible(show);
         zoomLabel.setVisible(show);
@@ -928,7 +931,7 @@ public class Draw extends JPanel implements MouseMotionListener {
             camera.x = (int) (currentCameraPosition.x + toGlobalScale(currentMousePosition.x - currentScreenLocation.x));
             camera.y = (int) (currentCameraPosition.y + toGlobalScale(currentMousePosition.y - currentScreenLocation.y));
             Draw.drawZone = false;
-            
+
             repaint();
         }
 
@@ -984,7 +987,7 @@ public class Draw extends JPanel implements MouseMotionListener {
         double factor = (float) inter.getEpaisseur() / 5;
         lineWidth = (float) factor * Arc.DEFAULT_LINE_WIDTH;
         if (!G.getNodes().isEmpty()) {
-            
+
             System.out.println(lineWidth);
             for (Arc l : G.getLines()) {
                 l.width = (int) lineWidth;
@@ -1189,7 +1192,7 @@ public class Draw extends JPanel implements MouseMotionListener {
     public void setNodeRadius(double r) {
         Draw.nodeRadius = r;
     }
-    
+
     public String getPathSauvegarde() {
         return pathSauvegarde;
     }
