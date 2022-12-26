@@ -18,6 +18,7 @@ import Inforeg.ObjetGraph.Node;
 import Inforeg.ObjetGraph.Nail;
 import Inforeg.History;
 import Inforeg.StepByStep.StepByStep;
+import Inforeg.UI.CustomButton;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -210,7 +211,7 @@ public class Draw extends JPanel implements MouseMotionListener {
             repaint();
         });
 
-        fitToScreen = new JButton(AssetLoader.fitIco);
+        fitToScreen = new CustomButton(AssetLoader.fitIco, null, Color.decode("#bccfd1"),null);
         fitToScreen.setPreferredSize(new Dimension(24, 24));
         fitToScreen.addActionListener((ActionEvent e) -> {
             fitScreen();

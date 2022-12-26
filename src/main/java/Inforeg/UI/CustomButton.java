@@ -14,14 +14,14 @@ import javax.swing.event.MouseInputListener;
  *
  * @author Rémi
  */
-public class ToolButton extends JButton {
+public class CustomButton extends JButton {
     public Color color;
     public Color focusColor;
     public Color selectedColor;
     private boolean selected = false;
     private boolean enabled = true;
     
-    public ToolButton(String text,Color color, Color focusColor, Color selectedColor) {
+    public CustomButton(String text,Color color, Color focusColor, Color selectedColor) {
         super(text);
         
         this.color = color;
@@ -42,7 +42,7 @@ public class ToolButton extends JButton {
         
     }
     
-    public ToolButton(Icon icon,Color color, Color focusColor, Color selectedColor) {
+    public CustomButton(Icon icon,Color color, Color focusColor, Color selectedColor) {
         super(icon);
         this.color = color;
         this.focusColor = focusColor;
@@ -61,7 +61,7 @@ public class ToolButton extends JButton {
         updateUI();
     }
     
-    public ToolButton(String text,Icon icon,Color color, Color focusColor, Color selectedColor) {
+    public CustomButton(String text,Icon icon,Color color, Color focusColor, Color selectedColor) {
         super(text,icon);
         this.color = color;
         this.focusColor = focusColor;

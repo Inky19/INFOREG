@@ -275,6 +275,7 @@ public class Arc implements Comparable<Arc>, Clickable, GraphObject {
      */
     public void addNail(Nail nail){
         nail.arc = this;
+        nail.color = colorDisplayed;
         if (from == to){
             nails.set(0, nail);
         } else {
@@ -284,6 +285,7 @@ public class Arc implements Comparable<Arc>, Clickable, GraphObject {
     
     public void addNail(Nail nail, int index){
         nail.arc = this;
+        nail.color = colorDisplayed;
         if (from == to){
             nails.set(0, nail);
         } else {
@@ -306,7 +308,7 @@ public class Arc implements Comparable<Arc>, Clickable, GraphObject {
             i++;
         }
         nails.add(i, nail);
-        nail.color = color;
+        nail.color = colorDisplayed;
         nail.arc = this;
     }
 

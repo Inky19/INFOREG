@@ -63,7 +63,7 @@ public class AlgoBox extends JPanel{
 
     public void addAlgo(Algorithm algo) {
         algos.add(algo);
-        ToolButton algoButton = new ToolButton(algo.getName(),BUTTON_COLOR,BUTTON_SELECTED_COLOR,null);
+        CustomButton algoButton = new CustomButton(algo.getName(),BUTTON_COLOR,BUTTON_SELECTED_COLOR,null);
         algoButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         algoButton.setMaximumSize(buttonSize);
         algoButton.addActionListener((ActionEvent e) -> {

@@ -22,7 +22,7 @@ import Inforeg.UI.LatexWindow;
 import Inforeg.UI.CheckBox;
 import Inforeg.UI.CreditsWindow;
 import Inforeg.UI.GraphTypeWindow;
-import Inforeg.UI.ToolButton;
+import Inforeg.UI.CustomButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import static java.awt.Color.red;
@@ -118,12 +118,12 @@ public class Interface {
     protected JButton clearSelection;
     private JButton back;
     private JButton forward;
-    private ToolButton algoButton;
+    private CustomButton algoButton;
     private JButton previousStep;
     private JButton nextStep;
     private JToolBar stepBystepBar;
 
-    private ToolButton selectedButton;
+    private CustomButton selectedButton;
 
     private JCheckBox autoStart;
     private JCheckBox stepByStep;
@@ -312,7 +312,7 @@ public class Interface {
         // Titre de la zone :
         JPanel titlePanel = new JPanel(new BorderLayout());
         JLabel titleResult = new JLabel("     Résultats :");
-        ToolButton showResult = new ToolButton(downArrow, null, TOOL_BUTTON_FOCUS_COLOR, null);
+        CustomButton showResult = new CustomButton(downArrow, null, TOOL_BUTTON_FOCUS_COLOR, null);
         showResult.setOpaque(false);
         showResult.addActionListener((ActionEvent e) -> {
             if (resultContainer.getPreferredSize().height <= resultTitleSize) {
@@ -359,7 +359,7 @@ public class Interface {
         //ajoute un séparateur de taille par défaut
         toolBarButtons.addSeparator();
 
-        ToolButton colorButton = new ToolButton("Couleur", null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        CustomButton colorButton = new CustomButton("Couleur", null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         colorButton.setMaximumSize(buttonSize);
         colorButton.setMnemonic('o');
         colorButton.setToolTipText("Choisir une couleur");
@@ -430,7 +430,7 @@ public class Interface {
         tools.setAlignmentX(FlowLayout.LEFT);
         tools.setLayout(new GridLayout(2, 2));
         // Move Button
-        ToolButton moveButton = new ToolButton(moveCursor, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        CustomButton moveButton = new CustomButton(moveCursor, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         moveButton.setToolTipText("Déplacement");
         moveButton.addActionListener((ActionEvent e) -> {
             mode = DEPLACEMENT_MODE;
@@ -438,7 +438,7 @@ public class Interface {
         });
         tools.add(moveButton);
         // Select Button
-        ToolButton selectButton = new ToolButton(selectCursor, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        CustomButton selectButton = new CustomButton(selectCursor, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         selectButton.setToolTipText("Sélection");
         selectButton.setBackground(TOOL_BUTTON_COLOR);
         selectButton.addActionListener((ActionEvent e) -> {
@@ -449,7 +449,7 @@ public class Interface {
         tools.add(selectButton);
         toolBarButtons.add(tools);
         // Brush Button
-        ToolButton brushButton = new ToolButton(colorIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        CustomButton brushButton = new CustomButton(colorIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         brushButton.setToolTipText("Pinceau");
         brushButton.addActionListener((ActionEvent e) -> {
             mode = EDITION_MODE;
@@ -458,7 +458,7 @@ public class Interface {
         });
         tools.add(brushButton);
         // Pin Button
-        ToolButton labelButton = new ToolButton(labelIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        CustomButton labelButton = new CustomButton(labelIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         labelButton.setToolTipText("Label");
         labelButton.addActionListener((ActionEvent e) -> {
             mode = EDITION_MODE;
@@ -473,7 +473,7 @@ public class Interface {
         toolBarButtons.add(l1);
         toolBarButtons.addSeparator();
         // Node Button
-        ToolButton nodeButton = new ToolButton("Noeud", nodeIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        CustomButton nodeButton = new CustomButton("Noeud", nodeIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         nodeButton.setFocusPainted(false);
         nodeButton.setBackground(TOOL_BUTTON_COLOR);
         nodeButton.addActionListener((ActionEvent e) -> {
@@ -484,7 +484,7 @@ public class Interface {
         toolBarButtons.add(nodeButton);
         nodeButton.setMaximumSize(buttonSize);
         // Arc Button
-        ToolButton arcButton = new ToolButton("Arc", arcIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        CustomButton arcButton = new CustomButton("Arc", arcIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         arcButton.setFocusPainted(false);
         arcButton.setBackground(TOOL_BUTTON_COLOR);
         arcButton.setHorizontalAlignment(SwingConstants.LEFT);
@@ -496,7 +496,7 @@ public class Interface {
         });
         toolBarButtons.add(arcButton);
         // Label Button
-        ToolButton pinButton = new ToolButton("Clou", pinIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+        CustomButton pinButton = new CustomButton("Clou", pinIco, null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         pinButton.setFocusPainted(false);
         pinButton.setBackground(TOOL_BUTTON_COLOR);
         pinButton.setMaximumSize(buttonSize);
@@ -513,7 +513,7 @@ public class Interface {
         toolBarButtons.add(l2);
         toolBarButtons.addSeparator();
 
-        ToolButton connexeButton = new ToolButton("Connexe", AlgoBox.BUTTON_COLOR, AlgoBox.BUTTON_SELECTED_COLOR, null);
+        CustomButton connexeButton = new CustomButton("Connexe", AlgoBox.BUTTON_COLOR, AlgoBox.BUTTON_SELECTED_COLOR, null);
         connexeButton.setHorizontalAlignment(SwingConstants.CENTER);
         connexeButton.setMaximumSize(new Dimension(buttonSize.width, connexeButton.getMaximumSize().height));
         connexeButton.addActionListener((ActionEvent e) -> {
@@ -523,7 +523,7 @@ public class Interface {
         toolBarButtons.add(connexeButton);
         toolBarButtons.addSeparator();
 
-        algoButton = new ToolButton("▼", AlgoBox.BUTTON_COLOR, AlgoBox.BUTTON_SELECTED_COLOR, null);
+        algoButton = new CustomButton("▼", AlgoBox.BUTTON_COLOR, AlgoBox.BUTTON_SELECTED_COLOR, null);
         Dimension algoButtonSize = new Dimension(buttonSize.width, algoButton.getMaximumSize().height);
         algoButton.setMaximumSize(algoButtonSize);
         algoButton.setPreferredSize(algoButtonSize);
@@ -539,7 +539,7 @@ public class Interface {
         algoPanel.setMaximumSize(new Dimension(buttonSize.width, Integer.MAX_VALUE));
         algoPanel.setPreferredSize(algoPanel.getMaximumSize());
         algoPanel.setAlignmentX(0);
-        ToolButton algoGo = new ToolButton(playIco, null , AlgoBox.BUTTON_COLOR, null);
+        CustomButton algoGo = new CustomButton(playIco, null , AlgoBox.BUTTON_COLOR, null);
         algoGo.setToolTipText("Lancer l'algorithme");
         algoGo.addActionListener((ActionEvent e) -> {
             if (d.getAlgo() == null) {
@@ -561,7 +561,7 @@ public class Interface {
                 d.repaint();
             }
         });
-        ToolButton resetButton = new ToolButton(resetIco, null, AlgoBox.BUTTON_COLOR, null);
+        CustomButton resetButton = new CustomButton(resetIco, null, AlgoBox.BUTTON_COLOR, null);
         resetButton.addActionListener(((ActionEvent e) -> {
             d.reinit();
             stepBystepBar.setVisible(false);
@@ -591,9 +591,9 @@ public class Interface {
         stepBystepBar.setFloatable(false);
         stepBystepBar.setBorderPainted(false);
         
-        previousStep = new ToolButton(previousIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
+        previousStep = new CustomButton(previousIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
         previousStep.setFocusPainted(false);
-        nextStep = new ToolButton(nextIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
+        nextStep = new CustomButton(nextIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
         previousStep.addActionListener((ActionEvent e) -> {
             if (d.stepBysStep.isLastStep()) {
                 nextStep.setEnabled(true);
@@ -660,7 +660,7 @@ public class Interface {
         FlowLayout f = new FlowLayout(FlowLayout.CENTER, 0, 0);
         JPanel pnlTab = new JPanel(f);
         pnlTab.setOpaque(false);
-        JButton addTabButton = new ToolButton(plusIco, null, Color.LIGHT_GRAY, null);
+        JButton addTabButton = new CustomButton(plusIco, null, Color.LIGHT_GRAY, null);
         addTabButton.setPreferredSize(new Dimension(50,30));
 
         tabsPanel.addTab("", null, new JScrollPane());
@@ -896,13 +896,13 @@ public class Interface {
         menuBar.add(aboutMenu);
 
         //CTRL Z / CTRL Y
-        back = new ToolButton(backIco, null, TOOL_BUTTON_COLOR, null);
+        back = new CustomButton(backIco, null, TOOL_BUTTON_COLOR, null);
         back.setPreferredSize(new Dimension(50, 32));
         back.addActionListener((ActionEvent ae) -> {
             History piles = d.getTransitions();
             piles.back(d);
         });
-        forward = new ToolButton(forwardIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
+        forward = new CustomButton(forwardIco, null, TOOL_BUTTON_FOCUS_COLOR, null);
         forward.setPreferredSize(new Dimension(50, 32));
         forward.addActionListener((ActionEvent ae) -> {
             History piles = d.getTransitions();
@@ -1128,7 +1128,7 @@ public class Interface {
         return autoStart.isSelected();
     }
 
-    public void selectButton(ToolButton button) {
+    public void selectButton(CustomButton button) {
         if (selectedButton != null) {
             selectedButton.unselect();
         }
