@@ -19,6 +19,7 @@ import Inforeg.UI.GraphTypeWindow;
 import Inforeg.UI.ToolButton;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
@@ -32,6 +33,10 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -840,27 +845,28 @@ public class Interface {
         JMenu aboutMenu = new JMenu("A propos");
 
         //Sub Menus de Aide
-        JMenu helpSubMenu = new JMenu("Utilisation des boutons");
-        JMenuItem helpSubMenuItem1 = new JMenuItem("Création de noeud");
-        helpSubMenuItem1.addActionListener(new ActionListener() {
+        JMenuItem helpSubMenu = new JMenuItem("Documentation");
+        helpSubMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                String str = "Pour créer des noeuds : \n"
-                        + "\n"
-                        + "    - veillez à ce que le bouton 'Noeud' soit activé \n"
-                        + "\n"
-                        + "    - puis, déplacer votre souris sur une zone et cliquer pour créer un noeud \n"
-                        + "\n"
-                        + "    - pour déplacer un noeud : maintenez le clique gauche sur un noeud, déplacez vers une zone de l'écran et relâchez\n"
-                        + "\n"
-                        + "    - pour supprimer un noeud : double-cliquez sur un noeud\n";
-                JOptionPane.showMessageDialog(frame, str, "Bouton Noeud", JOptionPane.INFORMATION_MESSAGE);
+                String inputPdf = "asset/doc.pdf";
+                InputStream manualAsStream = getClass().getClassLoader().getResourceAsStream(inputPdf);
+
+                Path tempOutput = null;
+                try {
+                    tempOutput = Files.createTempFile("TempManual", ".pdf");
+                    tempOutput.toFile().deleteOnExit();
+                    Files.copy(manualAsStream, tempOutput, StandardCopyOption.REPLACE_EXISTING);
+                    File userManual = new File (tempOutput.toFile().getPath());
+                    if (userManual.exists()){
+                        Desktop.getDesktop().open(userManual);
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
-        //JMenuItem helpSubMenuItem2 = new JMenuItem("Help Sub menu item 2");
         helpMenu.add(helpSubMenu);
-        helpSubMenu.add(helpSubMenuItem1);
-        //helpSubMenu.add(helpSubMenuItem2);
 
         JMenuItem credits = new JMenuItem("Crédits");
         aboutMenu.add(credits);
@@ -868,14 +874,6 @@ public class Interface {
         credits.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                /*
-                String creditStr = "Application créée par Béryl CASSEL, Cristobal CARRASCO DE RODT, Jorge QUISPE , Isaías VENEGAS et Samy AMAL \n"
-                        + "\n"
-                        + "dans le cadre du projet de groupe INFOREG \n"
-                        + "\n"
-                        + "encadré par Olivier ROUX";
-                JOptionPane.showMessageDialog(frame, creditStr, "Credits", JOptionPane.INFORMATION_MESSAGE);
-                 */
                 CreditsWindow credits;
                 try {
                     credits = new CreditsWindow(frame);
