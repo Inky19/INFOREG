@@ -2,25 +2,23 @@
 
 ## Sommaire
 
-- [Documentation utilisateur INFOREG](#documentation-utilisateur-inforeg)
-  - [Sommaire](#sommaire)
-  - [1. Prérequis et exécution](#1-prérequis-et-exécution)
-  - [2. Interface](#2-interface)
-  - [3. Choix du type de graphe](#3-choix-du-type-de-graphe)
-  - [4. Création du graphe](#4-création-du-graphe)
-    - [4.1 Ajout d'éléments](#41-ajout-déléments)
-    - [4.2 Modification](#42-modification)
-    - [4.3 Affichage](#43-affichage)
-    - [4.4 Historique](#44-historique)
-  - [5. Traitement algorithmique](#5-traitement-algorithmique)
-    - [5.1 Choix d'un algorithme](#51-choix-dun-algorithme)
-    - [5.2 Traitement](#52-traitement)
-  - [6. Sauvegarde et chargement](#6-sauvegarde-et-chargement)
-    - [6.1 Sauvegarde](#61-sauvegarde)
-    - [6.2 Chargement](#62-chargement)
-  - [7. Exportation en d'autres formats](#7-exportation-en-dautres-formats)
-    - [7.1 Image PNG](#71-image-png)
-    - [7.2 Export LaTeX](#72-export-latex)
+- [1. Prérequis et exécution](#1-prérequis-et-exécution)
+- [2. Interface](#2-interface)
+- [3. Choix du type de graphe](#3-choix-du-type-de-graphe)
+- [4. Création du graphe](#4-création-du-graphe)
+  - [4.1 Ajout d'éléments](#41-ajout-déléments)
+  - [4.2 Modification](#42-modification)
+  - [4.3 Affichage](#43-affichage)
+  - [4.4 Historique](#44-historique)
+- [5. Traitement algorithmique](#5-traitement-algorithmique)
+  - [5.1 Choix d'un algorithme](#51-choix-dun-algorithme)
+  - [5.2 Traitement](#52-traitement)
+- [6. Sauvegarde et chargement](#6-sauvegarde-et-chargement)
+  - [6.1 Sauvegarde](#61-sauvegarde)
+  - [6.2 Chargement](#62-chargement)
+- [7. Exportation en d'autres formats](#7-exportation-en-dautres-formats)
+  - [7.1 Image PNG](#71-image-png)
+  - [7.2 Export LaTeX](#72-export-latex)
     
 <div class="page"/>
 
@@ -62,7 +60,7 @@ Il est possible de choisir si un graphe est :
 Un graphe est constitué visuellement de 3 éléments :
 - des nœuds
 - des arcs entre les nœuds
-- des clous qui scindent les arcs en segment
+- des clous qui scindent les arcs en segments
 
 Chaque ajout se fait en cliquant sur le bouton rectangulaire correspondant dans la zone `Ajouter`.
 
@@ -83,18 +81,18 @@ L'ajout d'un arc nécessite de cliquer sur deux nœuds. Le 1er nœud cliqué a u
 - Si le graphe est orienté, le sens de l'arc se fera du 1er nœud vers le second.
 - Si le même nœud est cliqué deux fois, un arc en forme de cercle apparaîtra pour indiquer la présence d'une boucle. Ce type d'arc ne peut pas avoir plus d'un seul clou.
 
-Lorsque ce bouton est sélectionné, un arc peut être supprimé en avec un double-clic gauche.
+Lorsque ce bouton est sélectionné, un arc peut être supprimé avec un double-clic gauche.
 
 <div>
   <font size=3><b>Clou</b></font>
   <img style="vertical-align:middle; padding-left:10px" src="../src/main/resources/asset/icons/pin.png">
 </div>
 
-Les clous permettent de modifier le chemin d'un arc en le découpant en segments. Cela permet par exemple d'éviter que des arcs se croisent.
+Les clous permettent de modifier le chemin d'un arc en le découpant en segments. Cela permet par exemple d'éviter que des arcs ne se croisent.
 
 L'ajout d'un clou nécessite de cliquer sur un arc existant. Il n'y a pas de limite de clous par arc, sauf pour les boucles qui sont limitées à un seul clou.  
-Lorsque ce bouton est sélectionné, un clou peut être déplacé en maintenant clic gauche et peut être supprimé en avec un double-clic gauche.
-> **Remarque**
+Lorsque ce bouton est sélectionné, un clou peut être déplacé en maintenant clic gauche et peut être supprimé avec un double-clic gauche.
+> **Remarque**  
 > Les boucles contiennent un clou lors de leur création. Ce dernier ne peut pas être supprimé.
 
 <div class="page"/>
@@ -135,17 +133,17 @@ La zone affichée à l'écran peut être modifiée pour faciliter la création d
   <img style="vertical-align:middle; padding-left:10px" src="../src/main/resources/asset/icons/move.png">
 </div>
 
-Le bouton déplacement permet de déplacer le cadre de la zone de dessin dans le repère du graphe. Un déplacement s'effectue lorsque ce bouton est sélectionné, puis en maintenant clic gauche et en déplaçant la souris.
+Le bouton `déplacement` permet de déplacer le cadre de la zone de dessin dans le repère du graphe. Un déplacement s'effectue lorsque ce bouton est sélectionné, puis en maintenant clic gauche et en déplaçant la souris.
 
 <div>
   <font size=3><b>Sélectionner</b></font>
   <img style="vertical-align:middle; padding-left:10px" src="../src/main/resources/asset/icons/select.png">
 </div>
 
-Le bouton sélectionner permet de sélectionner des éléments du graphe :
+Le bouton `sélectionner` permet de sélectionner des éléments du graphe :
 - Si un nœud ou un clou est cliqué directement, il est possible de le déplacer en maintenant clic gauche. 
 
-- Si une zone vide du graphe est cliquée, une zone de sélection peut être déssinée en maintenant clic gauche. Les éléments sélectionnés par cette zone deviennent verts. Une fois la souris relâchée, il est possible de :
+- Si une zone vide du graphe est cliquée, une zone de sélection peut être dessinée en maintenant clic gauche. Les éléments sélectionnés par cette zone deviennent verts. Une fois la souris relâchée, il est possible de :
   - déplacer les éléments en cliquant sur l'un d'entre eux et maintenir clique gauche.
   - supprimer les éléments en appuyant sur `suppr`.
 
@@ -159,7 +157,7 @@ Le bouton <img style="vertical-align:middle" src="../src/main/resources/asset/ic
 
 ### 4.4 Historique
 
-Les boutons <img style="vertical-align:middle" src="../src/main/resources/asset/icons/back.png" width="25px"> et <img style="vertical-align:middle" src="../src/main/resources/asset/icons/forward.png" width="25px"> situés en haut à droite de la fenêtre permettent de respectivement revenir en arrière ou en avant d'une étape de modification du graphe.
+Les boutons <img style="vertical-align:middle" src="../src/main/resources/asset/icons/back.png" width="25px"> et <img style="vertical-align:middle" src="../src/main/resources/asset/icons/forward.png" width="25px"> situés en haut à droite de la fenêtre permettent de revenir en arrière ou en avant d'une étape de modification du graphe.
 
 ## 5. Traitement algorithmique
 
@@ -180,22 +178,22 @@ Cliquer sur l'algorithme souhaité. La fenêtre se ferme et le nom de l'algorith
 ### 5.2 Traitement
 
 Pour lancer l'algorithme sélectionné, cliquer sur le bouton <img style="vertical-align:middle" src="../src/main/resources/asset/icons/play.png" width="20px">
-en dessous de la zone avec le nom de l'algorithme.
+en-dessous de la zone avec le nom de l'algorithme.
 
-En fonction de l'algorithme, il est possible de devoir suivre des instructions supplémentaire juste après le lancement (par exemple, choisir un nœud de départ et un nœud d'arrivée). Ces instructions s'affichent en haut de la zone de dessin.
+En fonction de l'algorithme, il est possible de devoir suivre des instructions supplémentaires juste après le lancement (par exemple, choisir un nœud de départ et un nœud d'arrivée). Ces instructions s'affichent en haut de la zone de dessin.
 
 Plusieurs options sont disponibles avant le lancement de l'algorithme :
 - La case `Pas à pas` permet (si cochée) de visualiser le fonctionnement de l'algorithme et de parcourir les différentes étapes avec les boutons <img style="vertical-align:middle;margin-right:5px" src="../src/main/resources/asset/icons/previous.png" width="17px"><img style="vertical-align:middle" src="../src/main/resources/asset/icons/next.png" width="17px"> (ces boutons s'affichent après avoir lancé l'algorithme).
-- La case `Départ auto` peut apparaître en fonction de l'algorithme sélectionner. Si elle est cochée, le premier nœud placé sera sélectionné automatiquement comme nœud de départ.
+- La case `Départ auto` peut apparaître en fonction de l'algorithme sélectionné. Si elle est cochée, le premier nœud placé sera sélectionné automatiquement comme nœud de départ.
 
 <div>
-  <font size=3><b>Reinitialisation des couleurs d'un graphe</b></font>
+  <font size=3><b>Réinitialisation des couleurs d'un graphe</b></font>
   <img style="vertical-align:middle; padding-left:10px" src="../src/main/resources/asset/icons/reset.png">
 </div>
 
 
 Le bouton <img style="vertical-align:middle" src="../src/main/resources/asset/icons/reset.png" width="20px">
-permet d'effacer les modifications visuelles générées pendant le traitement (couleur des nœuds et des arcs). Il n'est pas nécessaire de cliquer sur ce bouton après chaque traitement pour pouvoir en relancer un suivant (la reinitilisation est automatique au lancement d'un algorithme).
+permet d'effacer les modifications visuelles générées pendant le traitement (couleur des nœuds et des arcs). Il n'est pas nécessaire de cliquer sur ce bouton après chaque traitement pour pouvoir en relancer un suivant (la réinitialisation est automatique au lancement d'un algorithme).
 
 ## 6. Sauvegarde et chargement
 
@@ -211,7 +209,7 @@ La sauvegarde du graphe se fait par le raccourci `CTRL+S` ou par le menu `Fichie
 <div>
   <font size=3><b>Stucture d'un fichier de sauvegarde</b></font>
 </div>
-Si un fichier ne peut pas être chargé car il semble corrompu, il est possible que la structure de la sauvegarde est été altérée. Un fichier de sauvegarde doit avoir la forme suivante :
+Si un fichier ne peut pas être chargé car il semble corrompu, il est possible que la structure de la sauvegarde ait été altérée. Un fichier de sauvegarde doit avoir la forme suivante :
 
 **Légende**  
 `<nom valeur:type>`  
@@ -235,7 +233,7 @@ Arc, <id nœud1:int>, <id nœud2:int>, <pondération:int>, <couleur:hex>, <nombr
 
 ### 6.2 Chargement
 
-Il existe deux manière de charger un fichier `.inforeg` existant :
+Il existe deux manières de charger un fichier `.inforeg` existant :
 - Sélectionner `Charger un graphe` dans la fenêtre de démarrage.
 - Dans le menu `Fichier` de la fenêtre principale, sélectionner `Ouvrir`.
 
@@ -244,7 +242,7 @@ Un explorateur de fichier s'ouvre ensuite pour sélectionner le fichier souhait�
 
 ### 7.1 Image PNG
 
-L'export en PNG enregistre le graphe sur un fond transparent, avec les mêmes dimensions et la même résolution obtenus avec un appui sur le bouton de zoom automatique (voir [Affichage](#43-affichage)).
+L'export en PNG enregistre le graphe sur un fond transparent, avec les mêmes dimensions et la même résolution obtenues avec un appui sur le bouton de zoom automatique (voir [Affichage](#43-affichage)).
 
 Pour exporter le graphe en image PNG, cliquer sur `Fichier` puis `Exporter` puis `Image PNG`.  
 Un explorateur de fichier s'ouvre alors pour enregistrer l'image.
@@ -262,7 +260,7 @@ Une fenêtre apparaît pour choisir les différentes options des nœuds et des a
 
 
 
-- La case `Adapter la taille des nœuds en fonction de leur label` permet de redimensionner automatiquement le diamètre de chaque nœud dont le texte dépace des bords.
+- La case `Adapter la taille des nœuds en fonction de leur label` permet de redimensionner automatiquement le diamètre de chaque nœud dont le texte dépasse des bords.
 
 - La case `Afficher les clous` permet d'afficher les clous d'un arc sous forme de petits disques bleus (comme dans le logiciel). Si cette option n'est pas sélectionnée, les arcs sont dessinés comme des lignes brisées.
 
