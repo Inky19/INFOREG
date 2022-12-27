@@ -142,7 +142,7 @@ public class LatexWindow extends JDialog {
         custNodePanel.add(nodeColCust);
 
         // Bouton de sélection de la couleur
-        ToolButton nodeColorButton = createColorButton(frame, NODE_COLOR_BUTTON);
+        CustomButton nodeColorButton = createColorButton(frame, NODE_COLOR_BUTTON);
 
         custNodePanel.add(nodeColorButton);
         JPanel nodesColor = createContainer("Couleur", new JComponent[]{nodeColGraph, nodeColWhite, custNodePanel});
@@ -224,7 +224,7 @@ public class LatexWindow extends JDialog {
         custArcPanel.add(arcColCust);
 
         // Bouton de sélection de la couleur
-        ToolButton arcColorButton = createColorButton(frame, ARC_COLOR_BUTTON);
+        CustomButton arcColorButton = createColorButton(frame, ARC_COLOR_BUTTON);
 
         custArcPanel.add(arcColorButton);
         JPanel arcsColor = createContainer("Couleur", new JComponent[]{arcColGraph, arcColWhite, custArcPanel});
@@ -247,7 +247,7 @@ public class LatexWindow extends JDialog {
         wrapperArea.add(exportScrollPane);
         export.add(wrapperArea);
 
-        JButton exportButton = new ToolButton("Exporter", Color.GRAY, Color.LIGHT_GRAY, null);
+        JButton exportButton = new CustomButton("Exporter",Color.GRAY,Color.LIGHT_GRAY,null);
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -276,8 +276,8 @@ public class LatexWindow extends JDialog {
         return container;
     }
 
-    private ToolButton createColorButton(Frame frame, int targetColor) {
-        ToolButton colorButton = new ToolButton("", null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
+    private CustomButton createColorButton(Frame frame, int targetColor) {
+        CustomButton colorButton = new CustomButton("", null, TOOL_BUTTON_FOCUS_COLOR, TOOL_BUTTON_SELECTED_COLOR);
         colorButton.setToolTipText("Choisir une couleur");
         BufferedImage colorSample = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
         ActionListener colorListener;

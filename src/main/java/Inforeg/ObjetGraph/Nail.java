@@ -133,4 +133,15 @@ public class Nail extends Ellipse2D.Double implements Attachable, Clickable, Gra
         return r;
     }
 
+    @Override
+    public String toString() {
+        return "Clou | " + getArcIndex() + " " + arc.toString();
+    }
+    /**
+     * @return l'index de ce clou dans la liste des clous de l'arc.
+     */
+    public int getArcIndex() {
+        return arc.getNails().indexOf(this);
+    }
+    
 }

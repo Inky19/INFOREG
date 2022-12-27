@@ -201,7 +201,7 @@ public abstract class SaveManager {
                                 radius = Double.parseDouble(data[ind + 2]);
                                 ind += 3;
                                 nail = new Nail(nailx, naily, radius, color, arc);
-                                arc.loadNail(nail);
+                                arc.addNail(nail);
                             }
                             d.getLines().add(arc);
 

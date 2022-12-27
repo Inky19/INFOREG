@@ -12,6 +12,7 @@ import Inforeg.ObjetGraph.Node;
 import Inforeg.ObjetGraph.Nail;
 import Inforeg.History;
 import Inforeg.StepByStep.StepByStep;
+import Inforeg.UI.CustomButton;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -161,7 +162,6 @@ public class Draw extends JPanel implements MouseMotionListener {
     private Point currentMousePosition;
     private Point currentCameraPosition;
     private Point savedCameraPosition = new Point(0, 0);
-    ;
     private Point camera = new Point(0, 0);
     private float zoom = 100f;
     private static final int MAX_ZOOM = 400;
@@ -212,7 +212,7 @@ public class Draw extends JPanel implements MouseMotionListener {
             repaint();
         });
 
-        fitToScreen = new JButton(AssetLoader.fitIco);
+        fitToScreen = new CustomButton(AssetLoader.fitIco, null, Color.decode("#bccfd1"),null);
         fitToScreen.setPreferredSize(new Dimension(24, 24));
         fitToScreen.addActionListener((ActionEvent e) -> {
             fitScreen();
@@ -282,9 +282,13 @@ public class Draw extends JPanel implements MouseMotionListener {
                                     }
                                 }
                                 case Interface.PIN_TOOL -> {
-                                    if (currentNail == null) {
+                                    if (currentNail == null && currentArc != null) {
                                         currentNail = addNail(x, y);
-                                        updateCursor(false, true, false);
+                                        if  (currentNail != null) {
+                                            transitions.createLog(History.ADD_NAIL, currentNail, currentArc, currentNail.getArcIndex());
+                                            transitions.push();
+                                            updateCursor(false, true, false);
+                                        }
                                     }
                                 }
                                 case Interface.ARC_TOOL -> {
@@ -344,18 +348,7 @@ public class Draw extends JPanel implements MouseMotionListener {
                                         selectXstart = x;
                                         selectYstart = y;
                                     } else {
-                                        for (Node n : G.getNodes()) {
-                                            if (n.isSelected()) {
-                                                n.prevPos = new Vector2D(n.getCx(), n.getCy());
-                                            }
-                                        }
-                                        for (Arc a : G.getLines()) {
-                                            for (Nail nail : a.getNails()) {
-                                                if (nail.selected) {
-                                                    nail.prevPos = new Vector2D(nail.cx, nail.cy);
-                                                }
-                                            }
-                                        }
+                                        
                                     }
                                 }
                             }
@@ -392,13 +385,12 @@ public class Draw extends JPanel implements MouseMotionListener {
                             int y = evt.getY();
                             // Vérifie si on clique où non sur un cercle existant
                             currentNode = findNode(x, y);
-                            if (currentNode != null && currentNode.prevPos != null) {
+                            if (currentNode != null && currentNode.prevPos != null && !multiselected) {
                                 transitions.createLog(History.MOVE_NODE, currentNode, currentNode.prevPos.x, currentNode.prevPos.y, currentNode.getCx(), currentNode.getCy());
                                 transitions.push();
                                 currentNode.prevPos = null;
                             }
-                            if (currentNail != null && currentNail.prevPos != null) {
-                                //Nail n = G.getLines().get(currentArcIndex).getClou();
+                            if (currentNail != null && currentNail.prevPos != null && !multiselected) {
                                 transitions.createLog(History.MOVE_NAIL, currentNail, currentNail.prevPos.x, currentNail.prevPos.y, currentNail.getCx(), currentNail.getCy());
                                 transitions.push();
                                 currentNail.prevPos = null;
@@ -407,29 +399,27 @@ public class Draw extends JPanel implements MouseMotionListener {
                         if (inter.getActiveTool() == inter.SELECT_TOOL) {
                             for (Node n : G.getNodes()) {
                                 if (multiselected && n.isSelected() && n.prevPos != null) {
-                                    //transitions.createLog(History.MOVE_NODE, n, n.getCx(), n.getCy(), n.prevPos.x, n.prevPos.y);
+                                    transitions.createLog(History.MOVE_NODE, n, n.prevPos.x, n.prevPos.y, n.getCx(), n.getCy());
                                     n.prevPos = null;
-                                } else if (zoneR.contains(n.getCenterX(), n.getCenterY())) {
+                                } else if (zoneR != null && zoneR.contains(n.getCenterX(), n.getCenterY())) {
                                     n.setMultiSelected(true);
-
-                                    multiselected = true;
+                                    multiselected = true;    
                                 }
                             }
                             for (Arc a : G.getLines()) {
                                 for (Nail nail : a.getNails()) {
                                     if (nail.prevPos != null && multiselected == true) {
-                                        transitions.createLog(History.MOVE_NAIL, nail, nail.cx, nail.cy, nail.prevPos.x, nail.prevPos.y);
-                                        System.out.println(nail);
+                                        transitions.createLog(History.MOVE_NAIL, nail, nail.prevPos.x, nail.prevPos.y, nail.cx, nail.cy);
                                         nail.prevPos = null;
                                     }
-                                    if (zoneR.contains(nail.getCenterX(), nail.getCenterY())) {
+                                    if (zoneR != null && zoneR.contains(nail.getCenterX(), nail.getCenterY())) {
                                         nail.selected = true;
                                         multiselected = true;
                                     }
                                 }
                             }
                             if (multiselected == true && drawZone == false) {
-                                //transitions.push();
+                                transitions.push();
                             }
                             drawZone = false;
                             repaint();
@@ -466,7 +456,7 @@ public class Draw extends JPanel implements MouseMotionListener {
 
                     if (inter.getActiveTool() == Interface.PIN_TOOL) {
                         if (evt.getClickCount() >= 2 && currentNail != null) {
-                            transitions.createLog(History.REMOVE_NAIL, currentNail);
+                            transitions.createLog(History.REMOVE_NAIL, currentNail, currentNail.arc, currentNail.getArcIndex());
                             transitions.push();
                             currentNail.delete();
                         }
@@ -716,7 +706,7 @@ public class Draw extends JPanel implements MouseMotionListener {
         if (currentArc != null) {
             Vector2D pos = toGlobalCoordinates(x, y);
             Nail nail = new Nail(pos.x, pos.y);
-            currentArc.addNail(nail);
+            currentArc.addNailWhereSelected(nail);
             repaint();
             return nail;
         }
@@ -761,24 +751,6 @@ public class Draw extends JPanel implements MouseMotionListener {
         repaint();
     }
 
-    @Deprecated
-    public int find(Ellipse2D.Double circ) {
-        boolean trouve = false;
-        int n = 0;
-        Ellipse2D.Double comp;
-        while ((n < G.getNodes().size()) && (!trouve)) {
-            comp = this.G.getNodes().get(n);
-            if (Double.compare(comp.x, circ.x) == 0
-                    && Double.compare(comp.y, circ.y) == 0) {
-                trouve = true;
-                return n;
-            } else {
-                n++;
-            }
-        }
-        return -1;
-    }
-
     /**
      * Ajoute une ligne dans la ArrayList lines et actualise l'affichage
      *
@@ -817,17 +789,6 @@ public class Draw extends JPanel implements MouseMotionListener {
         repaint();
     }
 
-    @Deprecated
-    public void removeArc(int n) {
-        if (n < 0 || n >= G.getLines().size()) {
-            return;
-        } else {
-            Arc l = G.getLines().get(n);
-            G.getLines().remove(l);
-        }
-        repaint();
-    }
-
     /**
      * Modifie le curseur lorsqu'on se trouve sur un cercle
      */
@@ -840,7 +801,7 @@ public class Draw extends JPanel implements MouseMotionListener {
         Arc arc = findArc(x, y);
         // Show info
         if (nail != null) {
-            info.setText(nail.arc.toString());
+            info.setText(nail.toString());
         } else if (n != null) {
             info.setText(n.toString());
         } else if (arc != null) {
@@ -887,7 +848,6 @@ public class Draw extends JPanel implements MouseMotionListener {
                     }
                     repaint();
                 } else {
-                    // On ajoute l'action à la pile
                     if (currentNode.prevPos == null) {
                         currentNode.prevPos = new Vector2D(currentNode.getCx(), currentNode.getCy());
                     }
@@ -939,7 +899,22 @@ public class Draw extends JPanel implements MouseMotionListener {
         if (Interface.getActiveTool() == Interface.SELECT_TOOL) {
             selectXend = event.getX();
             selectYend = event.getY();
-
+            if (multiselected) {
+                for (Node n : G.getNodes()) {
+                    if (n.isSelected() && n.prevPos == null) {
+                        n.prevPos = new Vector2D(n.getCx(), n.getCy());
+                    }
+                }
+                for (Arc a : G.getLines()) {
+                    for (Nail nail : a.getNails()) {
+                        if (nail.selected && nail.prevPos == null) {
+                            nail.prevPos = new Vector2D(nail.cx, nail.cy);
+                        }
+                    }
+                }
+            }
+            
+            
             if (currentNode == null && currentNail == null) {
                 int px = Math.min(selectXstart, selectXend);
                 int py = Math.min(selectYstart, selectYend);
@@ -1044,14 +1019,28 @@ public class Draw extends JPanel implements MouseMotionListener {
 
     public void deleteSelected() {
         ArrayList<Node> deletedNodes = new ArrayList<>();
+        ArrayList<Nail> deleteNail = new ArrayList<>();
+        
         for (Node n : G.getNodes()) {
             if (n.isSelected()) {
-                System.out.println(n.getLabel());
                 deletedNodes.add(n);
+                n.setSelect(false);
+            }
+        }
+        for (Arc a : G.getLines()) {
+            for (Nail nail : a.getNails()) {
+                if (nail.selected) {
+                    deleteNail.add(nail);
+                    nail.selected = false;
+                }
             }
         }
         for (Node n : deletedNodes) {
             ActionMenu.deleteNode(this, n);
+        }
+        for (Nail nail : deleteNail) {
+            System.out.println(nail);
+            ActionMenu.deleteNail(this, nail);
         }
         transitions.push();
     }

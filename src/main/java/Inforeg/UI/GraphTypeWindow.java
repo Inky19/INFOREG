@@ -82,7 +82,7 @@ public class GraphTypeWindow extends JDialog {
 
         JDialog J = this;
         // Bouton générant un nouveau graphe
-        ToolButton nouveau = new ToolButton("Créer", buttonColor, selectedColor, null);
+        CustomButton nouveau = new CustomButton("Créer",buttonColor,selectedColor, null);
         nouveau.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -97,7 +97,7 @@ public class GraphTypeWindow extends JDialog {
         });
 
         // Bouton permettant de charger un graphe existant
-        ToolButton charge = new ToolButton("Charger un Graphe existant", buttonColor, selectedColor, null);
+        CustomButton charge = new CustomButton("Charger un Graphe existant",buttonColor,selectedColor,null);
         charge.setAlignmentX(Component.CENTER_ALIGNMENT);
         charge.addActionListener(new ActionListener() {
             @Override
