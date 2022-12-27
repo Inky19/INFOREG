@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 class Enregistrement {
 
     int action; // ajouter/supprimer des noeud/arc, modifier l'étiquette
+    int index; 
     Node noeud; // noeud
     double x; // position
     double y; // position
@@ -63,6 +64,13 @@ class Enregistrement {
         this.lastLbl = currentLbl;
         this.newLbl = newLbl;
         this.arc = line;
+    }
+    
+    public Enregistrement(int action, Nail clou, Arc arc, int index) {
+        this.arc = arc;
+        this.clou = clou;
+        this.action = action;
+        this.index = index;
     }
 
     // Constructor pour les actions de mouvement
@@ -200,14 +208,20 @@ public class History {
     public void createLog(int action, Nail clou, double x, double y, double x2, double y2) {
         this.currentLog.add(new Enregistrement(action, clou, x, y, x2, y2));
     }
-
+    
+    public void createLog(int action, Nail clou, Arc arc, int index) {
+        this.currentLog.add(new Enregistrement(action, clou, arc,index));
+    }
+    
     /**
      * Ajoute les actions créés sur la pile Y
      */
     public void push() {
-        this.addPreviousState(currentLog);
-        this.clearNextStates();
-        this.currentLog = new LinkedList<>();
+        if (!currentLog.isEmpty()) {
+            this.addPreviousState(currentLog);
+            this.clearNextStates();
+            this.currentLog = new LinkedList<>();
+        }
     }
 
     /**
@@ -264,7 +278,8 @@ public class History {
         LinkedList<Enregistrement> lastRegs = getPreviousState();
         // Pour chaque action, on effectue l'action inverse
         // Ensuite, on déplace l'action sur l'autre pile
-        for (Enregistrement lastReg : lastRegs) {
+        for (int i= lastRegs.size()-1; 0 <= i;  i--) {
+            Enregistrement lastReg = lastRegs.get(i);
             switch (lastReg.action) {
                 case History.ADD_NODE:
                     d.getNodes().remove(lastReg.noeud);
@@ -283,8 +298,8 @@ public class History {
                     lastReg.clou.setCx(lastReg.x);
                     lastReg.clou.setCy(lastReg.y);
                     break;
-                case History.REMOVE_NAIL:
-                    // TO DO
+                case History.REMOVE_NAIL :
+                    lastReg.arc.addNail(lastReg.clou, lastReg.index);
                     break;
                 case History.ADD_NAIL:
                     lastReg.clou.delete();
@@ -321,36 +336,36 @@ public class History {
         // Ensuite, on déplace l'action sur l'autre pile
         for (Enregistrement nextReg : nextRegs) {
             switch (nextReg.action) {
-                case History.ADD_NODE:
+                case History.ADD_NODE :
                     d.getG().addNode(nextReg.noeud);
                     break;
-                case History.MOVE_NODE:
+                case History.MOVE_NODE :
                     nextReg.noeud.setCx(nextReg.x2);
                     nextReg.noeud.setCy(nextReg.y2);
                     break;
-                case History.REMOVE_NODE:
+                case History.REMOVE_NODE :
                     d.getG().getNodes().remove(nextReg.noeud);
                     break;
-                case History.ADD_ARC:
+                case History.ADD_ARC :
                     d.addLine(nextReg.arc);
                     break;
-                case History.MOVE_NAIL:
+                case History.MOVE_NAIL :
                     nextReg.clou.setCx(nextReg.x2);
                     nextReg.clou.setCy(nextReg.y2);
                     break;
-                case History.REMOVE_NAIL:
+                case History.REMOVE_NAIL :
                     nextReg.clou.delete();
                     break;
-                case History.ADD_NAIL:
-                    // TO DO
+                case History.ADD_NAIL :
+                    nextReg.arc.addNail(nextReg.clou, nextReg.index);
                     break;
-                case History.REMOVE_ARC:
+                case History.REMOVE_ARC :
                     d.getG().removeLine(nextReg.arc);
                     break;
-                case History.LABEL_NODE:
+                case History.LABEL_NODE :
                     nextReg.noeud.setLabel(nextReg.newLbl);
                     break;
-                case History.LABEL_ARC:
+                case History.LABEL_ARC :
                     nextReg.arc.setPoids(Integer.parseInt(nextReg.newLbl));
                     break;
                 default:

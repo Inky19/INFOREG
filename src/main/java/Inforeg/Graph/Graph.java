@@ -233,13 +233,16 @@ public class Graph {
     }
 
     public String formatInt(int n, int d) {
-        String aux = String.valueOf(n);
-        int count = d - aux.length();
-        while (count > 0) {
-            aux = "_" + aux;
-            --count;
+        String formated = String.valueOf(n);
+        String sep = " ";
+        int count = (d - formated.length());
+        for (int i=0; i < count/2; i++) {
+            formated = sep + formated + sep;
         }
-        return aux;
+        if (count%2==1) {
+            formated += sep;
+        }
+        return formated;
     }
 
     public Node getNode(int value) {
