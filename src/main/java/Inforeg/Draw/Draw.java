@@ -113,7 +113,7 @@ public class Draw extends JPanel implements MouseMotionListener {
 
     private String pathSauvegarde = " ";
     private String fileName;
-    private String resultat;
+    private String alogResults;
     /**
      * Dernier Nœud sur lequel on a passé la souris
      */
@@ -176,7 +176,7 @@ public class Draw extends JPanel implements MouseMotionListener {
      * @param pondere true pour un graphe pondéré
      */
     public Draw(boolean oriente, boolean pondere) {
-        resultat = "";
+        alogResults = "";
         this.oriente = oriente;
         this.G = new Graph(this);
         this.pondere = pondere;
@@ -1261,11 +1261,11 @@ public class Draw extends JPanel implements MouseMotionListener {
     }
 
     public String getResultat() {
-        return resultat;
+        return alogResults;
     }
 
     public void setResultat(String resultat) {
-        this.resultat = resultat;
+        this.alogResults = resultat;
         inter.refreshResult();
     }
 
