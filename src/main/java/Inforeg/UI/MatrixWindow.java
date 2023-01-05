@@ -44,7 +44,7 @@ public class MatrixWindow extends JDialog {
     CustomButton copy;
 
     public MatrixWindow(JFrame frame, Draw d) {
-        super(frame, "Exporter matrice d'adjacence");
+        super(frame, "Exporter la matrice d'adjacence");
         // Position
         this.setResizable(false);
         this.setSize(600, 500);
