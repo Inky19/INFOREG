@@ -749,7 +749,7 @@ public class Interface {
         Draw newD = graphWin.chooseGraph();
         if (newD != null){
             String title;
-            if (newD.getFileName() == null || newD.getFileName() == "") {
+            if (newD.getFileName() == null || newD.getFileName().equals("")) {
                 title = "Graphe " + String.valueOf(tabsPanel.getTabCount());
             } else {
                 title = newD.getFileName();

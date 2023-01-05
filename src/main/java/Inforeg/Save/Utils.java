@@ -21,7 +21,7 @@ public abstract class Utils {
      */
     public static String[] formatPath(File file, String ext) {
         String extFormat = ext.toLowerCase();
-        if (ext.substring(0, 0) != ".") {
+        if (!ext.substring(0, 0).equals(".")) {
             extFormat = "." + extFormat;
         }
         String name = file.getName();
