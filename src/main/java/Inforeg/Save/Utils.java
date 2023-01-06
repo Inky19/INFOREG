@@ -67,4 +67,9 @@ public abstract class Utils {
         int B = Integer.decode("0x" + colorHex.substring(4, 6));
         return new Color(R, G, B);
     }
+    
+    public static void copyToClipboard(String text) {
+        java.awt.Toolkit.getDefaultToolkit().getSystemClipboard()
+        .setContents(new java.awt.datatransfer.StringSelection(text), null);
+    }
 }

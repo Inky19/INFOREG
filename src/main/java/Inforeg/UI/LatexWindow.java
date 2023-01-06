@@ -1,5 +1,6 @@
 package Inforeg.UI;
 
+import Inforeg.AssetLoader;
 import Inforeg.Draw.Draw;
 import Inforeg.Save.ExportLatex;
 import java.awt.BorderLayout;
@@ -15,7 +16,6 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
@@ -27,6 +27,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * Fenêtre de l'export LaTeX
@@ -60,6 +62,7 @@ public class LatexWindow extends JDialog {
     private JCheckBox adaptSize;
 
     private JTextArea exportArea;
+    private CustomButton copyButton;
 
     public LatexWindow(JFrame frame, Draw d) {
         super(frame, "Exporter en format LaTeX");
@@ -242,12 +245,26 @@ public class LatexWindow extends JDialog {
         export.setLayout(new BoxLayout(export, BoxLayout.Y_AXIS));
         JPanel wrapperArea = new JPanel();
         exportArea = new JTextArea();
+        exportArea.getDocument().addDocumentListener(new DocumentListener() {
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {}
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            copyButton.setText("Copier");
+            copyButton.setIcon(AssetLoader.copyIco);
+            copyButton.unselect();
+        }
+        @Override
+        public void changedUpdate(DocumentEvent arg0) {}
+    });
+
         JScrollPane exportScrollPane = new JScrollPane(exportArea);
         exportScrollPane.setPreferredSize(new Dimension(400, 400));
         wrapperArea.add(exportScrollPane);
         export.add(wrapperArea);
 
-        JButton exportButton = new CustomButton("Exporter",Color.GRAY,Color.LIGHT_GRAY,null);
+        CustomButton exportButton = new CustomButton("Exporter", AlgoBox.BUTTON_COLOR, AlgoBox.BUTTON_COLOR, null);
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
@@ -255,9 +272,23 @@ public class LatexWindow extends JDialog {
                 setExport(exportLatex.export(d, nColor, aColor, nSize, aSize, adaptSize.isSelected(), showNails.isSelected()));
             }
         });
-
+        copyButton = new CustomButton("Copier", AssetLoader.copyIco, AlgoBox.BUTTON_COLOR, AlgoBox.BUTTON_COLOR, Color.decode("#94bc63"));
+        copyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                copyButton.setText("Copié");
+                copyButton.select();
+                copyButton.setIcon(AssetLoader.checkIco);
+                Inforeg.Save.Utils.copyToClipboard(exportArea.getText());
+            }
+        });
         exportButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        export.add(exportButton);
+        JPanel buttonsContainer = new JPanel();
+        
+        buttonsContainer.add(exportButton);
+        buttonsContainer.add(copyButton);
+        
+        export.add(buttonsContainer);
 
         this.add(tabs);
         this.setModal(true);
