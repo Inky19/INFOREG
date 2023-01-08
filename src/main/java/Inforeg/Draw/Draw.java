@@ -748,6 +748,8 @@ public class Draw extends JPanel implements MouseMotionListener {
         zoomSlider.setVisible(show);
         fitToScreen.setVisible(show);
         zoomLabel.setVisible(show);
+        info.setVisible(show);
+        infoTop.setVisible(show);
         repaint();
     }
 
